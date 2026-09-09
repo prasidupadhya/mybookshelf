@@ -31,6 +31,9 @@ The library currently includes works by Hermann Hesse, Albert Camus, Fyodor Dost
 
 ```text
 mybookshelf/
-├── index.html   # Complete application: markup, styles, data, and interactions
-└── README.md    # Project overview and usage notes
+├── index.html       # Page structure only
+├── styles.css       # Visual design, responsive rules, and motion
+├── books-data.js    # Shared book collection data
+├── shelf.js         # Rendering and interaction logic
+└── README.md        # Project overview and usage notes
 ```
