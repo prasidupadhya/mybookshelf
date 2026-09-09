@@ -9,10 +9,11 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230f1b17'/%3E%3Cpath d='M13 17c7-2 13 0 19 5v27c-6-5-12-7-19-5V17Zm38 0c-7-2-13 0-19 5v27c6-5 12-7 19-5V17Z' fill='%23eadfca'/%3E%3Cpath d='M32 22v27' stroke='%23b99a5b' stroke-width='2'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&amp;family=DM+Sans:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script src="books-data.js" defer></script>
   <script src="shelf.js" defer></script>
+  <script src="clock.js" defer></script>
 </head>
 <body>
   <div class="page-shell" data-page-shell>
@@ -21,22 +22,12 @@
       <p>Books I've finished, what I'm reading now, and what I want to read next.</p>
     </header>
 
-    <main class="bookcase" aria-label="Personal book collection">
-      <section class="shelf" data-shelf="read" aria-labelledby="read-label">
-        <h2 class="shelf__label" id="read-label">Read</h2>
-        <div class="shelf__books" data-shelf-books></div>
-      </section>
+    <main class="bookcase" data-bookcase aria-label="Personal book collection"></main>
 
-      <section class="shelf" data-shelf="current" aria-labelledby="current-label">
-        <h2 class="shelf__label" id="current-label">Currently reading</h2>
-        <div class="shelf__books" data-shelf-books></div>
-      </section>
-
-      <section class="shelf" data-shelf="want" aria-labelledby="want-label">
-        <h2 class="shelf__label" id="want-label">Want to read</h2>
-        <div class="shelf__books" data-shelf-books></div>
-      </section>
-    </main>
+    <footer class="library-footer">
+      <span class="library-footer__signature">Prasid's bookshelf</span>
+      <time class="library-footer__clock" data-live-clock></time>
+    </footer>
 
   </div>
 
@@ -64,7 +55,7 @@
         <h2 class="bookplate__title" id="bookplate-title" data-bookplate-title></h2>
         <p class="bookplate__author" data-bookplate-author></p>
         <p class="bookplate__pages" data-bookplate-pages></p>
-        <p class="bookplate__note" data-bookplate-note></p>
+        <p class="bookplate__description" data-bookplate-description></p>
         <a class="bookplate__link" data-bookplate-link target="_blank" rel="noopener noreferrer">Read about it on Goodreads</a>
       </div>
     </article>

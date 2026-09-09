@@ -1,52 +1,63 @@
+const SHELVES = Object.freeze([
+  Object.freeze({ id: "current", label: "Currently reading" }),
+  Object.freeze({ id: "want", label: "Want to read" }),
+  Object.freeze({ id: "read", label: "Read" })
+]);
+
 const BOOKS = Object.freeze([
   Object.freeze({
     title: "Siddhartha",
     author: "Hermann Hesse",
     url: "https://www.goodreads.com/en/book/show/52036.Siddhartha",
     shelf: "read",
+    shelfOrder: 3,
     pageCount: 152,
-    accentColor: "#b66f2e",
-    coverUrl: "https://images1.penguinrandomhouse.com/cover/9780553208849",
-    note: "I keep coming back to its idea that some things only make sense after you live through them."
+    accentColor: "#3c3489",
+    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1629378189i/52036.jpg",
+    description: "A wealthy Indian Brahmin leaves a life of privilege in search of spiritual fulfillment. Hesse brings together Eastern religion, Jungian archetypes, and Western individualism in one man's search for meaning."
   }),
   Object.freeze({
     title: "The Stranger",
     author: "Albert Camus",
     url: "https://www.goodreads.com/book/show/49552.The_Stranger",
     shelf: "read",
+    shelfOrder: 3,
     pageCount: 123,
-    accentColor: "#7097a7",
-    coverUrl: "https://images3.penguinrandomhouse.com/cover/9780679720201",
-    note: "It is so plain on the surface that the unease sneaks up on you."
+    accentColor: "#c7c6c7",
+    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1738704267i/49552.jpg",
+    description: "Camus follows an ordinary man who is drawn into a senseless murder on a sun-drenched Algerian beach. Through his story, the novel explores the confrontation between human beings and the absurd."
   }),
   Object.freeze({
     title: "White Nights",
     author: "Fyodor Dostoevsky",
     url: "https://www.goodreads.com/book/show/1772910.White_Nights",
     shelf: "read",
-    pageCount: 51,
-    accentColor: "#263c5a",
-    coverUrl: "https://images.gr-assets.com/books/1450699039l/1772910.jpg",
-    note: "Short, tender, and painfully good at capturing how hope can outrun reality."
+    shelfOrder: 3,
+    pageCount: 82,
+    accentColor: "#d4c0a4",
+    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1450699039i/1772910.jpg",
+    description: "Set in St. Petersburg, this 1848 story follows a young man struggling with inner restlessness and unrequited love. Its two alienated protagonists are briefly brought together in a tender blend of romanticism and realism."
   }),
   Object.freeze({
     title: "The Metamorphosis",
     author: "Franz Kafka",
     url: "https://www.goodreads.com/book/show/485894.The_Metamorphosis",
     shelf: "current",
+    shelfOrder: 1,
     pageCount: 201,
-    accentColor: "#465340",
-    coverUrl: "https://images3.penguinrandomhouse.com/cover/9780553213690",
-    note: "I am taking this one slowly; the family tension is stranger than the transformation itself."
+    accentColor: "#aa7764",
+    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1646444605i/485894.jpg",
+    description: "Gregor Samsa wakes one morning transformed into a giant insect. The story follows how he becomes an object of disgrace and an outsider within his own family, turning the bizarre premise into a darkly comic meditation on inadequacy, guilt, isolation, and alienation."
   }),
   Object.freeze({
     title: "The Bhagavad Gita",
-    author: "Anonymous · translated by Juan Mascaró",
+    author: "Krishna-Dwaipayana Vyasa",
     url: "https://www.goodreads.com/book/show/99944.The_Bhagavad_Gita",
     shelf: "want",
+    shelfOrder: 2,
     pageCount: 160,
-    accentColor: "#d28b2f",
-    coverUrl: "https://images3.penguinrandomhouse.com/cover/9780140449181",
-    note: "I want to read it when I can give the questions about duty and detachment proper attention."
+    accentColor: "#6c584f",
+    coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1769077152i/99944.jpg",
+    description: "Part of the Mahabharata, the Bhagavad Gita is a philosophical dialogue in which Krishna instructs the warrior prince Arjuna on ethics, the nature of God, and how people may come to know the divine. Set before a great battle, it moves through spiritual and moral questions as a practical guide to living well."
   })
 ]);
