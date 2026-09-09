@@ -7,6 +7,7 @@ Each title appears as its own designed spine, with the width derived from that e
 ## What this repository contains
 
 - A responsive three-tier bookshelf interface
+- An EN / ES language switch for titles, descriptions, shelf labels, and book-detail copy
 - A reusable JavaScript book collection that drives the layout and shelf order
 - Distinct spine treatments for each title
 - Spine colors sampled from the matching Goodreads cover art
@@ -15,7 +16,7 @@ Each title appears as its own designed spine, with the width derived from that e
 - A bookplate detail view with real cover art and edition details
 - Goodreads-based book descriptions instead of invented personal notes
 - An empty shelf slot reserved for a future addition
-- A small signature-style footer with a visitor-local live clock
+- A bilingual footer with a handwritten `Prasid` signature and visitor-local live date/time
 - Reduced-motion and visible-focus support
 
 ## Tech stack
