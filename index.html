@@ -18,14 +18,22 @@
 <body>
   <div class="page-shell" data-page-shell>
     <header class="library-header">
-      <h1>My bookshelf</h1>
-      <p>Books I've finished, what I'm reading now, and what I want to read next.</p>
+      <div>
+        <h1 data-heading>My bookshelf</h1>
+        <p data-intro>Books I've finished, what I'm reading now, and what I want to read next.</p>
+      </div>
+      <div class="language-switcher" role="group" aria-label="Language" data-language-group>
+        <button class="language-switcher__button is-active" type="button" data-language="en" aria-pressed="true">EN</button>
+        <span aria-hidden="true">/</span>
+        <button class="language-switcher__button" type="button" data-language="es" aria-pressed="false">ES</button>
+      </div>
     </header>
 
     <main class="bookcase" data-bookcase aria-label="Personal book collection"></main>
 
     <footer class="library-footer">
-      <span class="library-footer__signature">Prasid's bookshelf</span>
+      <span class="library-footer__signature">Prasid</span>
+      <span class="library-footer__suffix" data-footer-suffix>'s bookshelf</span>
       <time class="library-footer__clock" data-live-clock></time>
     </footer>
 
@@ -45,7 +53,7 @@
           <img class="bookplate__cover" data-bookplate-cover alt="" loading="eager">
           <figcaption class="bookplate__cover-fallback" data-bookplate-cover-fallback hidden>
             <span data-bookplate-cover-title></span>
-            <small>Cover unavailable</small>
+            <small data-bookplate-cover-fallback-label>Cover unavailable</small>
           </figcaption>
         </figure>
       </div>

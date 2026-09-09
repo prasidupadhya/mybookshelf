@@ -51,7 +51,7 @@
 
     .library-header {
       display: flex;
-      align-items: end;
+      align-items: flex-start;
       justify-content: space-between;
       gap: 28px;
       margin-bottom: 34px;
@@ -71,6 +71,35 @@
       margin: 0 0 7px;
       color: color-mix(in srgb, var(--parchment) 76%, var(--ink));
       line-height: 1.55;
+    }
+
+    .language-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 5px;
+      color: color-mix(in srgb, var(--parchment) 44%, var(--ink));
+      font-size: .78rem;
+    }
+
+    .language-switcher__button {
+      min-width: 30px;
+      min-height: 30px;
+      padding: 2px 4px;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+
+    .language-switcher__button:hover,
+    .language-switcher__button.is-active {
+      color: var(--parchment);
+      border-bottom-color: var(--brass);
     }
 
     .bookcase {
@@ -308,7 +337,7 @@
       display: flex;
       align-items: baseline;
       justify-content: flex-end;
-      gap: 10px;
+      gap: 7px;
       padding: 36px 8px 0;
       color: color-mix(in srgb, var(--parchment) 62%, var(--ink));
     }
@@ -319,6 +348,17 @@
       line-height: 1;
       transform: rotate(-1.5deg);
       transform-origin: right center;
+    }
+
+    .library-footer__suffix {
+      margin-left: -3px;
+      font-size: .82rem;
+      white-space: nowrap;
+    }
+
+    .library-footer__clock::before {
+      content: "·";
+      margin-right: 7px;
     }
 
     .library-footer__clock {
@@ -576,7 +616,8 @@
       }
 
       .library-header {
-        display: block;
+        display: flex;
+        align-items: flex-start;
         margin: 0 8px 28px;
       }
 
@@ -588,6 +629,11 @@
         max-width: 33rem;
         margin-top: 16px;
         font-size: .94rem;
+      }
+
+      .language-switcher {
+        flex: 0 0 auto;
+        margin-top: 2px;
       }
 
       .bookcase {
@@ -694,6 +740,20 @@
       .library-footer__clock {
         white-space: normal;
         text-align: right;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .library-header {
+        display: block;
+      }
+
+      .language-switcher {
+        margin-top: 16px;
+      }
+
+      .library-footer {
+        flex-wrap: wrap;
       }
     }
 

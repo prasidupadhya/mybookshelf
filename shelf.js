@@ -14,18 +14,19 @@ const bookplateLink = bookplate.querySelector("[data-bookplate-link]");
 const bookplateCover = bookplate.querySelector("[data-bookplate-cover]");
 const bookplateCoverFallback = bookplate.querySelector("[data-bookplate-cover-fallback]");
 const bookplateCoverTitle = bookplate.querySelector("[data-bookplate-cover-title]");
+const bookplateCoverFallbackLabel = bookplate.querySelector("[data-bookplate-cover-fallback-label]");
 const bookplateClose = bookplate.querySelector(".bookplate__close");
 const pageShell = document.querySelector("[data-page-shell]");
+const heading = document.querySelector("[data-heading]");
+const intro = document.querySelector("[data-intro]");
+const languageGroup = document.querySelector("[data-language-group]");
+const languageButtons = [...document.querySelectorAll("[data-language]")];
+const footerSuffix = document.querySelector("[data-footer-suffix]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 let lastFocusedSpine = null;
-
-function slugify(value) {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
+let activeLanguage = "en";
+let activeBookIndex = null;
 
 function getSpineWidth(pageCount) {
   const scaledWidth = SPINE_BASE_WIDTH + pageCount * SPINE_WIDTH_PER_PAGE;
@@ -58,7 +59,7 @@ function getReadableInk(backgroundColor) {
     : lightInk;
 }
 
-function createShelf({ id, label }) {
+function createShelf({ id }) {
   const section = document.createElement("section");
   const heading = document.createElement("h2");
   const booksContainer = document.createElement("div");
@@ -70,7 +71,7 @@ function createShelf({ id, label }) {
 
   heading.className = "shelf__label";
   heading.id = headingId;
-  heading.textContent = label;
+  heading.textContent = UI_COPY[activeLanguage].shelves[id];
 
   booksContainer.className = "shelf__books";
   booksContainer.dataset.shelfBooks = "";
@@ -88,18 +89,19 @@ function createBookSpine(book, index) {
   button.className = "book";
   button.type = "button";
   button.dataset.bookIndex = index;
-  button.dataset.book = slugify(book.title);
+  const localizedTitle = book.title[activeLanguage];
+  button.dataset.book = book.id;
   button.dataset.pageCount = book.pageCount;
   button.style.setProperty("--book-accent", book.accentColor);
   button.style.setProperty("--book-ink", getReadableInk(book.accentColor));
   button.style.setProperty("--book-width", `${spineWidth}px`);
   button.setAttribute(
     "aria-label",
-    `${book.title} by ${book.author}, ${book.pageCount} pages`
+    `${localizedTitle} — ${book.author}, ${book.pageCount} ${UI_COPY[activeLanguage].pages}`
   );
 
   title.className = "book__title";
-  title.textContent = book.title;
+  title.textContent = localizedTitle;
   author.className = "book__author";
   author.textContent = book.author;
 
@@ -108,6 +110,7 @@ function createBookSpine(book, index) {
 }
 
 function renderLibrary() {
+  bookcase.replaceChildren();
   const shelfElements = new Map();
   const orderedShelves = SHELVES
     .map((shelf) => ({
@@ -132,7 +135,7 @@ function renderLibrary() {
   const futureSlotLabel = document.createElement("span");
   futureSlot.className = "book-slot";
   futureSlot.setAttribute("aria-hidden", "true");
-  futureSlotLabel.textContent = "Next book";
+  futureSlotLabel.textContent = UI_COPY[activeLanguage].nextBook;
   futureSlot.append(futureSlotLabel);
   shelfElements.get("want")?.append(futureSlot);
 }
@@ -140,8 +143,11 @@ function renderLibrary() {
 function showCover(book) {
   bookplateCoverFallback.hidden = true;
   bookplateCover.hidden = false;
-  bookplateCover.alt = `Cover of ${book.title}`;
-  bookplateCoverTitle.textContent = book.title;
+  const localizedTitle = book.title[activeLanguage];
+  bookplateCover.alt = activeLanguage === "es"
+    ? `Portada de ${localizedTitle}`
+    : `Cover of ${localizedTitle}`;
+  bookplateCoverTitle.textContent = localizedTitle;
 
   bookplateCover.onerror = () => {
     bookplateCover.hidden = true;
@@ -152,15 +158,23 @@ function showCover(book) {
   bookplateCover.src = book.coverUrl;
 }
 
-function openBookplate(book, spine) {
-  lastFocusedSpine = spine;
-  bookplateTitle.textContent = book.title;
+function populateBookplate(book) {
+  bookplateTitle.textContent = book.title[activeLanguage];
   bookplateAuthor.textContent = book.author;
-  bookplatePages.textContent = `${book.pageCount} pages`;
-  bookplateDescription.textContent = book.description;
+  bookplatePages.textContent = `${book.pageCount} ${UI_COPY[activeLanguage].pages}`;
+  bookplateDescription.textContent = book.description[activeLanguage];
+  bookplateLink.textContent = UI_COPY[activeLanguage].readOnGoodreads;
   bookplateLink.href = book.url;
+  bookplateClose.setAttribute("aria-label", UI_COPY[activeLanguage].closeDetails);
+  bookplateCoverFallbackLabel.textContent = UI_COPY[activeLanguage].coverUnavailable;
   bookplateCard.style.setProperty("--plate-accent", book.accentColor);
   showCover(book);
+}
+
+function openBookplate(book, spine, index) {
+  lastFocusedSpine = spine;
+  activeBookIndex = index;
+  populateBookplate(book);
 
   bookplate.hidden = false;
   pageShell.inert = true;
@@ -175,7 +189,36 @@ function finishClose() {
   }
   pageShell.inert = false;
   document.body.classList.remove("has-open-bookplate");
+  activeBookIndex = null;
   lastFocusedSpine?.focus({ preventScroll: true });
+}
+
+function setLanguage(language) {
+  if (!UI_COPY[language]) return;
+
+  activeLanguage = language;
+  document.documentElement.lang = language;
+  heading.textContent = UI_COPY[language].heading;
+  intro.textContent = UI_COPY[language].intro;
+  languageGroup.setAttribute("aria-label", UI_COPY[language].languageLabel);
+  footerSuffix.textContent = UI_COPY[language].footerSuffix;
+
+  languageButtons.forEach((button) => {
+    const isActive = button.dataset.language === language;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+
+  renderLibrary();
+
+  if (activeBookIndex !== null && !bookplate.hidden) {
+    lastFocusedSpine = bookcase.querySelector(`[data-book-index="${activeBookIndex}"]`);
+    populateBookplate(BOOKS[activeBookIndex]);
+  }
+
+  window.dispatchEvent(new CustomEvent("bookshelf:languagechange", {
+    detail: { language }
+  }));
 }
 
 function closeBookplate() {
@@ -214,7 +257,12 @@ function trapBookplateFocus(event) {
 bookcase.addEventListener("click", (event) => {
   const spine = event.target.closest("[data-book-index]");
   if (!spine) return;
-  openBookplate(BOOKS[Number(spine.dataset.bookIndex)], spine);
+  const index = Number(spine.dataset.bookIndex);
+  openBookplate(BOOKS[index], spine, index);
+});
+
+languageButtons.forEach((button) => {
+  button.addEventListener("click", () => setLanguage(button.dataset.language));
 });
 
 bookplate.addEventListener("click", (event) => {
