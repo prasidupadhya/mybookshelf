@@ -13,6 +13,7 @@ const UI_COPY = Object.freeze({
     readOnGoodreads: "Read about it on Goodreads",
     closeDetails: "Close book details",
     languageLabel: "Language",
+    footerPrefix: "",
     footerSuffix: "'s bookshelf"
   }),
   es: Object.freeze({
@@ -29,7 +30,8 @@ const UI_COPY = Object.freeze({
     readOnGoodreads: "Leer más en Goodreads",
     closeDetails: "Cerrar detalles del libro",
     languageLabel: "Idioma",
-    footerSuffix: "· mi biblioteca"
+    footerPrefix: "Biblioteca de",
+    footerSuffix: ""
   })
 });
 

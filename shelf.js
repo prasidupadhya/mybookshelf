@@ -21,6 +21,7 @@ const heading = document.querySelector("[data-heading]");
 const intro = document.querySelector("[data-intro]");
 const languageGroup = document.querySelector("[data-language-group]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
+const footerPrefix = document.querySelector("[data-footer-prefix]");
 const footerSuffix = document.querySelector("[data-footer-suffix]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -201,7 +202,10 @@ function setLanguage(language) {
   heading.textContent = UI_COPY[language].heading;
   intro.textContent = UI_COPY[language].intro;
   languageGroup.setAttribute("aria-label", UI_COPY[language].languageLabel);
+  footerPrefix.textContent = UI_COPY[language].footerPrefix;
+  footerPrefix.hidden = !UI_COPY[language].footerPrefix;
   footerSuffix.textContent = UI_COPY[language].footerSuffix;
+  footerSuffix.hidden = !UI_COPY[language].footerSuffix;
 
   languageButtons.forEach((button) => {
     const isActive = button.dataset.language === language;

@@ -18,7 +18,7 @@
 <body>
   <div class="page-shell" data-page-shell>
     <header class="library-header">
-      <div>
+      <div class="library-header__copy">
         <h1 data-heading>My bookshelf</h1>
         <p data-intro>Books I've finished, what I'm reading now, and what I want to read next.</p>
       </div>
@@ -32,8 +32,11 @@
     <main class="bookcase" data-bookcase aria-label="Personal book collection"></main>
 
     <footer class="library-footer">
-      <span class="library-footer__signature">Prasid</span>
-      <span class="library-footer__suffix" data-footer-suffix>'s bookshelf</span>
+      <span class="library-footer__identity">
+        <span class="library-footer__prefix" data-footer-prefix hidden></span>
+        <span class="library-footer__signature">Prasid</span>
+        <span class="library-footer__suffix" data-footer-suffix>'s bookshelf</span>
+      </span>
       <time class="library-footer__clock" data-live-clock></time>
     </footer>
 
