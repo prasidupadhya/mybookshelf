@@ -373,7 +373,7 @@
     }
 
     .library-footer__suffix {
-      margin-left: -3px;
+      margin-left: 2px;
     }
 
     .library-footer__clock::before {
