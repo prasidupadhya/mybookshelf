@@ -4,11 +4,63 @@
       --walnut: #6b432b;
       --parchment: #eadfca;
       --brass: #b99a5b;
+      --page-bg-start: #12211b;
+      --page-bg-middle: #17251f;
+      --page-bg-end: #0f1c18;
+      --page-text: #f4ead8;
+      --muted-text: #b8ad98;
+      --control-muted: #817d70;
+      --control-active: #eadfca;
+      --bookcase-surface: #13231d;
+      --bookcase-border: rgba(185, 154, 91, .16);
+      --bookcase-shadow: rgba(0, 0, 0, .36);
+      --shelf-label: #eadfca;
+      --shelf-bay-top: rgba(0,0,0,.26);
+      --shelf-bay-side: rgba(0,0,0,.2);
+      --slot-border: rgba(234, 223, 202, .26);
+      --slot-border-bottom: rgba(234, 223, 202, .13);
+      --slot-text: rgba(234, 223, 202, .42);
+      --slot-bg: rgba(8, 16, 13, .18);
+      --footer-text: #968c7b;
+      --focus-ring: #e6c77e;
+      --grain-opacity: .22;
+      --grain-blend: soft-light;
+      --theme-control-bg: rgba(234, 223, 202, .035);
+      --theme-control-border: rgba(234, 223, 202, .16);
+      --theme-control-hover: rgba(234, 223, 202, .08);
+    }
+
+    html[data-theme="dark"] { color-scheme: dark; }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --page-bg-start: #f4ead8;
+      --page-bg-middle: #e9dcc4;
+      --page-bg-end: #ddc9aa;
+      --page-text: #20372e;
+      --muted-text: #625e51;
+      --control-muted: #756f61;
+      --control-active: #263b32;
+      --bookcase-surface: #d8c5a5;
+      --bookcase-border: rgba(99, 70, 42, .24);
+      --bookcase-shadow: rgba(83, 57, 31, .22);
+      --shelf-label: #2f453b;
+      --shelf-bay-top: rgba(83, 58, 36, .13);
+      --shelf-bay-side: rgba(83, 58, 36, .09);
+      --slot-border: rgba(75, 57, 40, .34);
+      --slot-border-bottom: rgba(75, 57, 40, .2);
+      --slot-text: rgba(53, 48, 40, .62);
+      --slot-bg: rgba(255, 250, 238, .22);
+      --footer-text: #655c50;
+      --focus-ring: #315344;
+      --grain-opacity: .12;
+      --grain-blend: multiply;
+      --theme-control-bg: rgba(255, 250, 238, .38);
+      --theme-control-border: rgba(75, 57, 40, .2);
+      --theme-control-hover: rgba(255, 250, 238, .7);
     }
 
     * { box-sizing: border-box; }
-
-    html { color-scheme: dark; }
 
     body {
       margin: 0;
@@ -17,8 +69,8 @@
       background:
         radial-gradient(circle at 18% 8%, rgba(185, 154, 91, .08), transparent 28rem),
         radial-gradient(circle at 78% 18%, rgba(234, 223, 202, .035), transparent 34rem),
-        linear-gradient(135deg, #12211b 0%, var(--ink) 48%, #0f1c18 100%);
-      color: color-mix(in srgb, var(--parchment) 94%, white);
+        linear-gradient(135deg, var(--page-bg-start) 0%, var(--page-bg-middle) 48%, var(--page-bg-end) 100%);
+      color: var(--page-text);
       font-family: "DM Sans", sans-serif;
     }
 
@@ -27,9 +79,9 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      opacity: .22;
+      opacity: var(--grain-opacity);
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
-      mix-blend-mode: soft-light;
+      mix-blend-mode: var(--grain-blend);
     }
 
     button,
@@ -38,7 +90,7 @@
     body.has-open-bookplate { overflow: hidden; }
 
     :focus-visible {
-      outline: 3px solid #e6c77e;
+      outline: 3px solid var(--focus-ring);
       outline-offset: 4px;
     }
 
@@ -73,10 +125,17 @@
     .library-header p {
       max-width: none;
       margin: 18px 0 0;
-      color: color-mix(in srgb, var(--parchment) 76%, var(--ink));
+      color: var(--muted-text);
       font-size: .94rem;
       line-height: 1.45;
       white-space: nowrap;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
     }
 
     .language-switcher {
@@ -84,7 +143,7 @@
       align-items: center;
       gap: 7px;
       margin-top: 5px;
-      color: color-mix(in srgb, var(--parchment) 44%, var(--ink));
+      color: var(--control-muted);
       font-size: .78rem;
     }
 
@@ -104,20 +163,57 @@
 
     .language-switcher__button:hover,
     .language-switcher__button.is-active {
-      color: var(--parchment);
+      color: var(--control-active);
       border-bottom-color: var(--brass);
+    }
+
+    .theme-toggle {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid var(--theme-control-border);
+      border-radius: 999px;
+      color: var(--control-active);
+      background: var(--theme-control-bg);
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .theme-toggle:hover { background: var(--theme-control-hover); }
+
+    .theme-toggle__mark {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 13px;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .theme-toggle[data-next-theme="light"] .theme-toggle__mark {
+      background: var(--brass);
+      border-color: var(--brass);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 20%, transparent);
+    }
+
+    .theme-toggle[data-next-theme="dark"] .theme-toggle__mark {
+      background: transparent;
+      box-shadow: inset -4px -1px 0 0 currentColor;
     }
 
     .bookcase {
       position: relative;
       padding: 34px 40px 14px;
-      border: 1px solid rgba(185, 154, 91, .16);
+      border: 1px solid var(--bookcase-border);
       border-radius: 2px;
       background:
         linear-gradient(90deg, rgba(255,255,255,.018), transparent 15%, transparent 85%, rgba(0,0,0,.09)),
-        #13231d;
+        var(--bookcase-surface);
       box-shadow:
-        0 32px 70px rgba(0, 0, 0, .36),
+        0 32px 70px var(--bookcase-shadow),
         inset 0 0 0 10px rgba(21, 13, 9, .08);
     }
 
@@ -148,7 +244,7 @@
       margin: 0 0 10px;
       font-size: .92rem;
       font-weight: 500;
-      color: var(--parchment);
+      color: var(--shelf-label);
     }
 
     .shelf__books {
@@ -161,8 +257,8 @@
       border-left: 1px solid rgba(255,255,255,.03);
       border-right: 1px solid rgba(0,0,0,.22);
       background:
-        linear-gradient(180deg, rgba(0,0,0,.26), transparent 48%),
-        linear-gradient(90deg, rgba(0,0,0,.2), transparent 10%, transparent 90%, rgba(0,0,0,.18));
+        linear-gradient(180deg, var(--shelf-bay-top), transparent 48%),
+        linear-gradient(90deg, var(--shelf-bay-side), transparent 10%, transparent 90%, var(--shelf-bay-side));
       box-shadow: inset 0 18px 28px rgba(0,0,0,.16);
     }
 
@@ -324,10 +420,10 @@
       margin-left: 6px;
       position: relative;
       z-index: 2;
-      border: 1px dashed rgba(234, 223, 202, .26);
-      border-bottom-color: rgba(234, 223, 202, .13);
-      color: rgba(234, 223, 202, .42);
-      background: rgba(8, 16, 13, .18);
+      border: 1px dashed var(--slot-border);
+      border-bottom-color: var(--slot-border-bottom);
+      color: var(--slot-text);
+      background: var(--slot-bg);
       box-shadow: inset 0 0 24px rgba(0,0,0,.12);
     }
 
@@ -345,7 +441,7 @@
       justify-content: flex-end;
       gap: 7px;
       padding: 36px 8px 0;
-      color: color-mix(in srgb, var(--parchment) 62%, var(--ink));
+      color: var(--footer-text);
     }
 
     .library-footer__identity {
@@ -658,9 +754,21 @@
         margin-top: 16px;
       }
 
+      .header-controls {
+        margin-top: 16px;
+        flex-wrap: wrap;
+      }
+
+      .header-controls .language-switcher { margin-top: 0; }
+
       .language-switcher__button {
         min-width: 44px;
         min-height: 44px;
+      }
+
+      .theme-toggle {
+        min-height: 44px;
+        padding-inline: 12px;
       }
 
       .bookcase {
@@ -840,6 +948,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+      .theme-toggle,
       .book,
       .bookplate,
       .bookplate__card,
