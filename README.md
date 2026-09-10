@@ -8,6 +8,7 @@ Each title appears as its own designed spine, with the width derived from that e
 
 - A responsive three-tier bookshelf interface
 - An EN / ES language switch for titles, descriptions, shelf labels, and book-detail copy
+- A persistent light / dark theme switch that follows the visitor's system preference on first load
 - A reusable JavaScript book collection that drives the layout and shelf order
 - Distinct spine treatments for each title
 - Spine colors sampled from the matching Goodreads cover art
@@ -41,5 +42,6 @@ mybookshelf/
 ├── books-data.js    # Shared book collection data
 ├── shelf.js         # Rendering and interaction logic
 ├── clock.js         # Visitor-local footer clock
+├── theme.js         # Theme preference, persistence, and theme toggle
 └── README.md        # Project overview and usage notes
 ```
