@@ -1,0 +1,33 @@
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 8%, rgba(185, 154, 91, .08), transparent 28rem),
+        radial-gradient(circle at 78% 18%, rgba(234, 223, 202, .035), transparent 34rem),
+        linear-gradient(135deg, var(--page-bg-start) 0%, var(--page-bg-middle) 48%, var(--page-bg-end) 100%);
+      color: var(--page-text);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: var(--grain-opacity);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='84' height='84' viewBox='0 0 84 84'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.72' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.12'/%3E%3C/svg%3E");
+      mix-blend-mode: var(--grain-blend);
+    }
+
+    button,
+    a { font: inherit; }
+
+    body.has-open-bookplate { overflow: hidden; }
+
+    :focus-visible {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 4px;
+    }

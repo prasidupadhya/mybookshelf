@@ -1,4 +1,4 @@
-const UI_COPY = Object.freeze({
+export const UI_COPY = Object.freeze({
   en: Object.freeze({
     heading: "My bookshelf",
     intro: "Books I've finished, what I'm reading now, and what I want to read next.",
@@ -35,13 +35,13 @@ const UI_COPY = Object.freeze({
   })
 });
 
-const SHELVES = Object.freeze([
+export const SHELVES = Object.freeze([
   Object.freeze({ id: "current" }),
   Object.freeze({ id: "want" }),
   Object.freeze({ id: "read" })
 ]);
 
-const BOOKS = Object.freeze([
+export const BOOKS = Object.freeze([
   Object.freeze({
     id: "siddhartha",
     title: Object.freeze({ en: "Siddhartha", es: "Siddhartha" }),

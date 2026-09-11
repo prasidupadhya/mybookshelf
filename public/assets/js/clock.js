@@ -1,6 +1,8 @@
 const footerClock = document.querySelector("[data-live-clock]");
 const CLOCK_LOCALES = Object.freeze({ en: "en-GB", es: "es-ES" });
-let clockLanguage = document.documentElement.lang === "es" ? "es" : "en";
+
+let footerClockFormatter = null;
+let intervalId = null;
 
 function createClockFormatter(language) {
   return new Intl.DateTimeFormat(CLOCK_LOCALES[language], {
@@ -12,19 +14,18 @@ function createClockFormatter(language) {
   });
 }
 
-let footerClockFormatter = createClockFormatter(clockLanguage);
-
 function updateFooterClock() {
   const now = new Date();
   footerClock.dateTime = now.toISOString();
   footerClock.textContent = footerClockFormatter.format(now);
 }
 
-updateFooterClock();
-window.setInterval(updateFooterClock, 1000);
-
-window.addEventListener("bookshelf:languagechange", (event) => {
-  clockLanguage = event.detail.language;
-  footerClockFormatter = createClockFormatter(clockLanguage);
+export function setClockLanguage(language) {
+  footerClockFormatter = createClockFormatter(language);
   updateFooterClock();
-});
+}
+
+export function initClock(language) {
+  setClockLanguage(language);
+  if (intervalId === null) intervalId = window.setInterval(updateFooterClock, 1000);
+}

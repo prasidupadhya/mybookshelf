@@ -1,0 +1,61 @@
+  :root {
+      --ink: #17251f;
+      --ink-deep: #0f1b17;
+      --walnut: #6b432b;
+      --parchment: #eadfca;
+      --brass: #b99a5b;
+      --page-bg-start: #12211b;
+      --page-bg-middle: #17251f;
+      --page-bg-end: #0f1c18;
+      --page-text: #f4ead8;
+      --muted-text: #b8ad98;
+      --control-muted: #817d70;
+      --control-active: #eadfca;
+      --bookcase-surface: #13231d;
+      --bookcase-border: rgba(185, 154, 91, .16);
+      --bookcase-shadow: rgba(0, 0, 0, .36);
+      --shelf-label: #eadfca;
+      --shelf-bay-top: rgba(0,0,0,.26);
+      --shelf-bay-side: rgba(0,0,0,.2);
+      --slot-border: rgba(234, 223, 202, .26);
+      --slot-border-bottom: rgba(234, 223, 202, .13);
+      --slot-text: rgba(234, 223, 202, .42);
+      --slot-bg: rgba(8, 16, 13, .18);
+      --footer-text: #968c7b;
+      --focus-ring: #e6c77e;
+      --grain-opacity: .22;
+      --grain-blend: soft-light;
+      --theme-control-bg: rgba(234, 223, 202, .035);
+      --theme-control-border: rgba(234, 223, 202, .16);
+      --theme-control-hover: rgba(234, 223, 202, .08);
+    }
+
+    html[data-theme="dark"] { color-scheme: dark; }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --page-bg-start: #f4ead8;
+      --page-bg-middle: #e9dcc4;
+      --page-bg-end: #ddc9aa;
+      --page-text: #20372e;
+      --muted-text: #625e51;
+      --control-muted: #756f61;
+      --control-active: #263b32;
+      --bookcase-surface: #d8c5a5;
+      --bookcase-border: rgba(99, 70, 42, .24);
+      --bookcase-shadow: rgba(83, 57, 31, .22);
+      --shelf-label: #2f453b;
+      --shelf-bay-top: rgba(83, 58, 36, .13);
+      --shelf-bay-side: rgba(83, 58, 36, .09);
+      --slot-border: rgba(75, 57, 40, .34);
+      --slot-border-bottom: rgba(75, 57, 40, .2);
+      --slot-text: rgba(53, 48, 40, .62);
+      --slot-bg: rgba(255, 250, 238, .22);
+      --footer-text: #655c50;
+      --focus-ring: #315344;
+      --grain-opacity: .12;
+      --grain-blend: multiply;
+      --theme-control-bg: rgba(255, 250, 238, .38);
+      --theme-control-border: rgba(75, 57, 40, .2);
+      --theme-control-hover: rgba(255, 250, 238, .7);
+    }

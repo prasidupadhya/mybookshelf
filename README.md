@@ -1,47 +1,78 @@
 # My Bookshelf
 
-My Bookshelf is a single-page personal library for literary and philosophical classics. The collection is arranged as a photographed-looking wooden bookshelf with three real reading states: books already read, the current read, and books saved for later.
+My Bookshelf is a bilingual personal library for literary and philosophical classics. The site keeps its warm wooden bookshelf identity while remaining a small, dependency-free static project that can be deployed directly to Cloudflare Pages.
 
-Each title appears as its own designed spine, with the width derived from that edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, a concise Goodreads-based synopsis, and a link to its Goodreads page.
+Each title appears as a designed spine whose width is derived from that edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, localized description, and Goodreads link.
 
-## What this repository contains
+## Features
 
-- A responsive three-tier bookshelf interface
-- An EN / ES language switch for titles, descriptions, shelf labels, and book-detail copy
-- A persistent light / dark theme switch that follows the visitor's system preference on first load
-- A reusable JavaScript book collection that drives the layout and shelf order
-- Distinct spine treatments for each title
-- Spine colors sampled from the matching Goodreads cover art
-- Spine widths derived from each edition's page count
-- Hover, keyboard, and book-open interactions
-- A bookplate detail view with real cover art and edition details
-- Goodreads-based book descriptions instead of invented personal notes
-- An empty shelf slot reserved for a future addition
-- A bilingual footer with a handwritten `Prasid` signature and visitor-local live date/time
-- Reduced-motion and visible-focus support
-
-## Tech stack
-
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Google Fonts
-
-The site has no build step and no runtime dependencies. Open `index.html` directly in a browser or serve the repository with any static file host.
-
-## Collection
-
-The library currently includes works by Hermann Hesse, Albert Camus, Fyodor Dostoevsky, Franz Kafka, and the *Bhagavad Gita*.
+- Three reading shelves: Currently reading, Want to read, and Read
+- English and Spanish interface copy and book descriptions
+- Persistent light/dark theme with system preference detection
+- Cover-derived spine colors and page-count-derived spine widths
+- Real book covers with a readable image fallback
+- Keyboard-accessible modal with focus trapping, Escape close, and outside-click close
+- Visitor-local live date and time
+- Responsive desktop, tablet, and mobile layouts
+- Reduced-motion support and visible focus states
+- Cloudflare Pages headers for basic browser security hardening
 
 ## Project structure
 
 ```text
 mybookshelf/
-├── index.html       # Page structure only
-├── styles.css       # Visual design, responsive rules, and motion
-├── books-data.js    # Shared book collection data
-├── shelf.js         # Rendering and interaction logic
-├── clock.js         # Visitor-local footer clock
-├── theme.js         # Theme preference, persistence, and theme toggle
-└── README.md        # Project overview and usage notes
+├── public/
+│   ├── index.html
+│   ├── _headers
+│   └── assets/
+│       ├── css/
+│       │   ├── tokens.css       # Theme tokens and light/dark values
+│       │   ├── base.css         # Global document and focus styles
+│       │   ├── header.css       # Heading, language, and theme controls
+│       │   ├── bookshelf.css    # Bookcase, shelves, spines, and empty slot
+│       │   ├── footer.css       # Signature and live-clock presentation
+│       │   ├── bookplate.css    # Book detail modal and cover treatment
+│       │   └── responsive.css   # Tablet/mobile/reduced-motion rules
+│       └── js/
+│           ├── data.js          # Book data, shelf order, and localized UI copy
+│           ├── theme.js         # System/manual theme selection and persistence
+│           ├── library.js       # Shelf and book-spine rendering
+│           ├── language.js      # EN/ES document copy and accessibility state
+│           ├── bookplate.js     # Modal content, focus management, and close logic
+│           ├── clock.js         # Visitor-local live date/time
+│           └── app.js           # Application initialization and event wiring
+└── README.md
 ```
+
+## Run locally
+
+No packages are required. Serve the `public` directory with any static HTTP server. Python's standard library works well:
+
+```bash
+python3 -m http.server 8000 --directory public
+```
+
+Then open `http://localhost:8000`.
+
+## Deploy to Cloudflare Pages
+
+This repository is ready for Git-based Cloudflare Pages deployment without a framework or package installation.
+
+Use these project settings in **Workers & Pages → Create application → Pages → Import an existing Git repository**:
+
+| Setting | Value |
+| --- | --- |
+| Production branch | `main` |
+| Framework preset | None |
+| Build command | `exit 0` (or leave blank) |
+| Build output directory | `public` |
+| Root directory | repository root |
+| Environment variables | none |
+
+After the repository is connected, pushes to `main` deploy automatically. Preview deployments can be created from other Git branches if you use them later.
+
+## Deployment model
+
+The deployed application is plain static HTML, CSS, and JavaScript. There is no server runtime, Node application, Python application, npm install, package manager, database, API key, or secret required in production.
+
+Google Fonts and the configured remote book-cover images are loaded by the visitor's browser. The rest of the application is served directly from Cloudflare's static asset network.
