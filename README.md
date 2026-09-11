@@ -1,47 +1,43 @@
 # My Bookshelf
 
-My Bookshelf is a single-page personal library for literary and philosophical classics. The collection is arranged as a photographed-looking wooden bookshelf with three real reading states: books already read, the current read, and books saved for later.
+My Bookshelf is a single-page personal library for literary and philosophical classics. The collection is arranged as a warm wooden bookshelf with three reading states: books currently being read, books saved for later, and books already read.
 
-Each title appears as its own designed spine, with the width derived from that edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, a concise Goodreads-based synopsis, and a link to its Goodreads page.
+Each title appears as its own designed spine, with width derived from that edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, bilingual description, and Goodreads link.
 
 ## What this repository contains
 
-- A responsive three-tier bookshelf interface
-- An EN / ES language switch for titles, descriptions, shelf labels, and book-detail copy
-- A persistent light / dark theme switch that follows the visitor's system preference on first load
-- A reusable JavaScript book collection that drives the layout and shelf order
-- Distinct spine treatments for each title
-- Spine colors sampled from the matching Goodreads cover art
-- Spine widths derived from each edition's page count
-- Hover, keyboard, and book-open interactions
-- A bookplate detail view with real cover art and edition details
-- Goodreads-based book descriptions instead of invented personal notes
-- An empty shelf slot reserved for a future addition
+- A responsive three-tier wooden bookshelf interface
+- EN / ES language switching for titles, descriptions, shelf labels, controls, and footer copy
+- Persistent light / dark theming that follows the visitor's system preference until manually overridden
+- Distinct cover-derived spine colors and page-count-derived spine widths
+- Keyboard-accessible book interactions and a focus-trapped bookplate detail view
+- Real cover art with a readable fallback when an image cannot load
 - A bilingual footer with a handwritten `Prasid` signature and visitor-local live date/time
-- Reduced-motion and visible-focus support
+- Reduced-motion, visible-focus, and mobile/touch support
+- A standard-library HTTP server with no runtime package dependencies
+
+## Run locally
+
+```bash
+python3 app.py
+```
+
+Then open `http://localhost:8000`.
+
+An optional `PORT` environment variable can change the listening port.
 
 ## Tech stack
 
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Google Fonts
+- Python 3 standard library (`http.server`, `json`, `urllib.parse`)
+- HTML, CSS, and minimal browser JavaScript generated and served from `app.py`
+- Google Fonts loaded by the generated page
 
-The site has no build step and no runtime dependencies. Open `index.html` directly in a browser or serve the repository with any static file host.
-
-## Collection
-
-The library currently includes works by Hermann Hesse, Albert Camus, Fyodor Dostoevsky, Franz Kafka, and the *Bhagavad Gita*.
+There is no build step, Node runtime, package manager, web framework, or third-party Python dependency.
 
 ## Project structure
 
 ```text
 mybookshelf/
-├── index.html       # Page structure only
-├── styles.css       # Visual design, responsive rules, and motion
-├── books-data.js    # Shared book collection data
-├── shelf.js         # Rendering and interaction logic
-├── clock.js         # Visitor-local footer clock
-├── theme.js         # Theme preference, persistence, and theme toggle
-└── README.md        # Project overview and usage notes
+├── app.py      # Book data, localized copy, generated page/CSS/JS, and HTTP server
+└── README.md   # Project overview and local run instructions
 ```
