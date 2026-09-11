@@ -140,6 +140,9 @@
       }
 
       .bookplate__cover-frame {
+        --book-depth: 18px;
+        --book-half-depth: 9px;
+        --book-cover-border: 3px;
         width: min(116px, 36vw);
       }
 
@@ -257,8 +260,6 @@
       .book:focus-visible,
       .bookplate__card,
       .bookplate.is-open .bookplate__card,
-      .bookplate__cover-frame,
-      .bookplate.is-open .bookplate__cover-frame,
       .bookplate__close:hover svg,
       .bookplate__close:focus-visible svg {
         transform: none;
