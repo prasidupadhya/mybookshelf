@@ -61,11 +61,18 @@ function createShelf({ id }, language) {
 
 function createBookSpine(book, index, language) {
   const button = document.createElement("button");
+  const front = document.createElement("span");
+  const back = document.createElement("span");
+  const spine = document.createElement("span");
+  const foreEdge = document.createElement("span");
+  const topEdge = document.createElement("span");
+  const bottomEdge = document.createElement("span");
+  const cover = document.createElement("img");
+  const coverFallback = document.createElement("span");
   const title = document.createElement("span");
   const author = document.createElement("span");
-  const pageEdge = document.createElement("span");
-  const topEdge = document.createElement("span");
   const spineWidth = getSpineWidth(book.pageCount);
+  const bookThickness = Math.round(18 + ((spineWidth - MIN_SPINE_WIDTH) / (MAX_SPINE_WIDTH - MIN_SPINE_WIDTH)) * 14);
   const localizedTitle = book.title[language];
 
   button.className = "book";
@@ -75,23 +82,44 @@ function createBookSpine(book, index, language) {
   button.dataset.pageCount = book.pageCount;
   button.style.setProperty("--book-accent", book.accentColor);
   button.style.setProperty("--book-ink", getReadableInk(book.accentColor));
-  button.style.setProperty("--book-width", `${spineWidth}px`);
+  button.style.setProperty("--book-thickness", `${bookThickness}px`);
   button.setAttribute(
     "aria-label",
     `${localizedTitle} — ${book.author}, ${book.pageCount} ${UI_COPY[language].pages}`
   );
+
+  front.className = "book__front";
+  back.className = "book__face book__back";
+  spine.className = "book__face book__spine";
+  foreEdge.className = "book__face book__fore-edge";
+  topEdge.className = "book__face book__top-edge";
+  bottomEdge.className = "book__face book__bottom-edge";
+  [back, spine, foreEdge, topEdge, bottomEdge].forEach((face) => face.setAttribute("aria-hidden", "true"));
+
+  cover.className = "book__cover";
+  cover.src = book.coverUrl;
+  cover.alt = "";
+  cover.loading = "lazy";
+  cover.decoding = "async";
+  cover.draggable = false;
+
+  coverFallback.className = "book__cover-fallback";
+  coverFallback.hidden = true;
+  coverFallback.textContent = localizedTitle;
+  cover.onerror = () => {
+    cover.hidden = true;
+    coverFallback.hidden = false;
+    cover.removeAttribute("src");
+  };
 
   title.className = "book__title";
   title.textContent = localizedTitle;
   author.className = "book__author";
   author.textContent = book.author;
 
-  pageEdge.className = "book__edge";
-  pageEdge.setAttribute("aria-hidden", "true");
-  topEdge.className = "book__top-edge";
-  topEdge.setAttribute("aria-hidden", "true");
-
-  button.append(title, author, pageEdge, topEdge);
+  spine.append(title, author);
+  front.append(cover, coverFallback);
+  button.append(back, spine, foreEdge, topEdge, bottomEdge, front);
   return button;
 }
 
