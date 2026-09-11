@@ -3,6 +3,7 @@ import { initClock, setClockLanguage } from "./clock.js";
 import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookplate.js";
 import { applyLanguage } from "./language.js";
 import { renderLibrary } from "./library.js";
+import { initMotion } from "./motion.js";
 
 const bookcase = document.querySelector("[data-bookcase]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
@@ -32,3 +33,4 @@ applyLanguage(activeLanguage);
 renderLibrary(activeLanguage);
 initBookplate(activeLanguage);
 initClock(activeLanguage);
+initMotion();

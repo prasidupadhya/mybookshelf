@@ -6,7 +6,8 @@
       place-items: center;
       padding: 24px;
       opacity: 0;
-      transition: opacity 280ms cubic-bezier(.22, 1, .36, 1);
+      perspective: 1500px;
+      transition: opacity 320ms cubic-bezier(.22, 1, .36, 1);
     }
 
     .bookplate[hidden] { display: none; }
@@ -16,12 +17,16 @@
     .bookplate__scrim {
       position: absolute;
       inset: 0;
-      background: rgba(8, 14, 11, .76);
-      backdrop-filter: blur(8px);
+      background:
+        radial-gradient(circle at var(--book-origin-x, 50%) var(--book-origin-y, 50%), color-mix(in srgb, var(--plate-accent, var(--brass)) 12%, transparent), transparent 24rem),
+        rgba(8, 14, 11, .78);
+      backdrop-filter: blur(11px) saturate(.82);
     }
 
     .bookplate__card {
       --plate-accent: var(--brass);
+      --book-origin-dx: 0px;
+      --book-origin-dy: 20px;
       width: min(760px, 100%);
       min-height: 430px;
       max-height: calc(100dvh - 48px);
@@ -38,13 +43,24 @@
         var(--parchment);
       border: 1px solid #aa936b;
       border-radius: 2px;
-      box-shadow: 0 30px 80px rgba(0,0,0,.5);
-      transform: translateY(20px) scale(.965);
-      transition: transform 420ms cubic-bezier(.16, 1, .3, 1);
+      box-shadow:
+        0 44px 110px rgba(0,0,0,.58),
+        0 8px 28px rgba(0,0,0,.24),
+        inset 0 1px rgba(255,255,255,.38),
+        inset 0 -1px rgba(93, 70, 45, .16);
+      transform:
+        translate3d(var(--book-origin-dx), var(--book-origin-dy), -120px)
+        scale(.78)
+        rotateX(8deg)
+        rotateY(-8deg);
+      transform-origin: center center;
+      transform-style: preserve-3d;
+      transition: transform 520ms cubic-bezier(.16, 1, .3, 1), box-shadow 420ms ease;
+      will-change: transform;
     }
 
     .bookplate.is-open .bookplate__card {
-      transform: translateY(0) scale(1);
+      transform: translate3d(0, 0, 0) scale(1) rotateX(0) rotateY(0);
     }
 
     .bookplate__card::before {
@@ -53,6 +69,7 @@
       inset: 10px;
       pointer-events: none;
       border: 1px solid color-mix(in srgb, var(--plate-accent) 58%, #5e4c35);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
     }
 
     .bookplate__cover-column,
@@ -75,7 +92,18 @@
       overflow: hidden;
       border: 1px solid color-mix(in srgb, var(--plate-accent) 42%, #5d4b36);
       background: #d8ccb5;
-      box-shadow: 10px 14px 24px rgba(67, 47, 29, .24);
+      box-shadow:
+        14px 18px 28px rgba(67, 47, 29, .28),
+        3px 5px 0 color-mix(in srgb, var(--page-edge) 86%, #8f7c61),
+        5px 7px 0 color-mix(in srgb, var(--page-edge-shadow) 72%, transparent);
+      transform: rotateY(-6deg) rotateX(1deg) translateZ(12px);
+      transform-origin: left center;
+      transition: transform 520ms cubic-bezier(.16, 1, .3, 1), box-shadow 420ms ease;
+      backface-visibility: hidden;
+    }
+
+    .bookplate.is-open .bookplate__cover-frame {
+      transform: rotateY(-3deg) rotateX(0) translateZ(12px);
     }
 
     .bookplate__cover,
@@ -128,6 +156,7 @@
       align-items: flex-start;
       padding: 28px 28px 24px 0;
       text-align: left;
+      transform: translateZ(6px);
     }
 
     .bookplate__ornament {
@@ -155,11 +184,12 @@
       max-width: 420px;
       margin: 0;
       font-family: "Newsreader", serif;
-      font-size: clamp(2rem, 5vw, 4.4rem);
+      font-size: clamp(2rem, 4.2vw, 3.6rem);
       font-weight: 500;
       line-height: .96;
       letter-spacing: -.035em;
-      overflow-wrap: anywhere;
+      overflow-wrap: normal;
+      word-break: normal;
       text-wrap: balance;
     }
 
