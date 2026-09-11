@@ -22,27 +22,12 @@ function applyPointerMotion() {
   root.style.setProperty("--light-x", `${xPercent.toFixed(2)}%`);
   root.style.setProperty("--light-y", `${yPercent.toFixed(2)}%`);
 
-  const rect = bookcase.getBoundingClientRect();
-  if (
-    pointerX >= rect.left && pointerX <= rect.right &&
-    pointerY >= rect.top && pointerY <= rect.bottom
-  ) {
-    const normalizedX = (pointerX - rect.left) / rect.width - 0.5;
-    const normalizedY = (pointerY - rect.top) / rect.height - 0.5;
-    bookcase.style.setProperty("--case-tilt-y", `${(normalizedX * 2.6).toFixed(2)}deg`);
-    bookcase.style.setProperty("--case-tilt-x", `${(-normalizedY * 1.8).toFixed(2)}deg`);
-  }
 }
 
 function schedulePointerMotion(event) {
   pointerX = event.clientX;
   pointerY = event.clientY;
   if (!frame) frame = window.requestAnimationFrame(applyPointerMotion);
-}
-
-function resetCaseTilt() {
-  bookcase.style.setProperty("--case-tilt-x", "0deg");
-  bookcase.style.setProperty("--case-tilt-y", "0deg");
 }
 
 function updateBookTilt(event) {
@@ -70,7 +55,6 @@ function syncMotionPreference() {
       window.cancelAnimationFrame(frame);
       frame = 0;
     }
-    resetCaseTilt();
     document.querySelectorAll(".book").forEach(resetBook);
     root.style.setProperty("--light-x", "50%");
     root.style.setProperty("--light-y", "18%");
@@ -81,7 +65,6 @@ export function initMotion() {
   document.addEventListener("pointermove", schedulePointerMotion, { passive: true });
   bookcase.addEventListener("pointermove", updateBookTilt, { passive: true });
   bookcase.addEventListener("pointerout", handleBookPointerOut, { passive: true });
-  bookcase.addEventListener("pointerleave", resetCaseTilt, { passive: true });
   reduceMotion.addEventListener("change", syncMotionPreference);
   finePointer.addEventListener("change", syncMotionPreference);
   syncMotionPreference();
