@@ -10,6 +10,8 @@ Each title appears as a designed spine whose width is derived from that edition'
 - English and Spanish interface copy and book descriptions
 - Persistent light/dark theme with system preference detection
 - Cover-derived spine colors and page-count-derived spine widths
+- Pointer-responsive 3D bookshelf perspective with physical book pull-forward depth
+- Page-edge detailing and clicked-book-origin animation into the bookplate view
 - Real book covers with a readable image fallback
 - Keyboard-accessible modal with focus trapping, Escape close, and outside-click close
 - Visitor-local live date and time
@@ -40,7 +42,10 @@ mybookshelf/
 │           ├── language.js      # EN/ES document copy and accessibility state
 │           ├── bookplate.js     # Modal content, focus management, and close logic
 │           ├── clock.js         # Visitor-local live date/time
+│           ├── motion.js        # Shelf perspective, book tilt, and ambient pointer light
 │           └── app.js           # Application initialization and event wiring
+├── .agents/skills/frontend-design/ # Frontend design guidance used for UI work
+├── skills-lock.json             # Installed design-skill lockfile
 └── README.md
 ```
 

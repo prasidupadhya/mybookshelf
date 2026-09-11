@@ -28,6 +28,16 @@
       --theme-control-bg: rgba(234, 223, 202, .035);
       --theme-control-border: rgba(234, 223, 202, .16);
       --theme-control-hover: rgba(234, 223, 202, .08);
+      --ambient-light: rgba(230, 199, 126, .16);
+      --ambient-shadow: rgba(0, 0, 0, .42);
+      --wood-highlight: rgba(255, 231, 190, .16);
+      --wood-shadow: rgba(32, 16, 8, .58);
+      --page-edge: #d9ccb1;
+      --page-edge-shadow: #9e8e72;
+      --case-tilt-x: 0deg;
+      --case-tilt-y: 0deg;
+      --light-x: 50%;
+      --light-y: 18%;
     }
 
     html[data-theme="dark"] { color-scheme: dark; }
@@ -58,4 +68,10 @@
       --theme-control-bg: rgba(255, 250, 238, .38);
       --theme-control-border: rgba(75, 57, 40, .2);
       --theme-control-hover: rgba(255, 250, 238, .7);
+      --ambient-light: rgba(255, 244, 214, .46);
+      --ambient-shadow: rgba(83, 57, 31, .24);
+      --wood-highlight: rgba(255, 241, 215, .26);
+      --wood-shadow: rgba(66, 39, 20, .4);
+      --page-edge: #eee3cb;
+      --page-edge-shadow: #b9a88a;
     }

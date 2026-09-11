@@ -1,14 +1,25 @@
     .bookcase {
+      --case-depth: 18px;
       position: relative;
       padding: 34px 40px 14px;
       border: 1px solid var(--bookcase-border);
       border-radius: 2px;
       background:
+        radial-gradient(circle at var(--light-x) var(--light-y), color-mix(in srgb, var(--ambient-light) 72%, transparent), transparent 42%),
         linear-gradient(90deg, rgba(255,255,255,.018), transparent 15%, transparent 85%, rgba(0,0,0,.09)),
         var(--bookcase-surface);
       box-shadow:
-        0 32px 70px var(--bookcase-shadow),
-        inset 0 0 0 10px rgba(21, 13, 9, .08);
+        0 42px 90px var(--bookcase-shadow),
+        0 8px 20px rgba(0, 0, 0, .12),
+        inset 0 0 0 10px rgba(21, 13, 9, .08),
+        inset 0 1px var(--wood-highlight),
+        inset 0 -1px var(--wood-shadow);
+      isolation: isolate;
+      transform: perspective(1600px) rotateX(var(--case-tilt-x)) rotateY(var(--case-tilt-y));
+      transform-origin: 50% 18%;
+      transform-style: preserve-3d;
+      transition: transform 300ms cubic-bezier(.2, .8, .2, 1), box-shadow 300ms ease;
+      will-change: transform;
     }
 
     .bookcase::before,
@@ -20,18 +31,21 @@
       width: 22px;
       z-index: 0;
       background:
-        linear-gradient(90deg, rgba(255,255,255,.08), transparent 22%, rgba(0,0,0,.19)),
+        linear-gradient(90deg, var(--wood-highlight), transparent 24%, rgba(0,0,0,.2)),
         repeating-linear-gradient(4deg, var(--walnut) 0 5px, #754a30 6px 9px, #654028 10px 15px);
-      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+      box-shadow: 0 10px 20px rgba(0,0,0,.3), inset 1px 0 rgba(255,255,255,.05), inset -2px 0 rgba(0,0,0,.16);
+      transform: translateZ(8px);
+      transform-style: preserve-3d;
     }
 
     .bookcase::before { left: -11px; }
-    .bookcase::after { right: -11px; transform: scaleX(-1); }
+    .bookcase::after { right: -11px; transform: translateZ(8px) scaleX(-1); }
 
     .shelf {
       position: relative;
       z-index: 1;
       margin-bottom: 35px;
+      transform-style: preserve-3d;
     }
 
     .shelf__label {
@@ -39,6 +53,7 @@
       font-size: .92rem;
       font-weight: 500;
       color: var(--shelf-label);
+      text-shadow: 0 1px rgba(0, 0, 0, .08);
     }
 
     .shelf__books {
@@ -51,9 +66,29 @@
       border-left: 1px solid rgba(255,255,255,.03);
       border-right: 1px solid rgba(0,0,0,.22);
       background:
+        radial-gradient(circle at var(--light-x) 12%, color-mix(in srgb, var(--ambient-light) 52%, transparent), transparent 32%),
         linear-gradient(180deg, var(--shelf-bay-top), transparent 48%),
         linear-gradient(90deg, var(--shelf-bay-side), transparent 10%, transparent 90%, var(--shelf-bay-side));
-      box-shadow: inset 0 18px 28px rgba(0,0,0,.16);
+      box-shadow:
+        inset 0 22px 34px rgba(0,0,0,.18),
+        inset 0 -8px 18px rgba(0,0,0,.08),
+        inset 8px 0 18px rgba(0,0,0,.05),
+        inset -8px 0 18px rgba(0,0,0,.06);
+      perspective: 900px;
+      perspective-origin: 50% 35%;
+      transform-style: preserve-3d;
+    }
+
+    .shelf__books::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.025), transparent 12%),
+        linear-gradient(90deg, rgba(255,255,255,.02), transparent 16%, transparent 84%, rgba(0,0,0,.08));
+      transform: translateZ(-12px);
     }
 
     .shelf__books::after {
@@ -64,17 +99,21 @@
       bottom: -16px;
       height: 22px;
       background:
-        linear-gradient(180deg, rgba(255,255,255,.08), transparent 32%, rgba(0,0,0,.2)),
+        linear-gradient(180deg, var(--wood-highlight), transparent 30%, rgba(0,0,0,.24)),
         repeating-linear-gradient(2deg, #795036 0 5px, var(--walnut) 6px 10px, #5b3825 11px 16px);
       border-top: 1px solid rgba(234, 223, 202, .11);
       border-bottom: 4px solid #352017;
-      box-shadow: 0 9px 13px rgba(0,0,0,.3);
+      box-shadow: 0 12px 18px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.08);
       z-index: 4;
+      transform: translateZ(12px) rotateX(-1deg);
+      transform-origin: top center;
     }
 
     .book {
       --book-width: 66px;
       --book-height: 186px;
+      --book-rotate-x: 0deg;
+      --book-rotate-y: 0deg;
       width: var(--book-width);
       height: var(--book-height);
       flex: 0 0 var(--book-width);
@@ -90,27 +129,35 @@
       color: var(--book-ink, #f7eedc);
       background: var(--book-accent);
       box-shadow:
-        inset 4px 0 rgba(255,255,255,.08),
-        inset -4px 0 rgba(0,0,0,.16),
-        4px 7px 9px rgba(0,0,0,.22);
+        inset 4px 0 rgba(255,255,255,.1),
+        inset -5px 0 rgba(0,0,0,.18),
+        inset 0 1px rgba(255,255,255,.08),
+        4px 8px 10px rgba(0,0,0,.24);
       cursor: pointer;
-      overflow: hidden;
+      overflow: visible;
       text-align: left;
       isolation: isolate;
-      transform: translateY(0);
+      transform: translate3d(0, 0, 0) rotateX(var(--book-rotate-x)) rotateY(var(--book-rotate-y));
+      transform-origin: 18% 100%;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform;
       transition:
-        transform 260ms cubic-bezier(.16, 1, .3, 1),
-        box-shadow 260ms cubic-bezier(.16, 1, .3, 1);
+        transform 360ms cubic-bezier(.16, 1, .3, 1),
+        box-shadow 360ms cubic-bezier(.16, 1, .3, 1),
+        filter 360ms ease;
     }
 
     .book:hover,
     .book:focus-visible {
-      transform: translateY(-11px);
+      z-index: 8;
+      transform: translate3d(0, -13px, 24px) rotateX(calc(var(--book-rotate-x) + 1deg)) rotateY(calc(var(--book-rotate-y) - 7deg));
       box-shadow:
         inset 4px 0 rgba(255,255,255,.1),
         inset -4px 0 rgba(0,0,0,.15),
-        7px 15px 18px rgba(0,0,0,.34),
-        0 0 24px color-mix(in srgb, var(--book-accent) 28%, transparent);
+        10px 18px 24px rgba(0,0,0,.38),
+        0 0 30px color-mix(in srgb, var(--book-accent) 24%, transparent);
+      filter: saturate(1.04) brightness(1.025);
     }
 
     .book::before,
@@ -126,6 +173,50 @@
       inset: 6px 5px;
       border-left: 1px solid rgba(255,255,255,.13);
       border-right: 1px solid rgba(0,0,0,.13);
+      box-shadow: inset 0 0 18px rgba(255,255,255,.025);
+    }
+
+    .book__edge,
+    .book__top-edge {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+      opacity: .44;
+      transition: opacity 260ms ease;
+    }
+
+    .book__edge {
+      top: 5px;
+      right: -10px;
+      bottom: 5px;
+      width: 10px;
+      border: 1px solid color-mix(in srgb, var(--page-edge-shadow) 62%, transparent);
+      background:
+        repeating-linear-gradient(180deg, rgba(95, 80, 58, .13) 0 1px, transparent 1px 4px),
+        linear-gradient(90deg, var(--page-edge), color-mix(in srgb, var(--page-edge) 72%, var(--page-edge-shadow)));
+      box-shadow: inset -2px 0 3px rgba(0,0,0,.11);
+      transform: rotateY(90deg);
+      transform-origin: left center;
+    }
+
+    .book__top-edge {
+      top: -8px;
+      left: 5px;
+      right: 5px;
+      height: 8px;
+      border: 1px solid color-mix(in srgb, var(--page-edge-shadow) 50%, transparent);
+      background:
+        repeating-linear-gradient(90deg, rgba(95, 80, 58, .1) 0 1px, transparent 1px 5px),
+        linear-gradient(180deg, var(--page-edge), color-mix(in srgb, var(--page-edge) 80%, var(--page-edge-shadow)));
+      transform: rotateX(90deg);
+      transform-origin: center bottom;
+    }
+
+    .book:hover .book__edge,
+    .book:hover .book__top-edge,
+    .book:focus-visible .book__edge,
+    .book:focus-visible .book__top-edge {
+      opacity: .95;
     }
 
     .book__title {
@@ -138,6 +229,8 @@
       letter-spacing: .015em;
       text-shadow: 0 1px 1px rgba(0,0,0,.12);
       overflow-wrap: anywhere;
+      position: relative;
+      z-index: 2;
     }
 
     .book__author {
@@ -148,6 +241,8 @@
       letter-spacing: .04em;
       color: currentColor;
       overflow-wrap: anywhere;
+      position: relative;
+      z-index: 2;
     }
 
     .book[data-book="siddhartha"] {
@@ -218,7 +313,8 @@
       border-bottom-color: var(--slot-border-bottom);
       color: var(--slot-text);
       background: var(--slot-bg);
-      box-shadow: inset 0 0 24px rgba(0,0,0,.12);
+      box-shadow: inset 0 0 24px rgba(0,0,0,.14), 0 5px 10px rgba(0,0,0,.08);
+      transform: translateZ(1px);
     }
 
     .book-slot span {

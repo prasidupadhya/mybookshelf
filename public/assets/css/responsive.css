@@ -46,6 +46,8 @@
 
       .bookcase {
         padding: 26px 15px 8px;
+        transform: none;
+        will-change: auto;
       }
 
       .bookcase::before,
@@ -107,7 +109,7 @@
       }
 
       .bookplate__title {
-        font-size: clamp(1.9rem, 8.5vw, 3.5rem);
+        font-size: clamp(1.9rem, 6.6vw, 3.2rem);
       }
 
       .bookplate__description {
@@ -220,19 +222,43 @@
       .shelf__books { padding-inline: 8px; }
     }
 
+    @media (hover: none), (pointer: coarse) {
+      .bookcase {
+        transform: none;
+        will-change: auto;
+      }
+
+      .book:hover {
+        transform: translate3d(0, -5px, 0);
+        filter: none;
+      }
+
+      .book:hover .book__edge,
+      .book:hover .book__top-edge {
+        opacity: .5;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .theme-toggle,
       .book,
+      .book__edge,
+      .book__top-edge,
+      .bookcase,
       .bookplate,
       .bookplate__card,
+      .bookplate__cover-frame,
       .bookplate__close svg {
         transition: none;
       }
 
+      .bookcase,
       .book:hover,
       .book:focus-visible,
       .bookplate__card,
       .bookplate.is-open .bookplate__card,
+      .bookplate__cover-frame,
+      .bookplate.is-open .bookplate__cover-frame,
       .bookplate__close:hover svg,
       .bookplate__close:focus-visible svg {
         transform: none;

@@ -20,6 +20,29 @@ let lastFocusedSpine = null;
 let activeBookIndex = null;
 let activeLanguage = "en";
 
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function setBookplateOrigin(spine, accentColor) {
+  const rect = spine.getBoundingClientRect();
+  const centerX = rect.left + rect.width / 2;
+  const centerY = rect.top + rect.height / 2;
+  const viewportCenterX = window.innerWidth / 2;
+  const viewportCenterY = window.innerHeight / 2;
+  const maxX = Math.min(320, window.innerWidth * 0.34);
+  const maxY = Math.min(260, window.innerHeight * 0.34);
+
+  const offsetX = reduceMotion.matches ? 0 : clamp(centerX - viewportCenterX, -maxX, maxX);
+  const offsetY = reduceMotion.matches ? 0 : clamp(centerY - viewportCenterY, -maxY, maxY);
+
+  bookplate.style.setProperty("--plate-accent", accentColor);
+  bookplate.style.setProperty("--book-origin-x", `${(centerX / window.innerWidth) * 100}%`);
+  bookplate.style.setProperty("--book-origin-y", `${(centerY / window.innerHeight) * 100}%`);
+  bookplateCard.style.setProperty("--book-origin-dx", `${offsetX}px`);
+  bookplateCard.style.setProperty("--book-origin-dy", `${offsetY}px`);
+}
+
 function showCover(book) {
   bookplateCoverFallback.hidden = true;
   bookplateCover.hidden = false;
@@ -59,6 +82,7 @@ export function openBookplate(index, spine, language) {
   lastFocusedSpine = spine;
   activeBookIndex = index;
   populateBookplate(book);
+  setBookplateOrigin(spine, book.accentColor);
 
   bookplate.hidden = false;
   pageShell.inert = true;
@@ -83,7 +107,7 @@ export function closeBookplate() {
     return;
   }
 
-  window.setTimeout(finishClose, 440);
+  window.setTimeout(finishClose, 560);
 }
 
 export function refreshBookplateLanguage(language) {

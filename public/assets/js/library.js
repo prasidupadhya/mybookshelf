@@ -63,6 +63,8 @@ function createBookSpine(book, index, language) {
   const button = document.createElement("button");
   const title = document.createElement("span");
   const author = document.createElement("span");
+  const pageEdge = document.createElement("span");
+  const topEdge = document.createElement("span");
   const spineWidth = getSpineWidth(book.pageCount);
   const localizedTitle = book.title[language];
 
@@ -84,7 +86,12 @@ function createBookSpine(book, index, language) {
   author.className = "book__author";
   author.textContent = book.author;
 
-  button.append(title, author);
+  pageEdge.className = "book__edge";
+  pageEdge.setAttribute("aria-hidden", "true");
+  topEdge.className = "book__top-edge";
+  topEdge.setAttribute("aria-hidden", "true");
+
+  button.append(title, author, pageEdge, topEdge);
   return button;
 }
 
