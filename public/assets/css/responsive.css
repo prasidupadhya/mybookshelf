@@ -67,9 +67,9 @@
       }
 
       .shelf__books {
-        min-height: 212px;
-        gap: 10px;
-        padding: 12px 10px 24px;
+        min-height: 214px;
+        gap: 16px;
+        padding: 16px 10px 24px;
         overflow-x: auto;
         overflow-y: hidden;
         overscroll-behavior-inline: contain;
@@ -79,6 +79,9 @@
       }
 
       .book {
+        --book-width: 102px;
+        --book-cover-border: 2px;
+        flex-basis: calc(var(--book-width) + 8px);
         scroll-snap-align: start;
       }
 
@@ -123,6 +126,11 @@
     }
 
     @media (max-width: 520px) {
+      .book {
+        --book-width: 90px;
+        --book-cover-border: 2px;
+      }
+
       .bookplate {
         padding: 8px;
       }
@@ -232,21 +240,15 @@
       }
 
       .book:hover {
-        transform: translate3d(0, -5px, 0);
-        filter: none;
-      }
-
-      .book:hover .book__edge,
-      .book:hover .book__top-edge {
-        opacity: .5;
+        --book-lift: -5px;
+        --book-yaw: 20deg;
+        filter: drop-shadow(7px 10px 7px rgba(0, 0, 0, .27));
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .theme-toggle,
       .book,
-      .book__edge,
-      .book__top-edge,
       .bookcase,
       .bookplate,
       .bookplate__card,
@@ -256,8 +258,6 @@
       }
 
       .bookcase,
-      .book:hover,
-      .book:focus-visible,
       .bookplate__card,
       .bookplate.is-open .bookplate__card,
       .bookplate__close:hover svg,
