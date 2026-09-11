@@ -63,11 +63,18 @@
 
       <div class="bookplate__cover-column">
         <figure class="bookplate__cover-frame">
-          <img class="bookplate__cover" data-bookplate-cover alt="" loading="eager">
-          <figcaption class="bookplate__cover-fallback" data-bookplate-cover-fallback hidden>
-            <span data-bookplate-cover-title></span>
-            <small data-bookplate-cover-fallback-label>Cover unavailable</small>
-          </figcaption>
+          <span class="bookplate__book-face bookplate__book-back" aria-hidden="true"></span>
+          <span class="bookplate__book-face bookplate__book-spine" aria-hidden="true"></span>
+          <span class="bookplate__book-face bookplate__book-fore-edge" aria-hidden="true"></span>
+          <span class="bookplate__book-face bookplate__book-top-edge" aria-hidden="true"></span>
+          <span class="bookplate__book-face bookplate__book-bottom-edge" aria-hidden="true"></span>
+          <div class="bookplate__book-front">
+            <img class="bookplate__cover" data-bookplate-cover alt="" loading="eager">
+            <div class="bookplate__cover-fallback" data-bookplate-cover-fallback hidden>
+              <span data-bookplate-cover-title></span>
+              <small data-bookplate-cover-fallback-label>Cover unavailable</small>
+            </div>
+          </div>
         </figure>
       </div>
 
