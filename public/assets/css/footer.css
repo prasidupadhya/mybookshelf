@@ -1,0 +1,48 @@
+    .library-footer {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 7px;
+      padding: 36px 8px 0;
+      color: var(--footer-text);
+    }
+
+    .library-footer__identity {
+      display: inline-flex;
+      align-items: baseline;
+      white-space: nowrap;
+    }
+
+    .library-footer__prefix,
+    .library-footer__suffix {
+      font-size: .82rem;
+    }
+
+    .library-footer__prefix {
+      margin-right: 5px;
+    }
+
+    .library-footer__signature {
+      display: inline-block;
+      font-family: "Caveat", cursive;
+      font-size: 1.55rem;
+      line-height: 1;
+      transform: rotate(-1.5deg);
+      transform-origin: right center;
+    }
+
+    .library-footer__suffix {
+      margin-left: 2px;
+    }
+
+    .library-footer__clock::before {
+      content: "·";
+      margin-right: 7px;
+    }
+
+    .library-footer__clock {
+      font-size: .78rem;
+      line-height: 1.3;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }

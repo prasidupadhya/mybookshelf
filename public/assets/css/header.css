@@ -1,0 +1,109 @@
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+      position: relative;
+    }
+
+    .library-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 28px;
+      margin-bottom: 34px;
+    }
+
+    .library-header__copy {
+      min-width: 0;
+    }
+
+    .library-header h1 {
+      margin: 0;
+      font-family: "Newsreader", serif;
+      font-size: clamp(2.7rem, 6vw, 5.8rem);
+      font-weight: 500;
+      line-height: .88;
+      letter-spacing: -.045em;
+    }
+
+    .library-header p {
+      max-width: none;
+      margin: 18px 0 0;
+      color: var(--muted-text);
+      font-size: .94rem;
+      line-height: 1.45;
+      white-space: nowrap;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 0 0 auto;
+    }
+
+    .language-switcher {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 5px;
+      color: var(--control-muted);
+      font-size: .78rem;
+    }
+
+    .language-switcher__button {
+      min-width: 30px;
+      min-height: 30px;
+      padding: 2px 4px;
+      border: 0;
+      border-bottom: 1px solid transparent;
+      color: inherit;
+      background: transparent;
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 600;
+      letter-spacing: .04em;
+    }
+
+    .language-switcher__button:hover,
+    .language-switcher__button.is-active {
+      color: var(--control-active);
+      border-bottom-color: var(--brass);
+    }
+
+    .theme-toggle {
+      min-height: 36px;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid var(--theme-control-border);
+      border-radius: 999px;
+      color: var(--control-active);
+      background: var(--theme-control-bg);
+      cursor: pointer;
+      font-size: .76rem;
+      font-weight: 600;
+      transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+    }
+
+    .theme-toggle:hover { background: var(--theme-control-hover); }
+
+    .theme-toggle__mark {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 13px;
+      border: 1.5px solid currentColor;
+      border-radius: 50%;
+    }
+
+    .theme-toggle[data-next-theme="light"] .theme-toggle__mark {
+      background: var(--brass);
+      border-color: var(--brass);
+      box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 20%, transparent);
+    }
+
+    .theme-toggle[data-next-theme="dark"] .theme-toggle__mark {
+      background: transparent;
+      box-shadow: inset -4px -1px 0 0 currentColor;
+    }

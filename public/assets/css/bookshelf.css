@@ -1,0 +1,230 @@
+    .bookcase {
+      position: relative;
+      padding: 34px 40px 14px;
+      border: 1px solid var(--bookcase-border);
+      border-radius: 2px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.018), transparent 15%, transparent 85%, rgba(0,0,0,.09)),
+        var(--bookcase-surface);
+      box-shadow:
+        0 32px 70px var(--bookcase-shadow),
+        inset 0 0 0 10px rgba(21, 13, 9, .08);
+    }
+
+    .bookcase::before,
+    .bookcase::after {
+      content: "";
+      position: absolute;
+      top: -14px;
+      bottom: -14px;
+      width: 22px;
+      z-index: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.08), transparent 22%, rgba(0,0,0,.19)),
+        repeating-linear-gradient(4deg, var(--walnut) 0 5px, #754a30 6px 9px, #654028 10px 15px);
+      box-shadow: 0 8px 18px rgba(0,0,0,.28);
+    }
+
+    .bookcase::before { left: -11px; }
+    .bookcase::after { right: -11px; transform: scaleX(-1); }
+
+    .shelf {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 35px;
+    }
+
+    .shelf__label {
+      margin: 0 0 10px;
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--shelf-label);
+    }
+
+    .shelf__books {
+      min-height: 214px;
+      display: flex;
+      align-items: end;
+      gap: 12px;
+      padding: 12px 18px 15px;
+      position: relative;
+      border-left: 1px solid rgba(255,255,255,.03);
+      border-right: 1px solid rgba(0,0,0,.22);
+      background:
+        linear-gradient(180deg, var(--shelf-bay-top), transparent 48%),
+        linear-gradient(90deg, var(--shelf-bay-side), transparent 10%, transparent 90%, var(--shelf-bay-side));
+      box-shadow: inset 0 18px 28px rgba(0,0,0,.16);
+    }
+
+    .shelf__books::after {
+      content: "";
+      position: absolute;
+      left: -8px;
+      right: -8px;
+      bottom: -16px;
+      height: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.08), transparent 32%, rgba(0,0,0,.2)),
+        repeating-linear-gradient(2deg, #795036 0 5px, var(--walnut) 6px 10px, #5b3825 11px 16px);
+      border-top: 1px solid rgba(234, 223, 202, .11);
+      border-bottom: 4px solid #352017;
+      box-shadow: 0 9px 13px rgba(0,0,0,.3);
+      z-index: 4;
+    }
+
+    .book {
+      --book-width: 66px;
+      --book-height: 186px;
+      width: var(--book-width);
+      height: var(--book-height);
+      flex: 0 0 var(--book-width);
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 12px 13px;
+      border: 0;
+      border-radius: 3px 4px 2px 3px;
+      color: var(--book-ink, #f7eedc);
+      background: var(--book-accent);
+      box-shadow:
+        inset 4px 0 rgba(255,255,255,.08),
+        inset -4px 0 rgba(0,0,0,.16),
+        4px 7px 9px rgba(0,0,0,.22);
+      cursor: pointer;
+      overflow: hidden;
+      text-align: left;
+      isolation: isolate;
+      transform: translateY(0);
+      transition:
+        transform 260ms cubic-bezier(.16, 1, .3, 1),
+        box-shadow 260ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .book:hover,
+    .book:focus-visible {
+      transform: translateY(-11px);
+      box-shadow:
+        inset 4px 0 rgba(255,255,255,.1),
+        inset -4px 0 rgba(0,0,0,.15),
+        7px 15px 18px rgba(0,0,0,.34),
+        0 0 24px color-mix(in srgb, var(--book-accent) 28%, transparent);
+    }
+
+    .book::before,
+    .book::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .book::after {
+      inset: 6px 5px;
+      border-left: 1px solid rgba(255,255,255,.13);
+      border-right: 1px solid rgba(0,0,0,.13);
+    }
+
+    .book__title {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: "Newsreader", serif;
+      font-size: clamp(.82rem, 1.15vw, 1rem);
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: .015em;
+      text-shadow: 0 1px 1px rgba(0,0,0,.12);
+      overflow-wrap: anywhere;
+    }
+
+    .book__author {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-size: clamp(.46rem, .72vw, .58rem);
+      line-height: 1;
+      letter-spacing: .04em;
+      color: currentColor;
+      overflow-wrap: anywhere;
+    }
+
+    .book[data-book="siddhartha"] {
+      --book-height: 191px;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,.16) 0 10px, transparent 11px),
+        repeating-linear-gradient(90deg, transparent 0 13px, rgba(0,0,0,.12) 14px 15px),
+        var(--book-accent);
+    }
+
+    .book[data-book="siddhartha"]::before {
+      background: linear-gradient(180deg, rgba(255,255,255,.12), transparent 34%, rgba(0,0,0,.16));
+    }
+
+    .book[data-book="the-stranger"] {
+      --book-height: 177px;
+      background:
+        repeating-linear-gradient(164deg, rgba(20,18,19,.18) 0 4px, transparent 4px 14px),
+        var(--book-accent);
+    }
+
+    .book[data-book="the-stranger"]::before {
+      background: linear-gradient(180deg, rgba(255,255,255,.18), transparent 38%, rgba(0,0,0,.06));
+    }
+
+    .book[data-book="white-nights"] {
+      --book-height: 170px;
+      background:
+        repeating-linear-gradient(2deg, rgba(65,52,41,.06) 0 1px, transparent 1px 7px),
+        var(--book-accent);
+    }
+
+    .book[data-book="white-nights"]::before {
+      background: linear-gradient(155deg, transparent 0 66%, rgba(51,42,35,.12) 67% 69%, transparent 70%);
+    }
+
+    .book[data-book="the-metamorphosis"] {
+      --book-height: 198px;
+      background:
+        radial-gradient(ellipse at 50% 41%, rgba(18,24,17,.62) 0 13px, transparent 14px),
+        linear-gradient(90deg, transparent 42%, rgba(19,26,18,.38) 43% 46%, transparent 47% 54%, rgba(19,26,18,.38) 55% 58%, transparent 59%),
+        var(--book-accent);
+    }
+
+    .book[data-book="the-metamorphosis"]::before {
+      background: repeating-radial-gradient(ellipse at center, transparent 0 12px, rgba(15,20,14,.12) 13px 14px);
+    }
+
+    .book[data-book="the-bhagavad-gita"] {
+      --book-height: 194px;
+      background:
+        linear-gradient(90deg, transparent 0 8px, rgba(255,255,255,.1) 9px 10px, transparent 11px calc(100% - 11px), rgba(255,255,255,.1) calc(100% - 10px) calc(100% - 9px), transparent calc(100% - 8px)),
+        repeating-linear-gradient(180deg, transparent 0 20px, rgba(255,255,255,.07) 21px 22px),
+        var(--book-accent);
+    }
+
+    .book-slot {
+      width: 64px;
+      height: 174px;
+      flex: 0 0 64px;
+      display: grid;
+      place-items: center;
+      align-self: end;
+      margin-left: 6px;
+      position: relative;
+      z-index: 2;
+      border: 1px dashed var(--slot-border);
+      border-bottom-color: var(--slot-border-bottom);
+      color: var(--slot-text);
+      background: var(--slot-bg);
+      box-shadow: inset 0 0 24px rgba(0,0,0,.12);
+    }
+
+    .book-slot span {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: "Newsreader", serif;
+      font-size: .76rem;
+      letter-spacing: .03em;
+    }
