@@ -3,7 +3,7 @@ import { initClock, setClockLanguage } from "./clock.js";
 import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookplate.js";
 import { applyLanguage } from "./language.js";
 import { renderLibrary } from "./library.js";
-import { initMotion } from "./motion.js";
+import { cancelBookSelection, initMotion, selectBook } from "./motion.js";
 
 const bookcase = document.querySelector("[data-bookcase]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
@@ -14,6 +14,7 @@ function setLanguage(language) {
   if (!UI_COPY[language] || !applyLanguage(language)) return;
 
   activeLanguage = language;
+  cancelBookSelection();
   renderLibrary(activeLanguage);
   refreshBookplateLanguage(activeLanguage);
   setClockLanguage(activeLanguage);
@@ -22,7 +23,9 @@ function setLanguage(language) {
 bookcase.addEventListener("click", (event) => {
   const spine = event.target.closest("[data-book-index]");
   if (!spine) return;
-  openBookplate(Number(spine.dataset.bookIndex), spine, activeLanguage);
+  selectBook(spine, event, () => {
+    openBookplate(Number(spine.dataset.bookIndex), spine, activeLanguage);
+  });
 });
 
 languageButtons.forEach((button) => {

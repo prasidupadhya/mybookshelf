@@ -2,7 +2,7 @@
 
 My Bookshelf is a bilingual personal library for literary and philosophical classics. The site keeps its warm wooden bookshelf identity while remaining a small, dependency-free static project that can be deployed directly to Cloudflare Pages.
 
-Each title appears as a designed spine whose width is derived from that edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, localized description, and Goodreads link.
+Each title appears as a solid CSS book with its original cover, a colored spine, and paper edges. Thickness is derived from the edition's page count. Selecting a book opens a bookplate-style detail view with its real cover, author, page count, localized description, and Goodreads link.
 
 ## Features
 
@@ -10,7 +10,10 @@ Each title appears as a designed spine whose width is derived from that edition'
 - English and Spanish interface copy and book descriptions
 - Persistent light/dark theme with system preference detection
 - Cover-derived spine colors and page-count-derived spine widths
-- Pointer-responsive 3D bookshelf perspective with physical book pull-forward depth
+- One shared 3D perspective across the bookcase, with joined cover, spine, and paper faces
+- A 340ms transform-only pull-out on desktop hover or keyboard focus; touch taps play the pull-out before opening details
+- Proportional book sizing and wrapping rows with continuing shelf ledges
+- Shared shelf shadows, with a flat cover and shadow fallback when CSS 3D is unsupported
 - Page-edge detailing and clicked-book-origin animation into the bookplate view
 - Real book covers with a readable image fallback
 - Keyboard-accessible modal with focus trapping, Escape close, and outside-click close
@@ -42,7 +45,7 @@ mybookshelf/
 │           ├── language.js      # EN/ES document copy and accessibility state
 │           ├── bookplate.js     # Modal content, focus management, and close logic
 │           ├── clock.js         # Visitor-local live date/time
-│           ├── motion.js        # Shelf perspective, book tilt, and ambient pointer light
+│           ├── motion.js        # Touch pull-out, selection cancellation, and reduced motion
 │           └── app.js           # Application initialization and event wiring
 ├── .agents/skills/frontend-design/ # Frontend design guidance used for UI work
 ├── skills-lock.json             # Installed design-skill lockfile
