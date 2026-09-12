@@ -14,8 +14,10 @@
         inset 0 0 0 10px rgba(21, 13, 9, .08),
         inset 0 1px var(--wood-highlight),
         inset 0 -1px var(--wood-shadow);
-      isolation: isolate;
       transform: none;
+      /* One camera for every shelf. Keep this entire ancestor chain unflattened. */
+      perspective: 2800px;
+      perspective-origin: 50% 0;
       transform-style: preserve-3d;
       transition: box-shadow 300ms ease;
     }
@@ -55,11 +57,16 @@
     }
 
     .shelf__books {
+      --book-width: 118px;
+      --shelf-row-height: calc(var(--book-width) * 1.68);
+      --shelf-row-gap: 40px;
       min-height: 224px;
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, var(--book-width));
+      grid-auto-rows: var(--shelf-row-height);
       align-items: end;
-      gap: 18px;
-      padding: 16px 18px 15px;
+      gap: var(--shelf-row-gap) 28px;
+      padding: 32px 28px 22px;
       position: relative;
       border-left: 1px solid rgba(255,255,255,.03);
       border-right: 1px solid rgba(0,0,0,.22);
@@ -72,21 +79,25 @@
         inset 0 -8px 18px rgba(0,0,0,.08),
         inset 8px 0 18px rgba(0,0,0,.05),
         inset -8px 0 18px rgba(0,0,0,.06);
-      perspective: 900px;
-      perspective-origin: 50% 35%;
       transform-style: preserve-3d;
     }
 
     .shelf__books::before {
       content: "";
       position: absolute;
-      inset: 0;
+      /* Continue the ledge below each wrapped row without extra DOM or JS. */
+      inset: 32px -8px 22px;
       z-index: 0;
       pointer-events: none;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,.025), transparent 12%),
-        linear-gradient(90deg, rgba(255,255,255,.02), transparent 16%, transparent 84%, rgba(0,0,0,.08));
-      transform: translateZ(-12px);
+      background: repeating-linear-gradient(180deg,
+        transparent 0 calc(var(--shelf-row-height) + 10px),
+        #94704e calc(var(--shelf-row-height) + 10px) calc(var(--shelf-row-height) + 12px),
+        #795036 calc(var(--shelf-row-height) + 12px) calc(var(--shelf-row-height) + 17px),
+        var(--walnut) calc(var(--shelf-row-height) + 17px) calc(var(--shelf-row-height) + 22px),
+        #5b3825 calc(var(--shelf-row-height) + 22px) calc(var(--shelf-row-height) + 28px),
+        #352017 calc(var(--shelf-row-height) + 28px) calc(var(--shelf-row-height) + 32px),
+        transparent calc(var(--shelf-row-height) + 32px) calc(var(--shelf-row-height) + var(--shelf-row-gap)));
+      transform: translateZ(12px);
     }
 
     .shelf__books::after {
@@ -108,18 +119,12 @@
     }
 
     .book {
-      --book-width: 118px;
-      --book-height: 186px;
+      --book-height: calc(var(--book-width) * 1.5763);
       --book-thickness: 22px;
       --book-half-depth: calc(var(--book-thickness) / 2);
       --book-cover-border: 3px;
-      --book-rotate-x: 0deg;
-      --book-rotate-y: 0deg;
-      --book-yaw: 18deg;
-      --book-lift: 0px;
       width: var(--book-width);
       height: var(--book-height);
-      flex: 0 0 calc(var(--book-width) + 10px);
       position: relative;
       z-index: 2;
       display: block;
@@ -127,47 +132,23 @@
       border: 0;
       color: var(--book-ink, #f7eedc);
       background: transparent;
-      cursor: grab;
+      cursor: pointer;
       overflow: visible;
       text-align: left;
-      isolation: isolate;
-      transform:
-        translate3d(0, var(--book-lift), 0)
-        rotateX(calc(-3deg + var(--book-rotate-x)))
-        rotateY(calc(var(--book-yaw) + var(--book-rotate-y)));
-      transform-origin: 22% 100%;
-      transform-style: preserve-3d;
-      backface-visibility: visible;
-      will-change: transform;
-      filter: drop-shadow(7px 10px 7px rgba(0, 0, 0, .27));
-      transition:
-        transform 360ms cubic-bezier(.16, 1, .3, 1),
-        filter 360ms ease;
-    }
-
-    .book:active {
-      cursor: grabbing;
-    }
-
-    .book:hover,
-    .book:focus-visible {
-      --book-lift: -13px;
-      --book-yaw: 26deg;
-      z-index: 8;
-      filter:
-        drop-shadow(14px 18px 13px rgba(0, 0, 0, .38))
-        saturate(1.04)
-        brightness(1.025);
+      touch-action: manipulation;
+      transform-origin: center bottom;
+      /* Flat is the baseline; supported browsers opt into the solid below. */
+      box-shadow: 5px 8px 12px rgba(0, 0, 0, .26);
     }
 
     .book__front,
     .book__face {
       position: absolute;
-      display: block;
       pointer-events: none;
-      transform-style: preserve-3d;
       backface-visibility: hidden;
     }
+
+    .book__face { display: none; }
 
     .book__front {
       inset: 0;
@@ -182,7 +163,13 @@
         0 0 0 1px color-mix(in srgb, var(--book-accent) 72%, #3c2c20),
         inset 1px 0 rgba(255,255,255,.12),
         inset -1px 0 rgba(0,0,0,.1);
-      transform: translateZ(var(--book-half-depth));
+    }
+
+    .book__front::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0,0,0,.16), rgba(255,255,255,.08) 5%, transparent 14%, rgba(0,0,0,.06));
     }
 
     .book__back {
@@ -201,7 +188,6 @@
       left: 0;
       width: var(--book-thickness);
       z-index: 5;
-      display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
@@ -244,7 +230,7 @@
           var(--book-accent) 0 var(--book-cover-border),
           transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
           var(--book-accent) calc(100% - var(--book-cover-border)) 100%),
-        repeating-linear-gradient(90deg, rgba(95, 80, 58, .1) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 3px),
         linear-gradient(180deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
       transform-origin: center center;
     }
@@ -262,7 +248,7 @@
           var(--book-accent) 0 var(--book-cover-border),
           transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
           var(--book-accent) calc(100% - var(--book-cover-border)) 100%),
-        repeating-linear-gradient(90deg, rgba(95, 80, 58, .08) 0 1px, transparent 1px 5px),
+        repeating-linear-gradient(180deg, rgba(95, 80, 58, .08) 0 1px, transparent 1px 3px),
         linear-gradient(0deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
     }
 
@@ -332,16 +318,53 @@
       z-index: 2;
     }
 
-    .book[data-book="siddhartha"] { --book-height: 191px; }
-    .book[data-book="the-stranger"] { --book-height: 177px; }
-    .book[data-book="white-nights"] { --book-height: 170px; }
-    .book[data-book="the-metamorphosis"] { --book-height: 198px; }
-    .book[data-book="the-bhagavad-gita"] { --book-height: 194px; }
+    .book[data-book="siddhartha"] { --book-height: calc(var(--book-width) * 1.6186); }
+    .book[data-book="the-stranger"] { --book-height: calc(var(--book-width) * 1.5); }
+    .book[data-book="white-nights"] { --book-height: calc(var(--book-width) * 1.4407); }
+    .book[data-book="the-metamorphosis"] { --book-height: calc(var(--book-width) * 1.678); }
+    .book[data-book="the-bhagavad-gita"] { --book-height: calc(var(--book-width) * 1.6441); }
+
+    @supports (perspective: 1px) and (transform-style: preserve-3d) {
+      .book {
+        --book-lift: 0px;
+        /* Clear the bay's z=0 back wall, including the rotated rear corners. */
+        --book-pull: 44px;
+        --book-yaw: 24deg;
+        --book-pitch: -8deg;
+        transform: translate3d(0, var(--book-lift), var(--book-pull))
+          rotateY(var(--book-yaw)) rotateX(var(--book-pitch));
+        transform-style: preserve-3d;
+        box-shadow: none;
+        transition: transform 340ms cubic-bezier(.22, .75, .25, 1);
+      }
+
+      .book__face { display: block; }
+      .book__spine { display: flex; }
+      .book__front { transform: translateZ(var(--book-half-depth)); }
+
+      .book.is-pulled,
+      .book:focus-visible {
+        --book-lift: -10px;
+        --book-pull: 72px;
+        --book-yaw: 36deg;
+        --book-pitch: -12deg;
+        z-index: 8;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        .book:hover {
+          --book-lift: -10px;
+          --book-pull: 72px;
+          --book-yaw: 36deg;
+          --book-pitch: -12deg;
+          z-index: 8;
+        }
+      }
+    }
 
     .book-slot {
       width: 64px;
-      height: 174px;
-      flex: 0 0 64px;
+      height: calc(var(--book-width) * 1.4746);
       display: grid;
       place-items: center;
       align-self: end;

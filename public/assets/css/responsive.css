@@ -67,22 +67,14 @@
       }
 
       .shelf__books {
-        min-height: 214px;
-        gap: 16px;
-        padding: 16px 10px 24px;
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-inline: contain;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(185,154,91,.4) transparent;
-        scroll-snap-type: x proximity;
+        --book-width: 102px;
+        min-height: 0;
+        column-gap: 26px;
+        padding: 32px 18px 24px;
       }
 
       .book {
-        --book-width: 102px;
         --book-cover-border: 2px;
-        flex-basis: calc(var(--book-width) + 8px);
-        scroll-snap-align: start;
       }
 
       .shelf__books::after {
@@ -126,9 +118,8 @@
     }
 
     @media (max-width: 520px) {
-      .book {
+      .shelf__books {
         --book-width: 90px;
-        --book-cover-border: 2px;
       }
 
       .bookplate {
@@ -220,7 +211,7 @@
       }
 
       .shelf__books {
-        padding-inline: 8px;
+        padding-inline: 18px;
       }
 
       .bookplate__card {
@@ -230,20 +221,7 @@
 
     @media (max-width: 430px) {
       .bookcase { padding-inline: 10px; }
-      .shelf__books { padding-inline: 8px; }
-    }
-
-    @media (hover: none), (pointer: coarse) {
-      .bookcase {
-        transform: none;
-        will-change: auto;
-      }
-
-      .book:hover {
-        --book-lift: -5px;
-        --book-yaw: 20deg;
-        filter: drop-shadow(7px 10px 7px rgba(0, 0, 0, .27));
-      }
+      .shelf__books { padding-inline: 18px; }
     }
 
     @media (prefers-reduced-motion: reduce) {

@@ -80,6 +80,8 @@ function createBookSpine(book, index, language) {
   button.dataset.bookIndex = index;
   button.dataset.book = book.id;
   button.dataset.pageCount = book.pageCount;
+  button.setAttribute("aria-haspopup", "dialog");
+  button.setAttribute("aria-controls", "bookplate");
   button.style.setProperty("--book-accent", book.accentColor);
   button.style.setProperty("--book-ink", getReadableInk(book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
