@@ -39,8 +39,7 @@ async function startViewer(book, session) {
   } catch {
     if (session !== viewerSession) return;
     stage.tabIndex = -1;
-    viewerRoot.querySelector("[data-viewer-help]").textContent = copy.unavailable;
-    viewerRoot.querySelector("[data-viewer-status]").textContent = "";
+    viewerRoot.querySelector("[data-viewer-status]").textContent = copy.unavailable;
   } finally {
     if (session === viewerSession) stage.removeAttribute("aria-busy");
   }
@@ -84,6 +83,8 @@ function showCover(book) {
     bookplateCover.removeAttribute("src");
   };
 
+  viewerRoot.style.setProperty("--cover-aspect", book.coverAspect);
+  bookplateCover.onload = () => viewerRoot.style.setProperty("--cover-aspect", bookplateCover.naturalWidth / bookplateCover.naturalHeight);
   bookplateCover.src = book.coverUrl;
 }
 

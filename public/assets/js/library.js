@@ -64,6 +64,7 @@ function createBookSpine(book, index, language) {
   const front = document.createElement("span");
   const back = document.createElement("span");
   const spine = document.createElement("span");
+  const spineLabel = document.createElement("span");
   const foreEdge = document.createElement("span");
   const topEdge = document.createElement("span");
   const bottomEdge = document.createElement("span");
@@ -85,6 +86,7 @@ function createBookSpine(book, index, language) {
   button.style.setProperty("--book-accent", book.accentColor);
   button.style.setProperty("--book-ink", getReadableInk(book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
+  button.style.setProperty("--cover-aspect", book.coverAspect);
   button.setAttribute(
     "aria-label",
     `${localizedTitle} — ${book.author}, ${book.pageCount} ${UI_COPY[language].pages}`
@@ -104,6 +106,7 @@ function createBookSpine(book, index, language) {
   cover.loading = "lazy";
   cover.decoding = "async";
   cover.draggable = false;
+  cover.onload = () => button.style.setProperty("--cover-aspect", cover.naturalWidth / cover.naturalHeight);
 
   coverFallback.className = "book__cover-fallback";
   coverFallback.hidden = true;
@@ -119,7 +122,9 @@ function createBookSpine(book, index, language) {
   author.className = "book__author";
   author.textContent = book.author;
 
-  spine.append(title, author);
+  spineLabel.className = "book__spine-label";
+  spineLabel.append(title, author);
+  spine.append(spineLabel);
   front.append(cover, coverFallback);
   button.append(back, spine, foreEdge, topEdge, bottomEdge, front);
   return button;
