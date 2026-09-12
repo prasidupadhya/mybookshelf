@@ -1,5 +1,6 @@
 import { BOOKS, UI_COPY } from "./data.js";
 import { getSpineByIndex } from "./library.js";
+import { setViewerLanguage } from "./book-viewer-copy.js";
 
 const bookplate = document.querySelector("#bookplate");
 const bookplateCard = bookplate.querySelector(".bookplate__card");
@@ -15,10 +16,35 @@ const bookplateCoverFallbackLabel = bookplate.querySelector("[data-bookplate-cov
 const bookplateClose = bookplate.querySelector(".bookplate__close");
 const pageShell = document.querySelector("[data-page-shell]");
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const viewerRoot = bookplate.querySelector("[data-book-viewer]");
 
 let lastFocusedSpine = null;
 let activeBookIndex = null;
 let activeLanguage = "en";
+let viewer = null;
+let viewerSession = 0;
+let closeTimer = 0;
+
+async function startViewer(book, session) {
+  const copy = setViewerLanguage(viewerRoot, book, activeLanguage);
+  const stage = viewerRoot.querySelector("[data-viewer-stage]");
+  stage.tabIndex = 0;
+  stage.setAttribute("aria-busy", "true");
+  viewerRoot.querySelector("[data-viewer-status]").textContent = copy.loading;
+  try {
+    // The engine and renderer are absent from the initial page's module graph.
+    const { createBookViewer } = await import("./book-viewer.js");
+    if (session !== viewerSession) return;
+    viewer = createBookViewer(viewerRoot, book, activeLanguage);
+  } catch {
+    if (session !== viewerSession) return;
+    stage.tabIndex = -1;
+    viewerRoot.querySelector("[data-viewer-help]").textContent = copy.unavailable;
+    viewerRoot.querySelector("[data-viewer-status]").textContent = "";
+  } finally {
+    if (session === viewerSession) stage.removeAttribute("aria-busy");
+  }
+}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
@@ -78,6 +104,11 @@ export function openBookplate(index, spine, language) {
   const book = BOOKS[index];
   if (!book) return;
 
+  window.clearTimeout(closeTimer);
+  viewer?.dispose();
+  viewer = null;
+  const session = ++viewerSession;
+
   activeLanguage = language;
   lastFocusedSpine = spine;
   activeBookIndex = index;
@@ -87,12 +118,18 @@ export function openBookplate(index, spine, language) {
   bookplate.hidden = false;
   pageShell.inert = true;
   document.body.classList.add("has-open-bookplate");
-  requestAnimationFrame(() => bookplate.classList.add("is-open"));
+  requestAnimationFrame(() => {
+    if (session === viewerSession) bookplate.classList.add("is-open");
+  });
   bookplateClose.focus({ preventScroll: true });
+  startViewer(book, session);
 }
 
 function finishClose() {
-  if (!bookplate.classList.contains("is-open")) bookplate.hidden = true;
+  if (bookplate.classList.contains("is-open")) return;
+  viewer?.dispose();
+  viewer = null;
+  bookplate.hidden = true;
   pageShell.inert = false;
   document.body.classList.remove("has-open-bookplate");
   activeBookIndex = null;
@@ -100,6 +137,10 @@ function finishClose() {
 }
 
 export function closeBookplate() {
+  window.clearTimeout(closeTimer);
+  ++viewerSession;
+  viewer?.pause();
+  viewerRoot.querySelector("[data-viewer-stage]").removeAttribute("aria-busy");
   bookplate.classList.remove("is-open");
 
   if (reduceMotion.matches) {
@@ -107,7 +148,7 @@ export function closeBookplate() {
     return;
   }
 
-  window.setTimeout(finishClose, 560);
+  closeTimer = window.setTimeout(finishClose, 560);
 }
 
 export function refreshBookplateLanguage(language) {
@@ -116,6 +157,7 @@ export function refreshBookplateLanguage(language) {
 
   lastFocusedSpine = getSpineByIndex(activeBookIndex);
   populateBookplate(BOOKS[activeBookIndex]);
+  viewer?.setLanguage(activeLanguage);
 }
 
 function trapBookplateFocus(event) {
@@ -127,7 +169,8 @@ function trapBookplateFocus(event) {
 
   if (event.key !== "Tab") return;
 
-  const focusable = [...bookplate.querySelectorAll("button, a[href]")];
+  const focusable = [...bookplate.querySelectorAll("button, a[href], [tabindex='0']")]
+    .filter(element => !element.disabled && element.getClientRects().length && !element.closest("[hidden]"));
   const first = focusable[0];
   const last = focusable[focusable.length - 1];
 
