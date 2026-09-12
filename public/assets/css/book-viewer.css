@@ -1,0 +1,93 @@
+/* Scoped to the detail preview: the bookshelf and its breakpoints stay intact. */
+.bookplate__cover-column { min-width: 0; padding: 12px 0; align-content: center; }
+.bookplate__pages,
+.bookplate__cover-fallback small { color: #665644; }
+.book-viewer { width: 100%; min-width: 0; }
+.book-viewer__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 290px;
+  perspective: 900px;
+  overflow: clip;
+  outline-offset: -3px;
+  border-radius: 2px;
+}
+.book-viewer.is-interactive .book-viewer__stage {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+.book-viewer.is-dragging .book-viewer__stage { cursor: grabbing; }
+.book-viewer__stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.book-viewer.is-ready canvas { opacity: 1; }
+.book-viewer.is-webgl .bookplate__cover-frame { visibility: hidden; }
+.book-viewer .bookplate__cover-frame {
+  width: min(62%, 160px);
+  filter: none;
+  isolation: auto;
+  transform: var(--viewer-rotation, rotateX(-8deg) rotateY(-24deg)) scale(var(--viewer-scale, 1));
+  transition: none;
+}
+.book-viewer .bookplate__book-back { background: #d4c6ae; }
+.book-viewer .bookplate__cover { user-select: none; -webkit-user-drag: none; }
+.book-viewer__help,
+.book-viewer__status {
+  margin: 6px auto 10px;
+  max-width: 30ch;
+  color: #5e5144;
+  font-size: .72rem;
+  line-height: 1.45;
+  text-align: center;
+}
+.book-viewer__status:empty { display: none; }
+.book-viewer__controls {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 3px;
+}
+.book-viewer__controls[hidden] { display: none; }
+.book-viewer__controls button {
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px;
+  color: #354b3e;
+  border: 1px solid rgba(67, 79, 54, .3);
+  border-radius: 3px;
+  background: rgba(255, 252, 243, .35);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1.1;
+}
+.book-viewer__controls [data-viewer-action="reset"],
+.book-viewer__controls [data-viewer-action="spin"] { font-size: .68rem; overflow-wrap: anywhere; }
+.book-viewer__controls button:hover { background: rgba(255, 252, 243, .7); }
+.book-viewer__controls button[aria-pressed="true"] { background: #354b3e; color: #fff8e8; }
+.bookplate .book-viewer :focus-visible { outline: 2px solid #315344; outline-offset: 2px; }
+.bookplate .book-viewer__stage:focus-visible { outline-offset: -3px; }
+@media (min-width: 521px) and (max-width: 760px) {
+  /* Preserve the two-column detail layout, with room for 44px viewer controls. */
+  .bookplate__card { grid-template-columns: minmax(180px, .8fr) minmax(0, 1.2fr); gap: 20px; padding-inline: 24px; }
+  .bookplate__details { padding-right: 0; }
+  .bookplate__title { font-size: clamp(1.9rem, 4.6vw, 2.8rem); overflow-wrap: anywhere; }
+  .book-viewer__stage { height: 255px; }
+}
+@media (max-width: 520px) {
+  .bookplate__cover-column { padding: 0; }
+  .book-viewer { max-width: 290px; margin-inline: auto; }
+  .book-viewer__stage { height: clamp(210px, 30dvh, 265px); }
+  .book-viewer__controls { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bookplate__title { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-viewer__stage canvas { transition: none; }
+}
