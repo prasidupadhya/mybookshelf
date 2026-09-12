@@ -44,6 +44,7 @@ export const SHELVES = Object.freeze([
 export const BOOKS = Object.freeze([
   Object.freeze({
     id: "siddhartha",
+    coverAspect: 352 / 596,
     title: Object.freeze({ en: "Siddhartha", es: "Siddhartha" }),
     author: "Hermann Hesse",
     url: "https://www.goodreads.com/en/book/show/52036.Siddhartha",
@@ -59,6 +60,7 @@ export const BOOKS = Object.freeze([
   }),
   Object.freeze({
     id: "the-stranger",
+    coverAspect: 1554 / 2400,
     title: Object.freeze({ en: "The Stranger", es: "El Extranjero" }),
     author: "Albert Camus",
     url: "https://www.goodreads.com/book/show/49552.The_Stranger",
@@ -74,6 +76,7 @@ export const BOOKS = Object.freeze([
   }),
   Object.freeze({
     id: "white-nights",
+    coverAspect: 318 / 474,
     title: Object.freeze({ en: "White Nights", es: "Noches Blancas" }),
     author: "Fyodor Dostoevsky",
     url: "https://www.goodreads.com/book/show/1772910.White_Nights",
@@ -89,6 +92,7 @@ export const BOOKS = Object.freeze([
   }),
   Object.freeze({
     id: "the-metamorphosis",
+    coverAspect: 428 / 700,
     title: Object.freeze({ en: "The Metamorphosis", es: "La Metamorfosis" }),
     author: "Franz Kafka",
     url: "https://www.goodreads.com/book/show/485894.The_Metamorphosis",
@@ -104,6 +108,7 @@ export const BOOKS = Object.freeze([
   }),
   Object.freeze({
     id: "the-bhagavad-gita",
+    coverAspect: 600 / 1014,
     title: Object.freeze({ en: "The Bhagavad Gita", es: "El Bhagavad Gita" }),
     author: "Unknown",
     url: "https://www.goodreads.com/book/show/99944.The_Bhagavad_Gita",

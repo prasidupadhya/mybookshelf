@@ -64,30 +64,23 @@
 
       <div class="bookplate__cover-column">
         <div class="book-viewer" data-book-viewer>
-          <div class="book-viewer__stage" data-viewer-stage role="group" tabindex="0" aria-describedby="viewer-help">
-        <figure class="bookplate__cover-frame">
-          <span class="bookplate__book-face bookplate__book-back" aria-hidden="true"></span>
-          <span class="bookplate__book-face bookplate__book-spine" aria-hidden="true"></span>
-          <span class="bookplate__book-face bookplate__book-fore-edge" aria-hidden="true"></span>
-          <span class="bookplate__book-face bookplate__book-top-edge" aria-hidden="true"></span>
-          <span class="bookplate__book-face bookplate__book-bottom-edge" aria-hidden="true"></span>
-          <div class="bookplate__book-front">
-            <img class="bookplate__cover" data-bookplate-cover alt="" loading="eager">
-            <div class="bookplate__cover-fallback" data-bookplate-cover-fallback hidden>
-              <span data-bookplate-cover-title></span>
-              <small data-bookplate-cover-fallback-label>Cover unavailable</small>
-            </div>
+          <div class="book-viewer__stage" data-viewer-stage role="group" tabindex="0">
+            <figure class="bookplate__cover-frame">
+              <span class="bookplate__book-face bookplate__book-back" aria-hidden="true"></span>
+              <span class="bookplate__book-face bookplate__book-spine" aria-hidden="true"></span>
+              <span class="bookplate__book-face bookplate__book-fore-edge" aria-hidden="true"></span>
+              <span class="bookplate__book-face bookplate__book-top-edge" aria-hidden="true"></span>
+              <span class="bookplate__book-face bookplate__book-bottom-edge" aria-hidden="true"></span>
+              <div class="bookplate__book-front">
+                <img class="bookplate__cover" data-bookplate-cover alt="" loading="eager">
+                <div class="bookplate__cover-fallback" data-bookplate-cover-fallback hidden>
+                  <span data-bookplate-cover-title></span>
+                  <small data-bookplate-cover-fallback-label>Cover unavailable</small>
+                </div>
+              </div>
+            </figure>
           </div>
-        </figure>
-          </div>
-          <p class="book-viewer__help" id="viewer-help" data-viewer-help></p>
           <div class="book-viewer__controls" data-viewer-controls role="group" hidden>
-            <button type="button" data-viewer-action="left">←</button>
-            <button type="button" data-viewer-action="up">↑</button>
-            <button type="button" data-viewer-action="down">↓</button>
-            <button type="button" data-viewer-action="right">→</button>
-            <button type="button" data-viewer-action="out">−</button>
-            <button type="button" data-viewer-action="in">+</button>
             <button type="button" data-viewer-action="reset">Reset</button>
             <button type="button" data-viewer-action="spin" aria-pressed="false">Auto-rotate</button>
           </div>

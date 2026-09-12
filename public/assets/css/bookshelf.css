@@ -57,13 +57,13 @@
     }
 
     .shelf__books {
-      --book-width: 118px;
-      --shelf-row-height: calc(var(--book-width) * 1.68);
+      --book-height: 198px;
+      --shelf-row-height: var(--book-height);
       --shelf-row-gap: 40px;
       min-height: 224px;
-      display: grid;
-      grid-template-columns: repeat(auto-fill, var(--book-width));
-      grid-auto-rows: var(--shelf-row-height);
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-start;
       align-items: end;
       gap: var(--shelf-row-gap) 28px;
       padding: 32px 28px 22px;
@@ -119,11 +119,12 @@
     }
 
     .book {
-      --book-height: calc(var(--book-width) * 1.5763);
+      --book-width: calc(var(--book-height) * var(--cover-aspect, .625));
       --book-thickness: 22px;
       --book-half-depth: calc(var(--book-thickness) / 2);
-      --book-cover-border: 3px;
+      --book-cover-border: 0px;
       width: var(--book-width);
+      flex: 0 0 var(--book-width);
       height: var(--book-height);
       position: relative;
       z-index: 2;
@@ -132,7 +133,7 @@
       border: 0;
       color: var(--book-ink, #f7eedc);
       background: transparent;
-      cursor: pointer;
+      cursor: grab;
       overflow: visible;
       text-align: left;
       touch-action: manipulation;
@@ -156,27 +157,18 @@
       display: grid;
       overflow: hidden;
       box-sizing: border-box;
-      border: var(--book-cover-border) solid var(--book-accent);
-      border-radius: 2px 3px 3px 2px;
+      border: 0;
+      border-radius: 0;
       background: var(--book-accent);
-      box-shadow:
-        0 0 0 1px color-mix(in srgb, var(--book-accent) 72%, #3c2c20),
-        inset 1px 0 rgba(255,255,255,.12),
-        inset -1px 0 rgba(0,0,0,.1);
     }
 
-    .book__front::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, rgba(0,0,0,.16), rgba(255,255,255,.08) 5%, transparent 14%, rgba(0,0,0,.06));
-    }
+    .book:active { cursor: grabbing; }
 
     .book__back {
       inset: 0;
       z-index: 0;
-      border: 1px solid color-mix(in srgb, var(--book-accent) 74%, #35261c);
-      border-radius: 2px 3px 3px 2px;
+      border: 0;
+      border-radius: 0;
       background: var(--book-accent);
       box-shadow: inset 1px 0 rgba(255,255,255,.1), inset -2px 0 rgba(0,0,0,.12);
       transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
@@ -188,11 +180,8 @@
       left: 0;
       width: var(--book-thickness);
       z-index: 5;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
       box-sizing: border-box;
-      padding: 11px 5px 10px;
+      padding: 0;
       color: var(--book-ink, #f7eedc);
       border-block: 1px solid color-mix(in srgb, var(--book-accent) 72%, #34251b);
       background:
@@ -292,37 +281,35 @@
       display: grid;
     }
 
+    .book__spine-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: calc(var(--book-height) - 16px);
+      transform: translate(-50%, -50%) rotate(-90deg);
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      white-space: nowrap;
+      line-height: 1.1;
+    }
+
     .book__title {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-family: "Newsreader", serif;
-      font-size: clamp(.47rem, .62vw, .62rem);
-      font-weight: 600;
-      line-height: .92;
-      letter-spacing: .01em;
-      text-shadow: 0 1px 1px rgba(0,0,0,.12);
+      min-width: 0;
       overflow: hidden;
-      position: relative;
-      z-index: 2;
+      text-overflow: ellipsis;
+      font-family: "Newsreader", serif;
+      font-size: clamp(8.5px, calc(var(--book-height) * .055), 11px);
+      font-weight: 600;
+      letter-spacing: .01em;
     }
 
     .book__author {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-size: clamp(.34rem, .44vw, .44rem);
-      line-height: .92;
-      letter-spacing: .02em;
-      color: currentColor;
-      overflow: hidden;
-      position: relative;
-      z-index: 2;
+      flex: 0 0 auto;
+      font-size: clamp(6.5px, calc(var(--book-height) * .039), 8px);
+      letter-spacing: .015em;
     }
-
-    .book[data-book="siddhartha"] { --book-height: calc(var(--book-width) * 1.6186); }
-    .book[data-book="the-stranger"] { --book-height: calc(var(--book-width) * 1.5); }
-    .book[data-book="white-nights"] { --book-height: calc(var(--book-width) * 1.4407); }
-    .book[data-book="the-metamorphosis"] { --book-height: calc(var(--book-width) * 1.678); }
-    .book[data-book="the-bhagavad-gita"] { --book-height: calc(var(--book-width) * 1.6441); }
 
     @supports (perspective: 1px) and (transform-style: preserve-3d) {
       .book {
@@ -364,7 +351,8 @@
 
     .book-slot {
       width: 64px;
-      height: calc(var(--book-width) * 1.4746);
+      height: calc(var(--book-height) * .88);
+      flex: 0 0 64px;
       display: grid;
       place-items: center;
       align-self: end;

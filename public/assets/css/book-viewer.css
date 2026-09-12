@@ -32,15 +32,19 @@
 .book-viewer.is-ready canvas { opacity: 1; }
 .book-viewer.is-webgl .bookplate__cover-frame { visibility: hidden; }
 .book-viewer .bookplate__cover-frame {
-  width: min(62%, 160px);
+  --book-cover-border: 0px;
+  width: auto;
+  height: 210px;
+  aspect-ratio: var(--cover-aspect, .625);
   filter: none;
   isolation: auto;
   transform: var(--viewer-rotation, rotateX(-8deg) rotateY(-24deg)) scale(var(--viewer-scale, 1));
   transition: none;
 }
-.book-viewer .bookplate__book-back { background: #d4c6ae; }
+.book-viewer .bookplate__book-front,
+.book-viewer .bookplate__book-back { border: 0; border-radius: 0; box-shadow: none; }
+.book-viewer .bookplate__book-back { background: var(--plate-accent); }
 .book-viewer .bookplate__cover { user-select: none; -webkit-user-drag: none; }
-.book-viewer__help,
 .book-viewer__status {
   margin: 6px auto 10px;
   max-width: 30ch;
@@ -52,8 +56,10 @@
 .book-viewer__status:empty { display: none; }
 .book-viewer__controls {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 3px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 180px;
+  margin: 12px auto 0;
 }
 .book-viewer__controls[hidden] { display: none; }
 .book-viewer__controls button {
@@ -69,7 +75,7 @@
   line-height: 1.1;
 }
 .book-viewer__controls [data-viewer-action="reset"],
-.book-viewer__controls [data-viewer-action="spin"] { font-size: .68rem; overflow-wrap: anywhere; }
+.book-viewer__controls [data-viewer-action="spin"] { font-size: .76rem; overflow-wrap: anywhere; }
 .book-viewer__controls button:hover { background: rgba(255, 252, 243, .7); }
 .book-viewer__controls button[aria-pressed="true"] { background: #354b3e; color: #fff8e8; }
 .bookplate .book-viewer :focus-visible { outline: 2px solid #315344; outline-offset: 2px; }
@@ -85,7 +91,7 @@
   .bookplate__cover-column { padding: 0; }
   .book-viewer { max-width: 290px; margin-inline: auto; }
   .book-viewer__stage { height: clamp(210px, 30dvh, 265px); }
-  .book-viewer__controls { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .book-viewer__controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bookplate__title { overflow-wrap: anywhere; }
 }
 @media (prefers-reduced-motion: reduce) {

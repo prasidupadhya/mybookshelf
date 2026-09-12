@@ -68,10 +68,10 @@ export function createBookViewer(root, book, language) {
     camera = new THREE.PerspectiveCamera(36, 1, .1, 100);
     model = new THREE.Group();
     scene.add(model);
-    // Page-count thickness in a plausible paperback range, with overhanging boards.
+    // The cover defines the proportions: equal height, natural image width, no frame.
     const depth = THREE.MathUtils.clamp(.12 + book.pageCount * .00065, .17, .38);
     const cloth = material({ color: book.accentColor });
-    const back = material({ color: '#d4c6ae' });
+    const width = 2.4 * (book.coverAspect || .625);
     const paperMap = canvasTexture(128, 256, (ctx, w, h) => {
       ctx.fillStyle = '#eee7d7'; ctx.fillRect(0, 0, w, h);
       for (let y = 0; y < h; y += 3) {
@@ -86,10 +86,10 @@ export function createBookViewer(root, book, language) {
     const paper = material({ map: paperMap });
     const top = material({ map: topMap });
     // Box material order: right, left, top, bottom, front, back.
-    addBox(1.54, 2.32, depth, [paper, cloth, top, top, paper, paper], .015);
-    addBox(1.6, 2.4, .026, cloth, 0, depth / 2 + .013);
-    addBox(1.6, 2.4, .026, back, 0, -depth / 2 - .013);
-    addBox(.05, 2.4, depth + .052, cloth, -.775);
+    addBox(width - .03, 2.36, depth, [paper, cloth, top, top, paper, paper]);
+    addBox(width, 2.4, .026, cloth, 0, depth / 2 + .013);
+    addBox(width, 2.4, .026, cloth, 0, -depth / 2 - .013);
+    addBox(.03, 2.4, depth + .052, cloth, -width / 2 + .015);
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
       ctx.fillStyle = book.accentColor; ctx.fillRect(0, 0, w, h);
@@ -102,7 +102,7 @@ export function createBookViewer(root, book, language) {
       ctx.fillText(line, w / 2, y);
     });
     const frontMaterial = material({ map: titleMap, roughness: .76 });
-    const front = new THREE.Mesh(track(new THREE.PlaneGeometry(1.59, 2.39)), frontMaterial);
+    const front = new THREE.Mesh(track(new THREE.PlaneGeometry(width, 2.4)), frontMaterial);
     front.position.z = depth / 2 + .027;
     model.add(front);
 
@@ -111,12 +111,15 @@ export function createBookViewer(root, book, language) {
       // Use the existing shelf's contrast-aware ink for the same cover color.
       ctx.fillStyle = coverInk;
       ctx.translate(w / 2, h / 2); ctx.rotate(-Math.PI / 2);
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '48px Georgia';
-      ctx.fillText(book.title[language], 0, -12, h - 140);
-      ctx.font = '25px sans-serif'; ctx.fillText(book.author, 0, 32, h - 160);
+      ctx.textBaseline = 'middle';
+      ctx.font = '30px sans-serif'; ctx.textAlign = 'right';
+      const authorWidth = ctx.measureText(book.author).width;
+      ctx.fillText(book.author, h / 2 - 70, 0);
+      ctx.font = '600 52px Georgia'; ctx.textAlign = 'left';
+      ctx.fillText(book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
     });
     const spine = new THREE.Mesh(track(new THREE.PlaneGeometry(depth + .05, 2.38)), material({ map: spineMap }));
-    spine.rotation.y = -Math.PI / 2; spine.position.x = -.801; model.add(spine);
+    spine.rotation.y = -Math.PI / 2; spine.position.x = -width / 2 - .001; model.add(spine);
 
     scene.add(new THREE.HemisphereLight('#fff8ec', '#827768', 2));
     const key = new THREE.DirectionalLight('#fff5e6', 2.6); key.position.set(-3, 5, 4); scene.add(key);
@@ -135,12 +138,14 @@ export function createBookViewer(root, book, language) {
       .then(blob => createImageBitmap(blob))
       .then(bitmap => {
         if (disposed) { bitmap.close(); return; }
-        const map = canvasTexture(512, 768, (ctx, w, h) => {
-          ctx.fillStyle = book.accentColor; ctx.fillRect(0, 0, w, h);
-          const scale = Math.min(w / bitmap.width, h / bitmap.height);
-          const width = bitmap.width * scale, height = bitmap.height * scale;
-          ctx.drawImage(bitmap, (w - width) / 2, (h - height) / 2, width, height);
+        // Fill the entire face; no padding, crop, or colored surround.
+        const aspect = bitmap.width / bitmap.height;
+        const textureHeight = 768;
+        const textureWidth = Math.round(textureHeight * aspect);
+        const map = canvasTexture(textureWidth, textureHeight, (ctx, w, h) => {
+          ctx.drawImage(bitmap, 0, 0, w, h);
         });
+        model.scale.x = aspect / (book.coverAspect || .625);
         bitmap.close();
         frontMaterial.map = map; frontMaterial.needsUpdate = true;
         titleMap.dispose(); resources.delete(titleMap);
@@ -154,7 +159,7 @@ export function createBookViewer(root, book, language) {
   function setAutoRotate(value) {
     autoRotate = value;
     spinButton.setAttribute('aria-pressed', String(value));
-    spinButton.textContent = value ? copy.pause : copy.spinStart;
+    spinButton.textContent = copy.spinStart;
   }
 
   function stopMotion() {

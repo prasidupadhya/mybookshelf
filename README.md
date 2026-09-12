@@ -87,15 +87,15 @@ Google Fonts and the configured remote book-cover images are loaded by the visit
 
 ## Interactive detail preview
 
-Opening a book lazy-loads a locally served Three.js 0.186.0 WebGL viewer. The shelf itself is unchanged. The viewer uses matte cover boards, a page-count-sized paper block, the actual front-cover texture, a labeled spine, a neutral back, and a soft ground shadow.
+Opening a book lazy-loads a locally served Three.js 0.186.0 WebGL viewer. The shelf retains its categories, styling, and viewing angle. Books share a common height and use each cover’s natural aspect ratio for their width. The viewer uses matte cover boards, a page-count-sized paper block, the actual front-cover texture, a labeled spine, a back matching the spine color, and a soft ground shadow. Cover art fills the entire front without a frame or colored padding.
 
 - Drag to rotate freely around X/Y; two fingers also support pinch zoom and twist.
 - Release a drag for decaying momentum; tap to stop. Idle rotation pauses on interaction and can be resumed with the Spin control.
-- Arrow keys or the directional buttons rotate, `+`/`−` zoom, and `Home`/Reset returns to the front. Space toggles idle rotation while the viewer is focused.
+- The only visible viewer buttons are Reset and Spin (toggle on/off). Arrow keys rotate, `+`/`−` zoom, and `Home`/Reset returns to the front. Space toggles idle rotation while the viewer is focused.
 - Reduced motion disables automatic rotation and momentum by default. The explicit Spin control is still available.
 - WebGL failure or context loss uses an interactive CSS solid. A failed engine download preserves the static cover and all book details.
 - The animation pauses offscreen, in a background tab, and immediately on close. At the end of the existing close transition, textures, geometry, materials, listeners, observers, and the WebGL context are released. Closing during the lazy import cannot create a late viewer.
 
-The renderer uses a small scene without shadow-map or postprocessing passes, limits the front-cover texture to 512×768 (other maps are at most 128×1024), caps pixel ratio at 1.5 for touch devices (2 on desktop), and reduces it if sustained frame times are slow. The local engine chunk is about 131 KiB gzipped and is never requested on initial page load. Vendor provenance and reproduction instructions are in `public/assets/vendor/three/README.md`.
+The renderer uses a small scene without shadow-map or postprocessing passes, limits the front-cover texture to 768 pixels high at its natural aspect ratio (other maps are at most 128×1024), caps pixel ratio at 1.5 for touch devices (2 on desktop), and reduces it if sustained frame times are slow. The local engine chunk is about 131 KiB gzipped and is never requested on initial page load. Vendor provenance and reproduction instructions are in `public/assets/vendor/three/README.md`.
 
-Review covered 320–1440px layouts, unchanged shelf DOM/geometry, mouse and touch gestures, complete X/Y turns, zoom limits, keyboard focus/escape, EN/ES, both themes, reduced motion, repeated resource disposal, unavailable WebGL, failed imports, and close-during-load races. A Chromium touch-emulation run with 4× CPU throttling measured 16.7ms median / 16.8ms p95 frames; physical mid-range mobile hardware was not available for testing.
+Review covered 320–1440px layouts, natural cover proportions and equal shelf-book heights, mouse and touch gestures, complete X/Y turns, zoom limits, keyboard focus/escape, EN/ES, both themes, reduced motion, repeated resource disposal, unavailable WebGL, failed imports, and close-during-load races. A Chromium touch-emulation run with 4× CPU throttling measured 16.7ms median / 16.8ms p95 frames; physical mid-range mobile hardware was not available for testing.
