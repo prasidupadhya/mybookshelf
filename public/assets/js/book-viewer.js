@@ -70,11 +70,10 @@ export function createBookViewer(root, book, language) {
     scene.add(model);
     // The cover defines the proportions: equal height, natural image width, no frame.
     const depth = THREE.MathUtils.clamp(.12 + book.pageCount * .00065, .17, .38);
-    const spineColor = book.spineColor ?? book.accentColor;
-    const backColor = book.backColor ?? book.accentColor;
-    const frontCloth = material({ color: book.accentColor });
-    const spineCloth = material({ color: spineColor });
-    const backCloth = material({ color: backColor });
+    const bindingColor = book.spineColor ?? book.accentColor;
+    const frontCloth = material({ color: bindingColor });
+    const spineCloth = material({ color: bindingColor });
+    const backCloth = material({ color: bindingColor });
     const width = 2.4 * (book.coverAspect || .625);
     const paperMap = canvasTexture(128, 256, (ctx, w, h) => {
       ctx.fillStyle = '#eee7d7'; ctx.fillRect(0, 0, w, h);
@@ -96,7 +95,7 @@ export function createBookViewer(root, book, language) {
     addBox(.03, 2.4, depth + .052, spineCloth, -width / 2 + .015);
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
-      ctx.fillStyle = book.accentColor; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = bindingColor; ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = coverInk; ctx.font = '36px Georgia'; ctx.textAlign = 'center';
       const words = book.title[language].split(' '); let line = '', y = h * .35;
       for (const word of words) {
@@ -111,7 +110,7 @@ export function createBookViewer(root, book, language) {
     model.add(front);
 
     const spineMap = canvasTexture(128, 1024, (ctx, w, h) => {
-      ctx.fillStyle = spineColor; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = bindingColor; ctx.fillRect(0, 0, w, h);
       // Use the existing shelf's contrast-aware ink for the same cover color.
       ctx.fillStyle = coverInk;
       ctx.translate(w / 2, h / 2); ctx.rotate(-Math.PI / 2);

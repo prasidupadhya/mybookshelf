@@ -86,6 +86,7 @@ function createBookSpine(book, index, language) {
   button.style.setProperty("--book-accent", book.accentColor);
   button.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
   button.style.setProperty("--book-back", book.backColor ?? book.accentColor);
+  button.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
   button.style.setProperty("--book-ink", getReadableInk(book.spineColor ?? book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
   button.style.setProperty("--cover-aspect", book.coverAspect);

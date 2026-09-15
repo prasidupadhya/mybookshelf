@@ -123,10 +123,10 @@
       overflow: hidden;
       border: 0;
       border-radius: 1px 2px 2px 1px;
-      background: var(--plate-accent);
+      background: var(--book-binding, var(--plate-accent));
       box-shadow:
-        0 0 0 var(--book-cover-border) var(--plate-accent),
-        0 0 0 calc(var(--book-cover-border) + 1px) color-mix(in srgb, var(--plate-accent) 72%, #463626),
+        0 0 0 var(--book-cover-border) var(--book-binding, var(--plate-accent)),
+        0 0 0 calc(var(--book-cover-border) + 1px) color-mix(in srgb, var(--book-binding, var(--plate-accent)) 72%, #463626),
         inset 1px 0 rgba(255,255,255,.12),
         inset -1px 0 rgba(0,0,0,.1);
       transform: translateZ(var(--book-half-depth));
@@ -135,9 +135,9 @@
     .bookplate__book-back {
       inset: 0;
       z-index: 0;
-      border: 1px solid color-mix(in srgb, var(--book-back, var(--plate-accent)) 76%, #463626);
+      border: 1px solid color-mix(in srgb, var(--book-binding, var(--book-back, var(--plate-accent))) 76%, #463626);
       border-radius: 1px 2px 2px 1px;
-      background: var(--book-back, var(--plate-accent));
+      background: var(--book-binding, var(--book-back, var(--plate-accent)));
       transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
     }
 
@@ -147,10 +147,10 @@
       left: 0;
       width: var(--book-depth);
       z-index: 4;
-      border-block: 1px solid color-mix(in srgb, var(--book-spine, var(--plate-accent)) 72%, #3c2e21);
+      border-block: 1px solid color-mix(in srgb, var(--book-binding, var(--book-spine, var(--plate-accent))) 72%, #3c2e21);
       background:
         linear-gradient(90deg, rgba(255,255,255,.18), transparent 25%, rgba(0,0,0,.22)),
-        var(--book-spine, var(--plate-accent));
+        var(--book-binding, var(--book-spine, var(--plate-accent)));
       box-shadow: inset -2px 0 rgba(0,0,0,.08);
       transform: translateX(calc(var(--book-half-depth) * -1)) rotateY(-90deg);
       transform-origin: center center;
@@ -179,7 +179,7 @@
       z-index: 3;
       border-inline: 1px solid rgba(107, 90, 67, .16);
       background:
-        linear-gradient(90deg, var(--plate-accent) 0 var(--book-cover-border), transparent var(--book-cover-border)),
+        linear-gradient(90deg, var(--book-binding, var(--plate-accent)) 0 var(--book-cover-border), transparent var(--book-cover-border)),
         repeating-linear-gradient(90deg, rgba(112, 94, 69, .09) 0 1px, transparent 1px 5px),
         linear-gradient(180deg, #fffefa, #eee9df 72%, #d7cfc2);
     }
@@ -195,7 +195,7 @@
       transform: translateY(var(--book-half-depth)) rotateX(-90deg);
       transform-origin: center center;
       background:
-        linear-gradient(90deg, var(--plate-accent) 0 var(--book-cover-border), transparent var(--book-cover-border)),
+        linear-gradient(90deg, var(--book-binding, var(--plate-accent)) 0 var(--book-cover-border), transparent var(--book-cover-border)),
         repeating-linear-gradient(90deg, rgba(112, 94, 69, .08) 0 1px, transparent 1px 5px),
         linear-gradient(0deg, #fffefa, #ece6dc 72%, #d3cabd);
     }
@@ -210,7 +210,7 @@
     .bookplate__cover {
       display: block;
       object-fit: contain;
-      background: #cfc1aa;
+      background: var(--book-binding, #cfc1aa);
     }
 
     .bookplate__cover[hidden],
@@ -226,7 +226,7 @@
       color: #5d4f40;
       background:
         linear-gradient(135deg, rgba(255,255,255,.15), transparent 35%),
-        #cfc1aa;
+        var(--book-binding, #cfc1aa);
       text-align: center;
     }
 

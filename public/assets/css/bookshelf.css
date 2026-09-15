@@ -159,7 +159,7 @@
       box-sizing: border-box;
       border: 0;
       border-radius: 0;
-      background: var(--book-accent);
+      background: var(--book-binding, var(--book-accent));
     }
 
     .book:active { cursor: grabbing; }
@@ -169,7 +169,7 @@
       z-index: 0;
       border: 0;
       border-radius: 0;
-      background: var(--book-back, var(--book-accent));
+      background: var(--book-binding, var(--book-back, var(--book-accent)));
       box-shadow: inset 1px 0 rgba(255,255,255,.1), inset -2px 0 rgba(0,0,0,.12);
       transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
     }
@@ -183,10 +183,10 @@
       box-sizing: border-box;
       padding: 0;
       color: var(--book-ink, #f7eedc);
-      border-block: 1px solid color-mix(in srgb, var(--book-spine, var(--book-accent)) 72%, #34251b);
+      border-block: 1px solid color-mix(in srgb, var(--book-binding, var(--book-spine, var(--book-accent))) 72%, #34251b);
       background:
         linear-gradient(90deg, rgba(255,255,255,.17), transparent 26%, rgba(0,0,0,.2)),
-        var(--book-spine, var(--book-accent));
+        var(--book-binding, var(--book-spine, var(--book-accent)));
       box-shadow: inset -2px 0 rgba(0,0,0,.08);
       transform: translateX(calc(var(--book-half-depth) * -1)) rotateY(-90deg);
       transform-origin: center center;
@@ -216,9 +216,9 @@
       border-inline: 1px solid color-mix(in srgb, var(--page-edge-shadow) 44%, transparent);
       background:
         linear-gradient(90deg,
-          var(--book-accent) 0 var(--book-cover-border),
+          var(--book-binding, var(--book-accent)) 0 var(--book-cover-border),
           transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
-          var(--book-accent) calc(100% - var(--book-cover-border)) 100%),
+          var(--book-binding, var(--book-accent)) calc(100% - var(--book-cover-border)) 100%),
         repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 3px),
         linear-gradient(180deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
       transform-origin: center center;
@@ -234,9 +234,9 @@
       transform: translateY(var(--book-half-depth)) rotateX(-90deg);
       background:
         linear-gradient(90deg,
-          var(--book-accent) 0 var(--book-cover-border),
+          var(--book-binding, var(--book-accent)) 0 var(--book-cover-border),
           transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
-          var(--book-accent) calc(100% - var(--book-cover-border)) 100%),
+          var(--book-binding, var(--book-accent)) calc(100% - var(--book-cover-border)) 100%),
         repeating-linear-gradient(180deg, rgba(95, 80, 58, .08) 0 1px, transparent 1px 3px),
         linear-gradient(0deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
     }
@@ -251,7 +251,7 @@
     .book__cover {
       display: block;
       object-fit: contain;
-      background: var(--book-accent);
+      background: var(--book-binding, var(--book-accent));
       user-select: none;
       -webkit-user-drag: none;
     }
@@ -269,7 +269,7 @@
       color: var(--book-ink, #f7eedc);
       background:
         linear-gradient(135deg, rgba(255,255,255,.11), transparent 38%),
-        var(--book-accent);
+        var(--book-binding, var(--book-accent));
       font-family: "Newsreader", serif;
       font-size: .92rem;
       line-height: 1.05;

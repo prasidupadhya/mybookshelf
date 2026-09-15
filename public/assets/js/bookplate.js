@@ -100,6 +100,7 @@ function populateBookplate(book) {
   bookplateCard.style.setProperty("--plate-accent", book.accentColor);
   bookplateCard.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
   bookplateCard.style.setProperty("--book-back", book.backColor ?? book.accentColor);
+  bookplateCard.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
   showCover(book);
 }
 
