@@ -135,9 +135,9 @@
     .bookplate__book-back {
       inset: 0;
       z-index: 0;
-      border: 1px solid color-mix(in srgb, var(--plate-accent) 76%, #463626);
+      border: 1px solid color-mix(in srgb, var(--book-back, var(--plate-accent)) 76%, #463626);
       border-radius: 1px 2px 2px 1px;
-      background: var(--plate-accent);
+      background: var(--book-back, var(--plate-accent));
       transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
     }
 
@@ -147,10 +147,10 @@
       left: 0;
       width: var(--book-depth);
       z-index: 4;
-      border-block: 1px solid color-mix(in srgb, var(--plate-accent) 72%, #3c2e21);
+      border-block: 1px solid color-mix(in srgb, var(--book-spine, var(--plate-accent)) 72%, #3c2e21);
       background:
         linear-gradient(90deg, rgba(255,255,255,.18), transparent 25%, rgba(0,0,0,.22)),
-        var(--plate-accent);
+        var(--book-spine, var(--plate-accent));
       box-shadow: inset -2px 0 rgba(0,0,0,.08);
       transform: translateX(calc(var(--book-half-depth) * -1)) rotateY(-90deg);
       transform-origin: center center;

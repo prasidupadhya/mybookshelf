@@ -70,7 +70,11 @@ export function createBookViewer(root, book, language) {
     scene.add(model);
     // The cover defines the proportions: equal height, natural image width, no frame.
     const depth = THREE.MathUtils.clamp(.12 + book.pageCount * .00065, .17, .38);
-    const cloth = material({ color: book.accentColor });
+    const spineColor = book.spineColor ?? book.accentColor;
+    const backColor = book.backColor ?? book.accentColor;
+    const frontCloth = material({ color: book.accentColor });
+    const spineCloth = material({ color: spineColor });
+    const backCloth = material({ color: backColor });
     const width = 2.4 * (book.coverAspect || .625);
     const paperMap = canvasTexture(128, 256, (ctx, w, h) => {
       ctx.fillStyle = '#eee7d7'; ctx.fillRect(0, 0, w, h);
@@ -86,10 +90,10 @@ export function createBookViewer(root, book, language) {
     const paper = material({ map: paperMap });
     const top = material({ map: topMap });
     // Box material order: right, left, top, bottom, front, back.
-    addBox(width - .03, 2.36, depth, [paper, cloth, top, top, paper, paper]);
-    addBox(width, 2.4, .026, cloth, 0, depth / 2 + .013);
-    addBox(width, 2.4, .026, cloth, 0, -depth / 2 - .013);
-    addBox(.03, 2.4, depth + .052, cloth, -width / 2 + .015);
+    addBox(width - .03, 2.36, depth, [paper, spineCloth, top, top, paper, paper]);
+    addBox(width, 2.4, .026, frontCloth, 0, depth / 2 + .013);
+    addBox(width, 2.4, .026, backCloth, 0, -depth / 2 - .013);
+    addBox(.03, 2.4, depth + .052, spineCloth, -width / 2 + .015);
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
       ctx.fillStyle = book.accentColor; ctx.fillRect(0, 0, w, h);
@@ -107,14 +111,18 @@ export function createBookViewer(root, book, language) {
     model.add(front);
 
     const spineMap = canvasTexture(128, 1024, (ctx, w, h) => {
-      ctx.fillStyle = book.accentColor; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = spineColor; ctx.fillRect(0, 0, w, h);
       // Use the existing shelf's contrast-aware ink for the same cover color.
       ctx.fillStyle = coverInk;
       ctx.translate(w / 2, h / 2); ctx.rotate(-Math.PI / 2);
       ctx.textBaseline = 'middle';
-      ctx.font = '30px sans-serif'; ctx.textAlign = 'right';
-      const authorWidth = ctx.measureText(book.author).width;
-      ctx.fillText(book.author, h / 2 - 70, 0);
+      const spineAuthor = book.spineAuthor ?? book.author;
+      let authorWidth = 0;
+      if (spineAuthor) {
+        ctx.font = '30px sans-serif'; ctx.textAlign = 'right';
+        authorWidth = ctx.measureText(spineAuthor).width;
+        ctx.fillText(spineAuthor, h / 2 - 70, 0);
+      }
       ctx.font = '600 52px Georgia'; ctx.textAlign = 'left';
       ctx.fillText(book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
     });

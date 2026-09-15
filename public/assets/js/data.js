@@ -52,6 +52,8 @@ export const BOOKS = Object.freeze([
     shelfOrder: 3,
     pageCount: 152,
     accentColor: "#3c3489",
+    spineColor: "#2f9faa",
+    backColor: "#e7e4d8",
     coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1395091265i/21480838.jpg",
     description: Object.freeze({
       en: "Set in ancient India during the time of the Buddha, a young Brahmin named Siddhartha leaves home to seek enlightenment. He tries asceticism, worldly pleasure, wealth, and love, then finds peace as a ferryman by a river. A novel about learning through direct experience rather than doctrine.",
@@ -68,6 +70,8 @@ export const BOOKS = Object.freeze([
     shelfOrder: 3,
     pageCount: 123,
     accentColor: "#c7c6c7",
+    spineColor: "#111111",
+    backColor: "#f2f1ed",
     coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1632419674i/59062200.jpg",
     description: Object.freeze({
       en: "Meursault, an emotionally detached Algerian clerk, drifts through his mother's funeral and later kills a man for almost no reason. His trial and imprisonment work through absurdism, the idea that life has no inherent meaning and that a person can still face that fact honestly.",
@@ -84,6 +88,8 @@ export const BOOKS = Object.freeze([
     shelfOrder: 3,
     pageCount: 82,
     accentColor: "#d4c0a4",
+    spineColor: "#963f42",
+    backColor: "#4f817c",
     coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1747510889i/228811127.jpg",
     description: Object.freeze({
       en: "A lonely dreamer in St. Petersburg spends four nights wandering the city. He falls for a young woman, Nastenka, who is waiting for her former lover to return. A short book about loneliness and the pain of a connection that never becomes real.",
@@ -100,6 +106,8 @@ export const BOOKS = Object.freeze([
     shelfOrder: 1,
     pageCount: 201,
     accentColor: "#aa7764",
+    spineColor: "#5d6161",
+    backColor: "#deddd5",
     coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1659129933i/61777293.jpg",
     description: Object.freeze({
       en: "Traveling salesman Gregor Samsa wakes up transformed into a giant insect. The novella follows his family's disgust, guilt, and eventual indifference toward him. A short story about isolation and how a person's worth gets tied to what they can produce.",
@@ -117,8 +125,8 @@ export const BOOKS = Object.freeze([
     shelfOrder: 2,
     pageCount: 160,
     accentColor: "#6c584f",
-    spineColor: "#a8762c",
-    backColor: "#0d6680",
+    spineColor: "#9b6d2a",
+    backColor: "#087f99",
     coverUrl: "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1492697517i/34909756.jpg",
     description: Object.freeze({
       en: "A foundational Hindu scripture written as a dialogue between the warrior prince Arjuna and the god Krishna on the eve of a great battle. Arjuna doesn't want to fight his own kin, and Krishna's response lays out teachings on duty, action without attachment to results, and the nature of the self and the divine.",

@@ -43,7 +43,7 @@
 }
 .book-viewer .bookplate__book-front,
 .book-viewer .bookplate__book-back { border: 0; border-radius: 0; box-shadow: none; }
-.book-viewer .bookplate__book-back { background: var(--plate-accent); }
+.book-viewer .bookplate__book-back { background: var(--book-back, var(--plate-accent)); }
 .book-viewer .bookplate__cover { user-select: none; -webkit-user-drag: none; }
 .book-viewer__status {
   margin: 6px auto 10px;
