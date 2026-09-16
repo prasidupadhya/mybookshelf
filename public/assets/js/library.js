@@ -84,7 +84,10 @@ function createBookSpine(book, index, language) {
   button.setAttribute("aria-haspopup", "dialog");
   button.setAttribute("aria-controls", "bookplate");
   button.style.setProperty("--book-accent", book.accentColor);
-  button.style.setProperty("--book-ink", getReadableInk(book.accentColor));
+  button.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
+  button.style.setProperty("--book-back", book.backColor ?? book.accentColor);
+  button.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
+  button.style.setProperty("--book-ink", getReadableInk(book.spineColor ?? book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
   button.style.setProperty("--cover-aspect", book.coverAspect);
   button.setAttribute(
@@ -120,10 +123,11 @@ function createBookSpine(book, index, language) {
   title.className = "book__title";
   title.textContent = localizedTitle;
   author.className = "book__author";
-  author.textContent = book.author;
+  author.textContent = book.spineAuthor ?? book.author;
 
   spineLabel.className = "book__spine-label";
-  spineLabel.append(title, author);
+  spineLabel.append(title);
+  if (author.textContent) spineLabel.append(author);
   spine.append(spineLabel);
   front.append(cover, coverFallback);
   button.append(back, spine, foreEdge, topEdge, bottomEdge, front);
