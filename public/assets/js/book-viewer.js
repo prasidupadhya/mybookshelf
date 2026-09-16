@@ -71,9 +71,7 @@ export function createBookViewer(root, book, language) {
     // The cover defines the proportions: equal height, natural image width, no frame.
     const depth = THREE.MathUtils.clamp(.12 + book.pageCount * .00065, .17, .38);
     const bindingColor = book.spineColor ?? book.accentColor;
-    const frontCloth = material({ color: bindingColor });
-    const spineCloth = material({ color: bindingColor });
-    const backCloth = material({ color: bindingColor });
+    const binding = material({ color: bindingColor });
     const width = 2.4 * (book.coverAspect || .625);
     const paperMap = canvasTexture(128, 256, (ctx, w, h) => {
       ctx.fillStyle = '#eee7d7'; ctx.fillRect(0, 0, w, h);
@@ -89,10 +87,11 @@ export function createBookViewer(root, book, language) {
     const paper = material({ map: paperMap });
     const top = material({ map: topMap });
     // Box material order: right, left, top, bottom, front, back.
-    addBox(width - .03, 2.36, depth, [paper, spineCloth, top, top, paper, paper]);
-    addBox(width, 2.4, .026, frontCloth, 0, depth / 2 + .013);
-    addBox(width, 2.4, .026, backCloth, 0, -depth / 2 - .013);
-    addBox(.03, 2.4, depth + .052, spineCloth, -width / 2 + .015);
+    // A single material keeps spine, back and the exposed cover-board edges identical.
+    addBox(width - .03, 2.36, depth, [paper, binding, top, top, paper, paper]);
+    addBox(width, 2.4, .026, binding, 0, depth / 2 + .013);
+    addBox(width, 2.4, .026, binding, 0, -depth / 2 - .013);
+    addBox(.03, 2.4, depth + .052, binding, -width / 2 + .015);
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
       ctx.fillStyle = bindingColor; ctx.fillRect(0, 0, w, h);
@@ -140,7 +139,7 @@ export function createBookViewer(root, book, language) {
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.52; scene.add(shadow);
 
     // Fetch is abortable; GPU textures are bounded and never allocated after close.
-    fetch(book.coverUrl, { signal: abort.signal, mode: 'cors' })
+    fetch(book.coverTextureUrl ?? book.coverUrl, { signal: abort.signal, mode: 'cors' })
       .then(response => { if (!response.ok) throw new Error('Cover unavailable'); return response.blob(); })
       .then(blob => createImageBitmap(blob))
       .then(bitmap => {

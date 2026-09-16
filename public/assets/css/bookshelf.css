@@ -200,6 +200,7 @@
       z-index: 2;
       border-block: 1px solid color-mix(in srgb, var(--page-edge-shadow) 52%, transparent);
       background:
+        linear-gradient(90deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
         repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 4px),
         linear-gradient(90deg, #fffefa, var(--page-edge) 70%, color-mix(in srgb, var(--page-edge) 72%, var(--page-edge-shadow)));
       box-shadow: inset -2px 0 3px rgba(0,0,0,.11);
@@ -215,10 +216,7 @@
       z-index: 3;
       border-inline: 1px solid color-mix(in srgb, var(--page-edge-shadow) 44%, transparent);
       background:
-        linear-gradient(90deg,
-          var(--book-binding, var(--book-accent)) 0 var(--book-cover-border),
-          transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
-          var(--book-binding, var(--book-accent)) calc(100% - var(--book-cover-border)) 100%),
+        linear-gradient(180deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
         repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 3px),
         linear-gradient(180deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
       transform-origin: center center;
@@ -233,10 +231,7 @@
       bottom: 0;
       transform: translateY(var(--book-half-depth)) rotateX(-90deg);
       background:
-        linear-gradient(90deg,
-          var(--book-binding, var(--book-accent)) 0 var(--book-cover-border),
-          transparent var(--book-cover-border) calc(100% - var(--book-cover-border)),
-          var(--book-binding, var(--book-accent)) calc(100% - var(--book-cover-border)) 100%),
+        linear-gradient(180deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
         repeating-linear-gradient(180deg, rgba(95, 80, 58, .08) 0 1px, transparent 1px 3px),
         linear-gradient(0deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
     }
