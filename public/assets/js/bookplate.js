@@ -1,6 +1,7 @@
 import { BOOKS, UI_COPY } from "./data.js";
 import { getSpineByIndex } from "./library.js";
 import { setViewerLanguage } from "./book-viewer-copy.js";
+import { getReadableInk } from "./book-appearance.js";
 
 const bookplate = document.querySelector("#bookplate");
 const bookplateCard = bookplate.querySelector(".bookplate__card");
@@ -24,6 +25,8 @@ let activeLanguage = "en";
 let viewer = null;
 let viewerSession = 0;
 let closeTimer = 0;
+let activeTransition = null;
+const plateFront = viewerRoot.querySelector('.bookplate__book-front');
 
 async function startViewer(book, session) {
   const copy = setViewerLanguage(viewerRoot, book, activeLanguage);
@@ -99,8 +102,20 @@ function showCover(book) {
 function populateBookplate(book) {
   bookplateTitle.textContent = book.title[activeLanguage];
   bookplateAuthor.textContent = book.author;
-  bookplatePages.textContent = `${book.pageCount} ${UI_COPY[activeLanguage].pages}`;
-  bookplatePages.hidden = !book.pageCount;
+  const copy = UI_COPY[activeLanguage];
+  const metadata = [];
+  const addMetadata = text => { const entry = document.createElement('span'); entry.textContent = text; metadata.push(entry); };
+  if (book.pageCount) addMetadata(`${book.pageCount} ${copy.pages}`);
+  addMetadata(copy.shelves[book.shelf]);
+  for (const [value, label] of [[book.startedAt, copy.started], [book.finishedAt, copy.finished]]) {
+    const date = value ? new Date(value) : null;
+    if (!date || Number.isNaN(date.getTime())) continue;
+    const entry = document.createElement('time'); entry.dateTime = date.toISOString();
+    entry.textContent = `${label}: ${new Intl.DateTimeFormat(activeLanguage, { day: 'numeric', month: 'short', year: 'numeric' }).format(date)}`;
+    metadata.push(entry);
+  }
+  bookplatePages.replaceChildren(...metadata);
+  bookplatePages.hidden = false;
   bookplateDescription.textContent = book.description[activeLanguage];
   bookplateLink.textContent = UI_COPY[activeLanguage].readOnGoodreads;
   bookplateLink.hidden = !book.url;
@@ -111,6 +126,7 @@ function populateBookplate(book) {
   bookplateCard.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
   bookplateCard.style.setProperty("--book-back", book.backColor ?? book.accentColor);
   bookplateCard.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
+  bookplateCard.style.setProperty('--book-ink', getReadableInk(book.spineColor ?? book.accentColor));
   showCover(book);
 }
 
@@ -128,15 +144,43 @@ export function openBookplate(index, spine, language) {
   activeBookIndex = index;
   populateBookplate(book);
   setBookplateOrigin(spine, book.accentColor);
-
-  bookplate.hidden = false;
-  pageShell.inert = true;
-  document.body.classList.add("has-open-bookplate");
-  requestAnimationFrame(() => {
-    if (session === viewerSession) bookplate.classList.add("is-open");
-  });
-  bookplateClose.focus({ preventScroll: true });
-  startViewer(book, session);
+  const reveal = native => {
+    if (session !== viewerSession) return;
+    bookplate.hidden = false;
+    pageShell.inert = true;
+    document.body.classList.add('has-open-bookplate');
+    if (native) bookplate.classList.add('is-open');
+    else requestAnimationFrame(() => { if (session === viewerSession) bookplate.classList.add('is-open'); });
+    bookplateClose.focus({ preventScroll: true });
+  };
+  const front = spine.querySelector('.book__front');
+  if (document.startViewTransition && CSS.supports('view-transition-name', 'book-cover') && !reduceMotion.matches) {
+    // Capture the same cover on each side. Start WebGL after the morph so its
+    // canvas cannot replace the texture while the browser takes snapshots.
+    front.style.viewTransitionName = 'book-cover';
+    const transition = document.startViewTransition(() => {
+      if (session !== viewerSession) return;
+      front.style.viewTransitionName = 'none';
+      plateFront.style.viewTransitionName = 'book-cover';
+      bookplate.classList.add('is-transitioning');
+      reveal(true);
+    });
+    activeTransition = transition;
+    transition.ready.catch(() => {}); // Unsupported snapshot cases still update the DOM.
+    transition.finished.catch(() => {}).finally(() => {
+      front.style.removeProperty('view-transition-name');
+      plateFront.style.removeProperty('view-transition-name');
+      bookplate.classList.remove('is-transitioning');
+      if (activeTransition === transition) activeTransition = null;
+      if (session === viewerSession && !bookplate.hidden) {
+        if (!bookplate.classList.contains('is-open')) reveal(false);
+        startViewer(book, session);
+      }
+    });
+  } else {
+    reveal(false);
+    startViewer(book, session);
+  }
 }
 
 function finishClose() {
@@ -153,6 +197,7 @@ function finishClose() {
 export function closeBookplate() {
   window.clearTimeout(closeTimer);
   ++viewerSession;
+  activeTransition?.skipTransition();
   viewer?.pause();
   viewerRoot.querySelector("[data-viewer-stage]").removeAttribute("aria-busy");
   bookplate.classList.remove("is-open");
@@ -162,7 +207,7 @@ export function closeBookplate() {
     return;
   }
 
-  closeTimer = window.setTimeout(finishClose, 560);
+  closeTimer = window.setTimeout(finishClose, 340);
 }
 
 export function refreshBookplateLanguage(language) {

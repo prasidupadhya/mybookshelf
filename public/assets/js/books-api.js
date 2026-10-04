@@ -28,7 +28,8 @@ export function normalizeBooks(payload) {
       spineTitle: record.spine_title_override, spineAuthor: record.spine_author_override ?? undefined,
       coverUrl: safeUrl(record.cover_url), coverTextureUrl: safeUrl(record.cover_texture_url, true),
       backCoverUrl: safeUrl(record.back_cover_url), backCoverTextureUrl: safeUrl(record.back_cover_texture_url, true), url: safeUrl(record.goodreads_url),
-      description: { en: String(record.description_en || ''), es: String(record.description_es || '') }
+      description: { en: String(record.description_en || ''), es: String(record.description_es || '') },
+      startedAt: record.started_at || null, finishedAt: record.finished_at || null
     };
   }));
   if (new Set(records.map(record => record.id)).size !== records.length) throw new Error('Duplicate book slugs');
