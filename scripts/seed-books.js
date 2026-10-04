@@ -2,12 +2,20 @@ import { readFile } from 'node:fs/promises';
 import { getDb } from '../lib/db.js';
 import { loadLocalEnv } from '../lib/env.js';
 import { EDITABLE_COLUMNS } from '../lib/book-records.js';
+import { validateBook } from '../lib/validation.js';
 import { exportBooks } from './export-books.js';
 
 loadLocalEnv();
 try {
-  // This immutable migration source captures every original data.js book, including EN/ES artwork metadata.
-  const books = JSON.parse(await readFile(new URL('../db/seed-books.json', import.meta.url), 'utf8'));
+  // Original editions live in Neon. Imports are private files, never deployed frontend assets.
+  const source = JSON.parse(await readFile(new URL('../.local-data/books-import.json', import.meta.url), 'utf8'));
+  if (!Array.isArray(source) || !source.length) throw new Error('No private import source');
+  const books = source.map(record => {
+    const fields = Object.fromEntries(EDITABLE_COLUMNS.filter(key => key in record).map(key => [key, record[key]]));
+    // Old local textures are now downloaded from the stored cover URL through the public relay.
+    if (fields.cover_texture_url?.startsWith('/assets/')) fields.cover_texture_url = fields.cover_url;
+    return validateBook(fields);
+  });
   const db = getDb();
   const before = await db.query('SELECT * FROM books WHERE slug = ANY($1::text[])', [books.map(book => book.slug)]);
   const columns = EDITABLE_COLUMNS;
@@ -25,6 +33,6 @@ try {
   }
   await exportBooks(db);
 } catch {
-  console.error('Seed failed. Check DATABASE_URL and run the migration first. No credentials were logged.');
+  console.error('Import failed. Check .local-data/books-import.json, DATABASE_URL and the migration. No credentials were logged.');
   process.exitCode = 1;
 }

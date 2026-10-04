@@ -4,7 +4,7 @@ const COLOR = /^#[0-9a-f]{6}$/i;
 function safeUrl(value, localTexture = false) {
   if (!value) return null;
   if (typeof value !== 'string') throw new Error('Invalid image URL');
-  if (localTexture && /^\/assets\/images\/covers\/[a-zA-Z0-9._-]+\.(jpg|jpeg|png|webp)$/.test(value)) return value;
+  if (localTexture && /^\/api\/books\/[0-9a-f-]{36}\/cover\?face=(front|back)&rev=[0-9a-f]{16}$/.test(value)) return value;
   const url = new URL(value);
   if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password) throw new Error('Invalid URL');
   return url.href;
@@ -27,7 +27,7 @@ export function normalizeBooks(payload) {
       backColor: COLOR.test(record.back_color) ? record.back_color : spine,
       spineTitle: record.spine_title_override, spineAuthor: record.spine_author_override ?? undefined,
       coverUrl: safeUrl(record.cover_url), coverTextureUrl: safeUrl(record.cover_texture_url, true),
-      backCoverUrl: safeUrl(record.back_cover_url), url: safeUrl(record.goodreads_url),
+      backCoverUrl: safeUrl(record.back_cover_url), backCoverTextureUrl: safeUrl(record.back_cover_texture_url, true), url: safeUrl(record.goodreads_url),
       description: { en: String(record.description_en || ''), es: String(record.description_es || '') }
     };
   }));
@@ -41,6 +41,5 @@ async function fetchBooks(url, timeout) {
   return normalizeBooks(await response.json());
 }
 
-export const loadSnapshot = () => fetchBooks('/assets/data/books.snapshot.json', 4000);
 // Vercel includes query strings in the cache key. Each minute starts with fresh database results.
 export const loadPublicBooks = () => fetchBooks(`/api/books?minute=${Math.floor(Date.now() / 60000)}`, 8000);

@@ -1,5 +1,5 @@
 import { UI_COPY, BOOKS, setBooks } from "./data.js";
-import { loadSnapshot, loadPublicBooks } from "./books-api.js";
+import { loadPublicBooks } from "./books-api.js";
 import { initClock, setClockLanguage } from "./clock.js";
 import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookplate.js";
 import { applyLanguage } from "./language.js";
@@ -13,13 +13,25 @@ let activeLanguage = document.documentElement.lang === "es" ? "es" : "en";
 let loading = true;
 let pendingBooks = null;
 let fetching = false;
+let unavailable = false;
+
+function renderCollection() {
+  renderLibrary(activeLanguage, { loading });
+  if (!unavailable) return;
+  const message = document.createElement('p'); message.className = 'collection-status';
+  message.setAttribute('role', 'status');
+  message.textContent = activeLanguage === 'es' ? 'La colección no está disponible temporalmente. ' : 'The collection is temporarily unavailable. ';
+  const retry = document.createElement('button'); retry.type = 'button';
+  retry.textContent = activeLanguage === 'es' ? 'Reintentar' : 'Try again';
+  retry.addEventListener('click', refreshBooks); message.append(retry); bookcase.append(message);
+}
 
 function setLanguage(language) {
   if (!UI_COPY[language] || !applyLanguage(language)) return;
 
   activeLanguage = language;
   cancelBookSelection();
-  renderLibrary(activeLanguage, { loading });
+  renderCollection();
   refreshBookplateLanguage(activeLanguage);
   setClockLanguage(activeLanguage);
 }
@@ -46,8 +58,8 @@ function updateBooks(books) {
   if (!document.querySelector('#bookplate').hidden) { pendingBooks = books; return; }
   if (!loading && JSON.stringify(BOOKS) === JSON.stringify(books)) return;
   const focused = document.activeElement?.closest('[data-book]')?.dataset.book;
-  cancelBookSelection(); setBooks(books); loading = false;
-  renderLibrary(activeLanguage);
+  cancelBookSelection(); setBooks(books); loading = false; unavailable = false;
+  renderCollection();
   if (focused) bookcase.querySelector(`[data-book="${focused}"]`)?.focus({ preventScroll: true });
 }
 
@@ -56,23 +68,14 @@ async function refreshBooks() {
   fetching = true;
   try { updateBooks(await loadPublicBooks()); }
   catch {
-    if (loading && BOOKS.length) { loading = false; renderLibrary(activeLanguage); }
-    else if (loading) {
-      loading = false; renderLibrary(activeLanguage);
-      const message = document.createElement('p'); message.className = 'collection-status';
-      message.textContent = activeLanguage === 'es' ? 'La colección no está disponible temporalmente.' : 'The collection is temporarily unavailable.';
-      message.setAttribute('role', 'status'); bookcase.append(message);
-    }
+    if (!BOOKS.length) { loading = false; unavailable = true; renderCollection(); }
+    // During a transient refresh failure, retain the last database response in memory.
   } finally { fetching = false; }
 }
 
-// Load the snapshot and API concurrently. Known cover ratios reserve the exact shelf layout.
-const apiRequest = loadPublicBooks().then(books => ({ books })).catch(() => null);
-try { setBooks(await loadSnapshot()); } catch { /* The API can still supply the collection. */ }
-renderLibrary(activeLanguage, { loading: true });
-const response = await apiRequest;
-if (response) updateBooks(response.books);
-else { loading = false; renderLibrary(activeLanguage); }
+// Only the database supplies book records; the skeleton contains no edition information.
+renderCollection();
+refreshBooks();
 
 const modalObserver = new MutationObserver(() => {
   if (document.querySelector('#bookplate').hidden && pendingBooks) {

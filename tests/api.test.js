@@ -8,7 +8,8 @@ test('Postgres migrations, authentication, CSRF, persistence and shelf operation
   process.env.SESSION_SECRET = randomBytes(32).toString('hex');
   const { db, pg } = await testDatabase();
   mock.module('../lib/db.js', { namedExports: { getDb: () => db } });
-  const names = ['books', 'admin/login', 'admin/logout', 'admin/me', 'admin/books/index', 'admin/books/[id]', 'admin/books/reorder'];
+  mock.module('../lib/cover-image.js', { namedExports: { fetchCoverImage: async () => ({ type: 'image/jpeg', bytes: Buffer.from([0xff, 0xd8, 0xff, 0xd9]) }) } });
+  const names = ['books', 'books/[id]/cover', 'admin/login', 'admin/logout', 'admin/me', 'admin/books/index', 'admin/books/[id]', 'admin/books/reorder', 'admin/cover'];
   const handlers = Object.fromEntries(await Promise.all(names.map(async name => [name, (await import(`../api/${name}.js`)).default])));
   try {
     const hash = await hashPassword('A test-only password 123!');
@@ -33,6 +34,12 @@ test('Postgres migrations, authentication, CSRF, persistence and shelf operation
     assert.equal(session.token_hash, createHash('sha256').update(raw).digest('hex'));
     assert.equal(JSON.stringify(session).includes(raw), false);
     assert.equal((await request(handlers['admin/me'], { cookie })).status, 200);
+    assert.equal((await request(handlers['admin/books/index'])).status, 401);
+    assert.equal((await request(handlers['admin/books/[id]'], { method: 'PATCH', body: {} })).status, 401);
+    assert.equal((await request(handlers['admin/cover'])).status, 401);
+    assert.equal((await request(handlers['admin/cover'], { method: 'POST', cookie, csrf: false, body: { url: 'https://example.com/cover.jpg' } })).status, 403);
+    const cover = await request(handlers['admin/cover'], { method: 'POST', cookie, body: { url: 'https://example.com/cover.jpg' } });
+    assert.equal(cover.status, 200); assert.equal(cover.headers['content-type'], 'image/jpeg');
     assert.equal((await request(handlers['admin/me'], { cookie: cookie.slice(0, -1) + (cookie.endsWith('A') ? 'B' : 'A') })).status, 401);
     for (let i = 0; i < 4; i++) assert.equal((await login({ username: 'prasid', password: 'wrong password' })).status, 401);
     const locked = await login({ username: 'prasid', password: 'A test-only password 123!' });
@@ -44,6 +51,11 @@ test('Postgres migrations, authentication, CSRF, persistence and shelf operation
     assert.equal(Object.values(publicResult.body.shelves).flat().length, 5);
     assert.match(publicResult.headers['cache-control'], /s-maxage=60, stale-while-revalidate=300/);
     assert.equal('created_at' in publicResult.body.shelves.read[0], false);
+    assert.match(publicResult.body.shelves.read[0].cover_texture_url, /^\/api\/books\/[^/]+\/cover\?face=front&rev=[0-9a-f]{16}$/);
+    const publicCover = await request(handlers['books/[id]/cover'], { id: publicResult.body.shelves.read[0].id });
+    assert.equal(publicCover.status, 200); assert.equal(publicCover.headers['content-type'], 'image/jpeg');
+    assert.equal((await request(handlers['books/[id]/cover'], { id: 'bad' })).status, 400);
+    assert.equal((await request(handlers['books/[id]/cover'], { id: '00000000-0000-0000-0000-000000000000' })).status, 404);
     assert.equal((await request(handlers['admin/books/index'], { method: 'POST', cookie, csrf: false, body: {} })).status, 403);
     for (const bad of [{ spine_color: 'red' }, { cover_url: 'javascript:alert(1)' }, { title: 7 }, { page_count: -1 }, { cover_texture_url: '//evil.com/a.jpg' }, { shelf: 'other' }]) {
       assert.equal((await request(handlers['admin/books/index'], { method: 'POST', cookie, body: { slug: 'bad-book', title: 'Bad', author: 'A', shelf: 'read', ...bad } })).status, 400);

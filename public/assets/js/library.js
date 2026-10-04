@@ -121,6 +121,14 @@ export function renderLibrary(language, { loading = false } = {}) {
     shelfElements.get(book.shelf)?.append(element);
   });
 
+  if (loading && !BOOKS.length) {
+    for (const container of shelfElements.values()) {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'shelf-placeholder'; placeholder.setAttribute('aria-hidden', 'true');
+      container.append(placeholder);
+    }
+  }
+
   const futureSlot = document.createElement("div");
   const futureSlotLabel = document.createElement("span");
   futureSlot.className = "book-slot";
