@@ -32,8 +32,8 @@
   --duration-quick: 120ms;
   --duration-normal: 220ms;
   --duration-pull: 340ms;
-  --lamp-x: 58%;
-  --lamp-y: 14%;
+  --lamp-x: 58vw;
+  --lamp-y: 14vh;
   --light-x: var(--lamp-x);
   --light-y: var(--lamp-y);
   --ink: var(--room-850);

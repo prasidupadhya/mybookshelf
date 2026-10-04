@@ -5,6 +5,7 @@ import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookpl
 import { applyLanguage } from "./language.js";
 import { renderLibrary } from "./library.js";
 import { cancelBookSelection, initMotion, selectBook } from "./motion.js";
+import { initAtmosphere } from "./atmosphere.js";
 
 const bookcase = document.querySelector("[data-bookcase]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
@@ -52,6 +53,7 @@ applyLanguage(activeLanguage);
 initBookplate(activeLanguage);
 initClock(activeLanguage);
 initMotion();
+initAtmosphere();
 
 function updateBooks(books) {
   // A background refresh must not replace a book while its detail view is open.
