@@ -85,16 +85,26 @@ function showCover(book) {
 
   viewerRoot.style.setProperty("--cover-aspect", book.coverAspect);
   bookplateCover.onload = () => viewerRoot.style.setProperty("--cover-aspect", bookplateCover.naturalWidth / bookplateCover.naturalHeight);
-  bookplateCover.src = book.coverUrl;
+  if (book.coverUrl) bookplateCover.src = book.coverUrl;
+  else bookplateCover.onerror();
+  const back = viewerRoot.querySelector('.bookplate__book-back');
+  back.replaceChildren();
+  if (book.backCoverUrl) {
+    const image = document.createElement('img'); image.src = book.backCoverUrl;
+    image.alt = ''; image.className = 'book__back-cover'; image.onerror = () => image.remove();
+    back.append(image);
+  }
 }
 
 function populateBookplate(book) {
   bookplateTitle.textContent = book.title[activeLanguage];
   bookplateAuthor.textContent = book.author;
   bookplatePages.textContent = `${book.pageCount} ${UI_COPY[activeLanguage].pages}`;
+  bookplatePages.hidden = !book.pageCount;
   bookplateDescription.textContent = book.description[activeLanguage];
   bookplateLink.textContent = UI_COPY[activeLanguage].readOnGoodreads;
-  bookplateLink.href = book.url;
+  bookplateLink.hidden = !book.url;
+  if (book.url) bookplateLink.href = book.url; else bookplateLink.removeAttribute('href');
   bookplateClose.setAttribute("aria-label", UI_COPY[activeLanguage].closeDetails);
   bookplateCoverFallbackLabel.textContent = UI_COPY[activeLanguage].coverUnavailable;
   bookplateCard.style.setProperty("--plate-accent", book.accentColor);

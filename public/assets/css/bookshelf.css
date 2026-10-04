@@ -169,7 +169,7 @@
       z-index: 0;
       border: 0;
       border-radius: 0;
-      background: var(--book-binding, var(--book-back, var(--book-accent)));
+      background: var(--book-back, var(--book-binding, var(--book-accent)));
       box-shadow: inset 1px 0 rgba(255,255,255,.1), inset -2px 0 rgba(0,0,0,.12);
       transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
     }

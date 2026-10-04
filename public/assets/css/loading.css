@@ -1,0 +1,6 @@
+/* The skeleton uses real snapshot dimensions; finished books use the original shelf CSS. */
+.book.is-loading { cursor: progress; pointer-events: none; }
+.book.is-loading .book__cover, .book.is-loading .book__spine-label { visibility: hidden; }
+.book.is-loading .book__front { background: color-mix(in srgb, var(--shelf-label) 16%, var(--bookcase-surface)); }
+.book__back-cover { display: block; width: 100%; height: 100%; object-fit: contain; }
+.collection-status { color: var(--muted-text); font-size: .9rem; }

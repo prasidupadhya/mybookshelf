@@ -31,6 +31,7 @@ export function createBookViewer(root, book, language) {
   let renderer = null;
   let scene, camera, model, shadow;
   let fitDistance = 7;
+  let bookRadius = 1.48;
   let slowFrames = 0;
   let contextLost = false;
   let textureFailed = false;
@@ -72,7 +73,9 @@ export function createBookViewer(root, book, language) {
     const depth = THREE.MathUtils.clamp(.12 + book.pageCount * .00065, .17, .38);
     const bindingColor = book.spineColor ?? book.accentColor;
     const binding = material({ color: bindingColor });
+    const backBinding = book.backColor && book.backColor !== bindingColor ? material({ color: book.backColor }) : binding;
     const width = 2.4 * (book.coverAspect || .625);
+    bookRadius = Math.max(1.48, Math.hypot(width / 2, 1.2, depth / 2));
     const paperMap = canvasTexture(128, 256, (ctx, w, h) => {
       ctx.fillStyle = '#eee7d7'; ctx.fillRect(0, 0, w, h);
       for (let y = 0; y < h; y += 3) {
@@ -90,7 +93,7 @@ export function createBookViewer(root, book, language) {
     // A single material keeps spine, back and the exposed cover-board edges identical.
     addBox(width - .03, 2.36, depth, [paper, binding, top, top, paper, paper]);
     addBox(width, 2.4, .026, binding, 0, depth / 2 + .013);
-    addBox(width, 2.4, .026, binding, 0, -depth / 2 - .013);
+    addBox(width, 2.4, .026, backBinding, 0, -depth / 2 - .013);
     addBox(.03, 2.4, depth + .052, binding, -width / 2 + .015);
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
@@ -122,7 +125,7 @@ export function createBookViewer(root, book, language) {
         ctx.fillText(spineAuthor, h / 2 - 70, 0);
       }
       ctx.font = '600 52px Georgia'; ctx.textAlign = 'left';
-      ctx.fillText(book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
+      ctx.fillText(book.spineTitle || book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
     });
     const spine = new THREE.Mesh(track(new THREE.PlaneGeometry(depth + .05, 2.38)), material({ map: spineMap }));
     spine.rotation.y = -Math.PI / 2; spine.position.x = -width / 2 - .001; model.add(spine);
@@ -139,7 +142,7 @@ export function createBookViewer(root, book, language) {
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.52; scene.add(shadow);
 
     // Fetch is abortable; GPU textures are bounded and never allocated after close.
-    fetch(book.coverTextureUrl ?? book.coverUrl, { signal: abort.signal, mode: 'cors' })
+    if (book.coverUrl) fetch(book.coverTextureUrl ?? book.coverUrl, { signal: abort.signal, mode: 'cors' })
       .then(response => { if (!response.ok) throw new Error('Cover unavailable'); return response.blob(); })
       .then(blob => createImageBitmap(blob))
       .then(bitmap => {
@@ -152,14 +155,27 @@ export function createBookViewer(root, book, language) {
           ctx.drawImage(bitmap, 0, 0, w, h);
         });
         model.scale.x = aspect / (book.coverAspect || .625);
+        bookRadius = Math.max(1.48, Math.hypot(1.2 * aspect, 1.2, depth / 2));
         bitmap.close();
         frontMaterial.map = map; frontMaterial.needsUpdate = true;
         titleMap.dispose(); resources.delete(titleMap);
-        invalidate();
+        resize(); invalidate();
       }).catch(error => {
         if (disposed || error.name === 'AbortError') return;
         textureFailed = true; status.textContent = copy.coverUnavailable;
       });
+    if (book.backCoverUrl) {
+      const backMaterial = material({ color: '#ffffff', roughness: .76 });
+      const back = new THREE.Mesh(track(new THREE.PlaneGeometry(width, 2.4)), backMaterial);
+      back.rotation.y = Math.PI; back.position.z = -depth / 2 - .027;
+      fetch(book.backCoverUrl, { signal: abort.signal, mode: 'cors' }).then(response => {
+        if (!response.ok) throw new Error('Back cover unavailable'); return response.blob();
+      }).then(blob => createImageBitmap(blob)).then(bitmap => {
+        if (disposed) { bitmap.close(); return; }
+        backMaterial.map = canvasTexture(Math.round(768 * (book.coverAspect || .625)), 768, (ctx, w, h) => ctx.drawImage(bitmap, 0, 0, w, h));
+        bitmap.close(); backMaterial.needsUpdate = true; model.add(back); invalidate();
+      }).catch(() => { /* A missing back image retains the chosen back color. */ });
+    }
   }
 
   function setAutoRotate(value) {
@@ -188,7 +204,7 @@ export function createBookViewer(root, book, language) {
       camera.aspect = width / height;
       // Fit a bounding sphere, so even the corners stay in view on a full turn.
       const halfFov = Math.min(Math.PI / 10, Math.atan(Math.tan(Math.PI / 10) * camera.aspect));
-      fitDistance = 1.48 / Math.sin(halfFov) * 1.08;
+      fitDistance = bookRadius / Math.sin(halfFov) * 1.08;
       camera.updateProjectionMatrix();
     }
     invalidate();

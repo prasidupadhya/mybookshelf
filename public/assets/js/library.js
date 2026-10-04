@@ -1,42 +1,7 @@
 import { BOOKS, SHELVES, UI_COPY } from "./data.js";
-
-const MIN_SPINE_WIDTH = 52;
-const MAX_SPINE_WIDTH = 112;
-const SPINE_BASE_WIDTH = 46;
-const SPINE_WIDTH_PER_PAGE = 0.18;
+import { getBookThickness, getReadableInk } from "./book-appearance.js";
 
 const bookcase = document.querySelector("[data-bookcase]");
-
-function getSpineWidth(pageCount) {
-  const scaledWidth = SPINE_BASE_WIDTH + pageCount * SPINE_WIDTH_PER_PAGE;
-  return Math.round(Math.min(MAX_SPINE_WIDTH, Math.max(MIN_SPINE_WIDTH, scaledWidth)));
-}
-
-function getRelativeLuminance(hexColor) {
-  const channels = [1, 3, 5].map((index) => {
-    const value = Number.parseInt(hexColor.slice(index, index + 2), 16) / 255;
-    return value <= 0.04045
-      ? value / 12.92
-      : ((value + 0.055) / 1.055) ** 2.4;
-  });
-
-  return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
-}
-
-function getContrastRatio(colorA, colorB) {
-  const lighter = Math.max(getRelativeLuminance(colorA), getRelativeLuminance(colorB));
-  const darker = Math.min(getRelativeLuminance(colorA), getRelativeLuminance(colorB));
-  return (lighter + 0.05) / (darker + 0.05);
-}
-
-function getReadableInk(backgroundColor) {
-  const darkInk = "#17110f";
-  const lightInk = "#fff8e8";
-
-  return getContrastRatio(backgroundColor, darkInk) >= getContrastRatio(backgroundColor, lightInk)
-    ? darkInk
-    : lightInk;
-}
 
 function createShelf({ id }, language) {
   const section = document.createElement("section");
@@ -59,7 +24,7 @@ function createShelf({ id }, language) {
   return { section, booksContainer };
 }
 
-function createBookSpine(book, index, language) {
+export function createBookSpine(book, index, language) {
   const button = document.createElement("button");
   const front = document.createElement("span");
   const back = document.createElement("span");
@@ -72,8 +37,7 @@ function createBookSpine(book, index, language) {
   const coverFallback = document.createElement("span");
   const title = document.createElement("span");
   const author = document.createElement("span");
-  const spineWidth = getSpineWidth(book.pageCount);
-  const bookThickness = Math.round(18 + ((spineWidth - MIN_SPINE_WIDTH) / (MAX_SPINE_WIDTH - MIN_SPINE_WIDTH)) * 14);
+  const bookThickness = getBookThickness(book.pageCount);
   const localizedTitle = book.title[language];
 
   button.className = "book";
@@ -87,12 +51,12 @@ function createBookSpine(book, index, language) {
   button.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
   button.style.setProperty("--book-back", book.backColor ?? book.accentColor);
   button.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
-  button.style.setProperty("--book-ink", getReadableInk(book.spineColor ?? book.accentColor));
+  button.style.setProperty("--book-ink", book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
   button.style.setProperty("--cover-aspect", book.coverAspect);
   button.setAttribute(
     "aria-label",
-    `${localizedTitle} — ${book.author}, ${book.pageCount} ${UI_COPY[language].pages}`
+    `${localizedTitle} — ${book.author}${book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : ''}`
   );
 
   front.className = "book__front";
@@ -104,7 +68,6 @@ function createBookSpine(book, index, language) {
   [back, spine, foreEdge, topEdge, bottomEdge].forEach((face) => face.setAttribute("aria-hidden", "true"));
 
   cover.className = "book__cover";
-  cover.src = book.coverUrl;
   cover.alt = "";
   cover.loading = "lazy";
   cover.decoding = "async";
@@ -119,9 +82,16 @@ function createBookSpine(book, index, language) {
     coverFallback.hidden = false;
     cover.removeAttribute("src");
   };
+  if (book.coverUrl) cover.src = book.coverUrl;
+  else { cover.hidden = true; coverFallback.hidden = false; }
+  if (book.backCoverUrl) {
+    const backCover = document.createElement('img'); backCover.src = book.backCoverUrl;
+    backCover.alt = ''; backCover.className = 'book__back-cover'; backCover.loading = 'lazy';
+    backCover.onerror = () => backCover.remove(); back.append(backCover);
+  }
 
   title.className = "book__title";
-  title.textContent = localizedTitle;
+  title.textContent = book.spineTitle || localizedTitle;
   author.className = "book__author";
   author.textContent = book.spineAuthor ?? book.author;
 
@@ -134,17 +104,10 @@ function createBookSpine(book, index, language) {
   return button;
 }
 
-export function renderLibrary(language) {
+export function renderLibrary(language, { loading = false } = {}) {
   bookcase.replaceChildren();
   const shelfElements = new Map();
-  const orderedShelves = SHELVES
-    .map((shelf) => ({
-      ...shelf,
-      order: Math.min(
-        ...BOOKS.filter((book) => book.shelf === shelf.id).map((book) => book.shelfOrder)
-      )
-    }))
-    .sort((a, b) => a.order - b.order);
+  const orderedShelves = SHELVES;
 
   orderedShelves.forEach((shelf) => {
     const { section, booksContainer } = createShelf(shelf, language);
@@ -153,7 +116,9 @@ export function renderLibrary(language) {
   });
 
   BOOKS.forEach((book, index) => {
-    shelfElements.get(book.shelf)?.append(createBookSpine(book, index, language));
+    const element = createBookSpine(book, index, language);
+    element.classList.toggle('is-loading', loading); element.disabled = loading;
+    shelfElements.get(book.shelf)?.append(element);
   });
 
   const futureSlot = document.createElement("div");
@@ -163,6 +128,7 @@ export function renderLibrary(language) {
   futureSlotLabel.textContent = UI_COPY[language].nextBook;
   futureSlot.append(futureSlotLabel);
   shelfElements.get("want")?.append(futureSlot);
+  bookcase.setAttribute('aria-busy', String(loading));
 }
 
 export function getSpineByIndex(index) {
