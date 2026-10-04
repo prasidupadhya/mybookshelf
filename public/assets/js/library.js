@@ -23,8 +23,11 @@ function createShelf({ id }, language, count, loading) {
   label.textContent = UI_COPY[language].shelves[id];
   const tally = document.createElement('span');
   tally.className = 'shelf__count';
-  tally.textContent = loading ? '—' : String(count).padStart(2, '0');
-  tally.setAttribute('aria-label', loading ? UI_COPY[language].loading : `${count} ${UI_COPY[language].books}`);
+  const number = document.createElement('span'); number.setAttribute('aria-hidden', 'true');
+  number.textContent = loading ? '—' : String(count).padStart(2, '0');
+  const accessibleCount = document.createElement('span'); accessibleCount.className = 'visually-hidden';
+  accessibleCount.textContent = loading ? UI_COPY[language].loading : `${count} ${count === 1 ? UI_COPY[language].book : UI_COPY[language].books}`;
+  tally.append(number, accessibleCount);
   heading.append(catalogue, label, tally);
 
   booksContainer.className = "shelf__books";
@@ -67,10 +70,10 @@ export function createBookSpine(book, index, language) {
   // A stable, restrained lean: never changes on a language switch or refresh.
   const hash = [...book.id].reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) >>> 0, 0);
   button.style.setProperty('--book-lean', `${hash % 4 === 0 ? -1.1 : hash % 4 === 1 ? .85 : 0}deg`);
-  button.setAttribute(
-    "aria-label",
-    `${localizedTitle} — ${book.author}${book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : ''}`
-  );
+  const visibleLabel = `${book.spineTitle || localizedTitle} ${book.spineAuthor ?? book.author}`.trim();
+  const fullLabel = visibleLabel === `${localizedTitle} ${book.author}`
+    ? visibleLabel : `${visibleLabel} (${localizedTitle} — ${book.author})`;
+  button.setAttribute('aria-label', `${fullLabel}${book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : ''}`);
 
   front.className = "book__front";
   back.className = "book__face book__back";
@@ -82,10 +85,20 @@ export function createBookSpine(book, index, language) {
 
   cover.className = "book__cover";
   cover.alt = "";
-  cover.loading = "lazy";
+  cover.loading = index === 0 ? 'eager' : 'lazy';
+  cover.fetchPriority = index === 0 ? 'high' : 'auto';
   cover.decoding = "async";
   cover.draggable = false;
-  // The API's stored natural aspect reserves the correct width before loading.
+  // Reserve the API's natural aspect; correct genuinely different artwork
+  // without moving correctly measured covers as their images finish loading.
+  cover.onload = () => {
+    const aspect = cover.naturalWidth / cover.naturalHeight;
+    if (Math.abs(aspect - book.coverAspect) <= .01) return;
+    button.style.setProperty('--cover-aspect', aspect);
+    if (aspect > Number(bookcase.style.getPropertyValue('--largest-cover-aspect'))) {
+      bookcase.style.setProperty('--largest-cover-aspect', String(aspect));
+    }
+  };
 
   coverFallback.className = "book__cover-fallback";
   coverFallback.hidden = true;
@@ -110,7 +123,7 @@ export function createBookSpine(book, index, language) {
 
   spineLabel.className = "book__spine-label";
   spineLabel.append(title);
-  if (author.textContent) spineLabel.append(author);
+  if (author.textContent) spineLabel.append(' ', author);
   spine.append(spineLabel);
   front.append(cover, coverFallback);
   button.append(back, spine, foreEdge, topEdge, bottomEdge, front);
@@ -125,6 +138,7 @@ export function createBookSpine(book, index, language) {
 
 export function renderLibrary(language, { loading = false } = {}) {
   bookcase.replaceChildren();
+  bookcase.style.setProperty('--largest-cover-aspect', String(Math.max(.625, ...BOOKS.map(book => book.coverAspect))));
   const shelfElements = new Map();
   const orderedShelves = SHELVES;
 

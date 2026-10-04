@@ -31,6 +31,8 @@
 .book-viewer.is-ready canvas { opacity: 1; }
 .book-viewer.is-webgl .bookplate__cover-frame { visibility: hidden; }
 .book-viewer .bookplate__cover-frame {
+  --book-depth: var(--viewer-depth, 24px);
+  --book-half-depth: calc(var(--book-depth) / 2);
   --book-cover-border: 0px;
   width: auto;
   height: 210px;

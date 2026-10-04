@@ -1,8 +1,19 @@
 # My Bookshelf
 
-A vanilla HTML/CSS/JavaScript bookshelf, deployed on Vercel with Neon Postgres. The public shelf keeps its existing wooden design, EN/ES copy, light/dark themes, CSS 3D books and lazy-loaded Three.js detail viewer. There is no frontend framework or build step.
+A vanilla HTML/CSS/JavaScript bookshelf, deployed on Vercel with Neon Postgres. Its Reading Room design keeps the wooden bookcase, EN/ES copy, light/dark themes, CSS 3D books and lazy-loaded Three.js detail viewer. There is no frontend framework or build step.
 
 Book records live only in Neon. No edition list, seed records, cover files or public JSON snapshot are checked into the current tree. `data.js` contains interface copy and shelf definitions only. Older Git commits still contain the former static library; deleting current files does not rewrite repository history.
+
+## Reading Room features
+
+- Deep green evening light and warm morning paper, with shared OKLCH color tokens. A small composited lamp follows a fine mouse pointer in the dark theme; touch devices use fixed light. The static grain and decorative motion simplify under reduced motion.
+- Self-hosted Fraunces for titles, Public Sans for reading/UI, and IBM Plex Mono for catalogue metadata. Fraunces gives the room a literary voice, while Public Sans keeps controls and long descriptions quiet. The subsetted WOFF2 files include Spanish punctuation and accented letters, use `font-display: swap`, and preload only the display face.
+- Numbered shelf headings with accessible counts, bilingual empty slots, deeper wooden ledges, stable subtle book leans and a decorative cloth bookmark for currently reading books. Natural cover proportions, paper edges, page-count thickness and the 340ms pull-out remain intact.
+- An ex-libris bookplate with a comfortable description measure and a text link to Goodreads. Supported browsers morph the selected cover with same-document View Transitions; other browsers retain the clicked-book-origin animation. Focus trapping, Escape, outside-click dismissal and focus return are preserved.
+- A freely rotatable Three.js book with drag/inertia, pinch/wheel zoom, keyboard controls, Reset/Spin and the existing CSS-solid fallback. Three.js is fetched only when a preview opens, and its resources are disposed on close.
+- A compact bilingual header, system-aware theme toggle, signature colophon and live clock. Administration shares the typography and surfaces without the lamp or grain.
+
+The redesign adds no runtime dependencies and does not change the schema, API contracts, authentication or administration logic. Its measurements, contrast table and review limits are recorded in [the Reading Room review](docs/reading-room-review.md).
 
 ## Architecture
 
@@ -16,12 +27,16 @@ config/security.js          Shared security headers and CSP
 lib/                        Parameterized queries, validation, auth and image handling
 db/schema.sql               Idempotent tables, indexes and database functions
 scripts/                    Migration, private import/export and admin setup
-public/index.html           Existing public bookshelf
+public/index.html           Public Reading Room and data-free loading cabinet
 public/admin/index.html     Separate private administration interface
-public/assets/js/           Vanilla public scripts and lazy 3D viewer
+public/assets/css/          Shared tokens/fonts and public component styles
+public/assets/js/           Vanilla public scripts, atmosphere and lazy 3D viewer
 public/assets/admin/        Admin scripts and styling
+public/assets/fonts/        Spanish-capable subsetted WOFF2 fonts and licenses
+public/assets/images/       Signature outlines and their font license
 public/assets/vendor/three/ Local, lazy-loaded Three.js engine
 tests/                      Disposable Postgres-compatible fixtures and security tests
+docs/reading-room-review.md Visual, accessibility and performance review
 ```
 
 Only `@neondatabase/serverless` is a production npm dependency. Node.js 22 is specified for the API. PGlite is a development dependency used to test the real SQL and transactions without contacting production.
@@ -140,7 +155,7 @@ All fields are validated server-side: types, length limits, HTTP(S)-only URLs, s
 
 The public collection uses `s-maxage=60, stale-while-revalidate=300`. The public page uses a minute-specific cache key and refreshes at minute boundaries and on returning to the tab, making admin changes visible within about a minute without redeployment or cache purge. Refresh waits until an open bookplate closes, preserving its content and focus.
 
-Per the final database-only requirement, there is **no checked-in snapshot fallback**. Initial requests show generic skeletons with no edition data. An initial outage shows a localized unavailable message and Retry button; a failed later refresh keeps the last database response in memory. Empty databases display the three existing shelf bays. Cover download/WebGL failures preserve book details and use the existing cover/CSS 3D fallback.
+Per the final database-only requirement, there is **no checked-in snapshot fallback**. Initial requests show generic skeletons with no edition data. An initial outage shows a localized unavailable message and Retry button; a failed later refresh keeps the last database response in memory. Empty databases display the three shelf bays with bilingual empty-state copy. Cover download/WebGL failures preserve book details and use the existing cover/CSS 3D fallback. The Reading Room redesign leaves this outage policy unchanged.
 
 ## Verification
 
@@ -148,8 +163,10 @@ Per the final database-only requirement, there is **no checked-in snapshot fallb
 npm test
 ```
 
-Tests apply the SQL migration twice to disposable Postgres-compatible databases, then check authentication, generic login errors, lockout expiry, cookie flags/token hashes, session expiry/logout, every unauthenticated admin route, CSRF, validation, create/edit/move/mark-read/reorder/delete persistence, and cover-relay SSRF defenses. Fixtures are fictional; they contain no current library records or production account credentials.
+Tests apply the SQL migration twice to disposable Postgres-compatible databases, then check authentication, generic login errors, lockout expiry, cookie flags/token hashes, session expiry/logout, every unauthenticated admin route, CSRF, validation, create/edit/move/mark-read/reorder/delete persistence, and cover-relay SSRF defenses. Appearance tests exercise 4,913 binding colors to check that automatically chosen black/white spine ink meets AA. Fixtures are fictional; they contain no current library records or production account credentials.
 
-Migration verification compared every imported editable field with the private original source, including EN/ES metadata and appearance. Browser review covers the existing public design and lazy 3D preview, admin layout/focus, live rotation during edits, automatic cover colors, both themes, keyboard controls and mobile/tablet/desktop widths. Real Neon-backed API checks also confirm persistence and remove temporary verification records afterward.
+Migration verification compared every imported editable field with the private original source, including EN/ES metadata and appearance. Reading Room browser review covers 320, 768, 1024 and 1440px, both languages/themes, reduced motion, native/fallback modal transitions, WebGL-unavailable previews, initial API failure and keyboard focus. Admin visual review uses a read-only fixture so it cannot modify the production collection. Earlier backend verification checked Neon persistence and removed its temporary records afterward.
+
+The final local Lighthouse 12.8.2 mobile audits scored **95 Performance / 100 Accessibility** in light mode and **93 / 100** in dark mode, with **CLS 0** and **TBT 0ms** in both. Audits use simulated mobile throttling, not physical-device benchmarks. Total added public JavaScript is **3,172 bytes gzipped** (excluding the unchanged Three.js vendor files); self-hosted WOFF2 fonts total **70,036 bytes**. See the review for the full asset and contrast accounting.
 
 The renderer retains the existing matte lighting and soft ground shadow, uses a small mesh without postprocessing/shadow-map passes, caps touch pixel ratio at 1.5, and reduces it if frames become slow. Updates reuse the canvas and dispose replaced geometry/materials; closing disposes textures, observers, listeners and the WebGL context. Responsive browser checks do not establish performance on physical mid-range mobile hardware.

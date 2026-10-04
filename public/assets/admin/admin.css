@@ -42,7 +42,7 @@ small { display: block; margin-top: 6px; color: var(--muted-text); font-size: .7
 .card-author { margin: 5px 0 0; color: var(--muted-text); font-size: .78rem; line-height: 1.4; overflow-wrap: anywhere; }
 .card-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
 .card-actions .admin-button { padding-inline: 10px; font-size: .76rem; }
-.card-actions select { flex: 1; min-width: 140px; width: auto; font-size: .76rem; }
+.card-actions select { flex: 1; min-width: 140px; width: auto; font-size: 1rem; }
 .card-actions [data-action='up'], .card-actions [data-action='down'] { min-width: 44px; font-size: 1.15rem; }
 .empty-shelf { color: var(--muted-text); font-size: .86rem; line-height: 1.5; }
 .dashboard-note { margin-top: 24px; }

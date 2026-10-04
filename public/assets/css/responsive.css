@@ -9,7 +9,7 @@
   .bookcase::before { left: -7px; }
   .bookcase::after { right: -7px; }
   .shelf { margin-bottom: 32px; }
-  .shelf__books { --book-height: 172px; min-height: 0; column-gap: 26px; padding: 32px 18px 24px; }
+  .shelf__books { --book-height: min(172px, calc((100vw - 120px) / var(--largest-cover-aspect, .625))); min-height: 0; column-gap: 26px; padding: 32px 18px 24px; }
   .shelf__books::after { bottom: 0; }
   .bookplate { padding: 12px; }
   .bookplate__card { min-height: 0; max-height: calc(100dvh - 24px); padding: 40px 28px; gap: 24px; grid-template-columns: minmax(180px, .75fr) minmax(0, 1.3fr); }
@@ -25,7 +25,7 @@
   .bookplate__close { top: 10px; right: 10px; }
 }
 @media (max-width: 520px) {
-  .shelf__books { --book-height: 150px; }
+  .shelf__books { --book-height: min(150px, calc((100vw - 110px) / var(--largest-cover-aspect, .625))); }
   .library-footer { flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
   .library-footer__clock::before { display: none; }
 }

@@ -41,7 +41,21 @@
       </div>
     </header>
 
-    <main class="bookcase" data-bookcase aria-label="Personal book collection"></main>
+    <main class="bookcase" data-bookcase aria-label="Personal book collection" aria-busy="true">
+      <!-- Reserve the cabinet before modules load; these shapes contain no book data. -->
+      <section class="shelf" data-shelf="current" aria-labelledby="current-label">
+        <h2 class="shelf__label" id="current-label"><span class="shelf__number" aria-hidden="true">I</span><span>Currently reading</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
+        <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+      </section>
+      <section class="shelf" data-shelf="want" aria-labelledby="want-label">
+        <h2 class="shelf__label" id="want-label"><span class="shelf__number" aria-hidden="true">II</span><span>Want to read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
+        <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+      </section>
+      <section class="shelf" data-shelf="read" aria-labelledby="read-label">
+        <h2 class="shelf__label" id="read-label"><span class="shelf__number" aria-hidden="true">III</span><span>Read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
+        <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+      </section>
+    </main>
 
     <footer class="library-footer">
       <span class="library-footer__identity">

@@ -28,7 +28,8 @@ export function setViewerLanguage(root, book, language) {
   root.querySelector('[data-viewer-controls]').setAttribute('aria-label', copy.controls);
   root.querySelectorAll('[data-viewer-action]').forEach(button => {
     const action = button.dataset.viewerAction;
-    button.setAttribute('aria-label', copy[action]);
+    const short = action === 'reset' ? copy.resetShort : action === 'spin' ? copy.spinStart : copy[action];
+    button.setAttribute('aria-label', short === copy[action] ? short : `${short}: ${copy[action]}`);
     button.title = copy[action];
     if (action === 'reset') button.textContent = copy.resetShort;
     if (action === 'spin') button.textContent = copy.spinStart;

@@ -14,8 +14,8 @@ test('Database records preserve localized fields, proportions, colors and paper 
   assert.equal(books[0].backColor, books[0].spineColor);
   assert.equal(getBookThickness(100), 21);
   assert(getBookThickness(500) > getBookThickness(100));
-  assert.equal(getReadableInk('#111111'), '#fff8e8');
-  assert.equal(getReadableInk('#ffffff'), '#17110f');
+  assert.equal(getReadableInk('#111111'), '#ffffff');
+  assert.equal(getReadableInk('#ffffff'), '#000000');
   const bad = structuredClone(payload); bad.shelves.read[0].goodreads_url = 'javascript:alert(1)';
   assert.throws(() => normalizeBooks(bad));
   const duplicate = structuredClone(payload); duplicate.shelves.read[0].slug = duplicate.shelves.read[1].slug;

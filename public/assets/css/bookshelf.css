@@ -57,7 +57,7 @@
     }
 
     .shelf__books {
-      --book-height: 198px;
+      --book-height: min(198px, calc((100vw - 128px) / var(--largest-cover-aspect, .625)));
       --shelf-row-height: var(--book-height);
       --shelf-row-gap: 40px;
       min-height: 224px;
@@ -109,7 +109,7 @@
       height: 22px;
       background:
         linear-gradient(180deg, var(--wood-highlight), transparent 30%, rgba(0,0,0,.24)),
-        repeating-linear-gradient(2deg, var(--wood-500) 0 5px, var(--walnut) 6px 10px, var(--wood-700) 11px 16px);
+        linear-gradient(2deg, var(--wood-500), var(--walnut) 60%, var(--wood-700));
       border-top: 1px solid rgba(234, 223, 202, .11);
       border-bottom: 4px solid var(--wood-700);
       box-shadow: 0 12px 18px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.08);

@@ -45,7 +45,7 @@
   --page-bg-middle: var(--room-900);
   --page-bg-end: var(--room-950);
   --page-text: oklch(0.94374 0.02500 89.21);
-  --muted-text: oklch(0.81948 0.02742 111.64);
+  --muted-text: oklch(0.87866 0.02564 102.01);
   --control-muted: var(--muted-text);
   --control-active: var(--page-text);
   --bookcase-surface: oklch(0.24339 0.02561 165.10);
@@ -58,7 +58,7 @@
   --slot-border-bottom: oklch(.77 .04 85 / .25);
   --slot-text: var(--muted-text);
   --slot-bg: oklch(.1 .01 165 / .12);
-  --footer-text: oklch(0.78493 0.02770 111.67);
+  --footer-text: oklch(0.87866 0.02564 102.01);
   --focus-ring: var(--brass-300);
   --grain-opacity: .045;
   --grain-blend: soft-light;
@@ -66,7 +66,7 @@
   --raised-surface: var(--room-800);
   --divider: oklch(.66 .035 105 / .3);
   --theme-control-bg: var(--room-850);
-  --theme-control-border: oklch(.73 .04 90 / .45);
+  --theme-control-border: oklch(0.63514 0.04863 129.95);
   --theme-control-hover: var(--room-800);
   --ambient-light: oklch(.82 .095 78 / .12);
   --ambient-shadow: oklch(.08 .01 160 / .4);
@@ -94,9 +94,9 @@ html[data-theme="light"] {
   --page-bg-middle: var(--paper-100);
   --page-bg-end: var(--paper-200);
   --page-text: oklch(0.32065 0.03715 161.58);
-  --muted-text: oklch(0.43658 0.02867 145.06);
+  --muted-text: oklch(0.34051 0.03987 149.78);
   --control-active: var(--page-text);
-  --bookcase-surface: oklch(0.86856 0.03696 82.17);
+  --bookcase-surface: oklch(0.88954 0.03913 83.82);
   --bookcase-border: oklch(.46 .055 70 / .4);
   --bookcase-shadow: oklch(.3 .05 65 / .16);
   --shelf-bay-top: oklch(.39 .05 67 / .1);
@@ -104,7 +104,7 @@ html[data-theme="light"] {
   --slot-border: oklch(.39 .04 80 / .42);
   --slot-border-bottom: oklch(.39 .04 80 / .3);
   --slot-bg: oklch(.98 .02 86 / .3);
-  --footer-text: oklch(0.43965 0.03118 141.63);
+  --footer-text: oklch(0.34051 0.03987 149.78);
   --focus-ring: var(--brass-600);
   --grain-opacity: .035;
   --grain-blend: multiply;
@@ -113,7 +113,7 @@ html[data-theme="light"] {
   --divider: oklch(.48 .045 77 / .3);
   --brass: var(--brass-600);
   --theme-control-bg: var(--paper-100);
-  --theme-control-border: oklch(.48 .045 77 / .45);
+  --theme-control-border: oklch(0.57992 0.04060 86.11);
   --theme-control-hover: var(--paper-50);
   --ambient-light: oklch(.99 .055 90 / .48);
   --ambient-shadow: oklch(.32 .055 65 / .16);
