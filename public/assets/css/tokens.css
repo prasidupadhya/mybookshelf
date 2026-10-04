@@ -1,75 +1,126 @@
-  :root {
-      --ink: #17251f;
-      --ink-deep: #0f1b17;
-      --walnut: #6b432b;
-      --parchment: #eadfca;
-      --brass: #b99a5b;
-      --page-bg-start: #12211b;
-      --page-bg-middle: #17251f;
-      --page-bg-end: #0f1c18;
-      --page-text: #f4ead8;
-      --muted-text: #b8ad98;
-      --control-muted: #817d70;
-      --control-active: #eadfca;
-      --bookcase-surface: #13231d;
-      --bookcase-border: rgba(185, 154, 91, .16);
-      --bookcase-shadow: rgba(0, 0, 0, .36);
-      --shelf-label: #eadfca;
-      --shelf-bay-top: rgba(0,0,0,.26);
-      --shelf-bay-side: rgba(0,0,0,.2);
-      --slot-border: rgba(234, 223, 202, .26);
-      --slot-border-bottom: rgba(234, 223, 202, .13);
-      --slot-text: rgba(234, 223, 202, .42);
-      --slot-bg: rgba(8, 16, 13, .18);
-      --footer-text: #968c7b;
-      --focus-ring: #e6c77e;
-      --grain-opacity: .22;
-      --grain-blend: soft-light;
-      --theme-control-bg: rgba(234, 223, 202, .035);
-      --theme-control-border: rgba(234, 223, 202, .16);
-      --theme-control-hover: rgba(234, 223, 202, .08);
-      --ambient-light: rgba(230, 199, 126, .16);
-      --ambient-shadow: rgba(0, 0, 0, .42);
-      --wood-highlight: rgba(255, 231, 190, .16);
-      --wood-shadow: rgba(32, 16, 8, .58);
-      --page-edge: #d9ccb1;
-      --page-edge-shadow: #9e8e72;
-      --light-x: 50%;
-      --light-y: 18%;
-    }
+/* The Reading Room: shared color, typography and motion primitives. */
+:root {
+  --room-950: oklch(0.20919 0.01892 171.58); /* #0f1b17 */
+  --room-900: oklch(0.24684 0.02658 166.37); /* #14251e */
+  --room-850: oklch(0.28152 0.03004 163.20); /* #1b2e25 */
+  --room-800: oklch(0.32938 0.03508 162.98); /* #243b30 */
+  --paper-50: oklch(0.97375 0.01672 88.00); /* #fbf6ea */
+  --paper-100: oklch(0.94727 0.02250 87.15); /* #f4eddd */
+  --paper-200: oklch(0.90082 0.03457 84.59); /* #e9ddc5 */
+  --paper-300: oklch(0.82549 0.05068 85.12); /* #d5c4a1 */
+  --wood-400: oklch(0.61265 0.07287 68.65); /* #a17c53 */
+  --wood-500: oklch(0.50305 0.06935 58.13); /* #825a3b */
+  --wood-600: oklch(0.42365 0.06649 51.11); /* #6b432b */
+  --wood-700: oklch(0.32528 0.04981 47.77); /* #492c1d */
+  --brass-300: oklch(0.83251 0.08322 86.37); /* #e0c589 */
+  --brass-600: oklch(0.49952 0.08510 73.70); /* #805b25 */
 
-    html[data-theme="dark"] { color-scheme: dark; }
+  --font-display: "Fraunces", "Reading Serif Fallback", Georgia, serif;
+  --font-ui: "Public Sans", "Reading Sans Fallback", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --type-xs: clamp(.75rem, .73rem + .1vw, .8125rem);
+  --type-sm: clamp(.875rem, .84rem + .15vw, .975rem);
+  --type-body: clamp(1rem, .955rem + .2vw, 1.125rem);
+  --type-step-1: clamp(1.25rem, 1.13rem + .55vw, 1.625rem);
+  --type-step-2: clamp(1.6rem, 1.35rem + 1.1vw, 2.35rem);
+  --type-step-3: clamp(2rem, 1.46rem + 2.4vw, 3.7rem);
+  --type-title: clamp(2.65rem, 1.78rem + 4.15vw, 5.55rem);
+  --space-gutter: clamp(1rem, .55rem + 2.25vw, 3rem);
+  --ease-settle: cubic-bezier(.22, .75, .25, 1);
+  --ease-reveal: cubic-bezier(.16, 1, .3, 1);
+  --ease-press: cubic-bezier(.2, .8, .3, 1);
+  --duration-quick: 120ms;
+  --duration-normal: 220ms;
+  --duration-pull: 340ms;
+  --lamp-x: 58%;
+  --lamp-y: 14%;
+  --light-x: var(--lamp-x);
+  --light-y: var(--lamp-y);
+  --ink: var(--room-850);
+  --ink-deep: var(--room-950);
+  --walnut: var(--wood-600);
+  --parchment: var(--paper-100);
+  --brass: var(--brass-300);
+  --page-bg-start: var(--room-950);
+  --page-bg-middle: var(--room-900);
+  --page-bg-end: var(--room-950);
+  --page-text: oklch(0.94374 0.02500 89.21);
+  --muted-text: oklch(0.81948 0.02742 111.64);
+  --control-muted: var(--muted-text);
+  --control-active: var(--page-text);
+  --bookcase-surface: oklch(0.24339 0.02561 165.10);
+  --bookcase-border: oklch(.68 .06 78 / .25);
+  --bookcase-shadow: oklch(.07 .01 165 / .5);
+  --shelf-label: var(--page-text);
+  --shelf-bay-top: oklch(.08 .02 160 / .45);
+  --shelf-bay-side: oklch(.07 .01 160 / .25);
+  --slot-border: oklch(.77 .04 85 / .4);
+  --slot-border-bottom: oklch(.77 .04 85 / .25);
+  --slot-text: var(--muted-text);
+  --slot-bg: oklch(.1 .01 165 / .12);
+  --footer-text: oklch(0.78493 0.02770 111.67);
+  --focus-ring: var(--brass-300);
+  --grain-opacity: .045;
+  --grain-blend: soft-light;
+  --panel-surface: var(--room-850);
+  --raised-surface: var(--room-800);
+  --divider: oklch(.66 .035 105 / .3);
+  --theme-control-bg: var(--room-850);
+  --theme-control-border: oklch(.73 .04 90 / .45);
+  --theme-control-hover: var(--room-800);
+  --ambient-light: oklch(.82 .095 78 / .12);
+  --ambient-shadow: oklch(.08 .01 160 / .4);
+  --wood-highlight: oklch(.87 .07 80 / .24);
+  --wood-shadow: oklch(.19 .03 50 / .6);
+  --page-edge: var(--paper-200);
+  --page-edge-shadow: var(--paper-300);
+  --plate-bg: var(--paper-100);
+  --plate-text: oklch(0.32441 0.03142 158.66);
+  --plate-muted: oklch(0.45107 0.02783 131.49);
+  --plate-rule: oklch(0.68235 0.05259 85.02);
+  --plate-link: oklch(0.41949 0.05508 155.60);
+  --plate-focus: oklch(0.49952 0.08510 73.70);
+  --link-text: var(--brass-300);
+  --danger-text: oklch(0.89706 0.05831 46.40);
+  --danger-bg: oklch(0.43402 0.10803 27.63);
+  --bookmark: oklch(0.55618 0.13461 34.87);
+}
 
-    html[data-theme="light"] {
-      color-scheme: light;
-      --page-bg-start: #f4ead8;
-      --page-bg-middle: #e9dcc4;
-      --page-bg-end: #ddc9aa;
-      --page-text: #20372e;
-      --muted-text: #625e51;
-      --control-muted: #756f61;
-      --control-active: #263b32;
-      --bookcase-surface: #d8c5a5;
-      --bookcase-border: rgba(99, 70, 42, .24);
-      --bookcase-shadow: rgba(83, 57, 31, .22);
-      --shelf-label: #2f453b;
-      --shelf-bay-top: rgba(83, 58, 36, .13);
-      --shelf-bay-side: rgba(83, 58, 36, .09);
-      --slot-border: rgba(75, 57, 40, .34);
-      --slot-border-bottom: rgba(75, 57, 40, .2);
-      --slot-text: rgba(53, 48, 40, .62);
-      --slot-bg: rgba(255, 250, 238, .22);
-      --footer-text: #655c50;
-      --focus-ring: #315344;
-      --grain-opacity: .12;
-      --grain-blend: multiply;
-      --theme-control-bg: rgba(255, 250, 238, .38);
-      --theme-control-border: rgba(75, 57, 40, .2);
-      --theme-control-hover: rgba(255, 250, 238, .7);
-      --ambient-light: rgba(255, 244, 214, .46);
-      --ambient-shadow: rgba(83, 57, 31, .24);
-      --wood-highlight: rgba(255, 241, 215, .26);
-      --wood-shadow: rgba(66, 39, 20, .4);
-      --page-edge: #eee3cb;
-      --page-edge-shadow: #b9a88a;
-    }
+html[data-theme="dark"] { color-scheme: dark; }
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --page-bg-start: var(--paper-50);
+  --page-bg-middle: var(--paper-100);
+  --page-bg-end: var(--paper-200);
+  --page-text: oklch(0.32065 0.03715 161.58);
+  --muted-text: oklch(0.43658 0.02867 145.06);
+  --control-active: var(--page-text);
+  --bookcase-surface: oklch(0.86856 0.03696 82.17);
+  --bookcase-border: oklch(.46 .055 70 / .4);
+  --bookcase-shadow: oklch(.3 .05 65 / .16);
+  --shelf-bay-top: oklch(.39 .05 67 / .1);
+  --shelf-bay-side: oklch(.3 .04 67 / .07);
+  --slot-border: oklch(.39 .04 80 / .42);
+  --slot-border-bottom: oklch(.39 .04 80 / .3);
+  --slot-bg: oklch(.98 .02 86 / .3);
+  --footer-text: oklch(0.43965 0.03118 141.63);
+  --focus-ring: var(--brass-600);
+  --grain-opacity: .035;
+  --grain-blend: multiply;
+  --panel-surface: var(--paper-100);
+  --raised-surface: var(--paper-50);
+  --divider: oklch(.48 .045 77 / .3);
+  --brass: var(--brass-600);
+  --theme-control-bg: var(--paper-100);
+  --theme-control-border: oklch(.48 .045 77 / .45);
+  --theme-control-hover: var(--paper-50);
+  --ambient-light: oklch(.99 .055 90 / .48);
+  --ambient-shadow: oklch(.32 .055 65 / .16);
+  --wood-highlight: oklch(.96 .04 88 / .35);
+  --wood-shadow: oklch(.3 .04 62 / .34);
+  --page-edge: var(--paper-100);
+  --page-edge-shadow: var(--paper-300);
+  --link-text: oklch(0.41949 0.05508 155.60);
+  --danger-text: oklch(0.43402 0.10803 27.63);
+}

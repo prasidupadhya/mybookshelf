@@ -1,0 +1,38 @@
+@font-face {
+  font-family: "Fraunces";
+  src: url("../fonts/fraunces-es-500.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+/* Match common local fallbacks so late font loads disturb the layout less. */
+@font-face {
+  font-family: "Reading Serif Fallback";
+  src: local("Georgia");
+  size-adjust: 93%;
+  ascent-override: 105.16%;
+  descent-override: 27.42%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Reading Sans Fallback";
+  src: local("Arial");
+  size-adjust: 107%;
+  ascent-override: 88.79%;
+  descent-override: 21.03%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Public Sans";
+  src: url("../fonts/public-sans-es-400-600.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono-es-400.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}

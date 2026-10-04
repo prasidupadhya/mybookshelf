@@ -11,7 +11,7 @@
         radial-gradient(circle at 78% 18%, rgba(234, 223, 202, .035), transparent 34rem),
         linear-gradient(135deg, var(--page-bg-start) 0%, var(--page-bg-middle) 48%, var(--page-bg-end) 100%);
       color: var(--page-text);
-      font-family: "DM Sans", sans-serif;
+      font-family: var(--font-ui);
       text-rendering: optimizeLegibility;
     }
 
