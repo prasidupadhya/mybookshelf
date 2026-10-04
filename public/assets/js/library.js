@@ -114,6 +114,12 @@ export function createBookSpine(book, index, language) {
   spine.append(spineLabel);
   front.append(cover, coverFallback);
   button.append(back, spine, foreEdge, topEdge, bottomEdge, front);
+  if (book.shelf === 'current') {
+    const ribbon = document.createElement('span');
+    ribbon.className = 'book__ribbon';
+    ribbon.setAttribute('aria-hidden', 'true');
+    button.append(ribbon);
+  }
   return button;
 }
 

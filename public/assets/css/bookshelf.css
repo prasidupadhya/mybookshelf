@@ -428,3 +428,18 @@ html[data-theme="light"] .shelf__books::after { box-shadow: 12px 15px 22px oklch
 @media (prefers-reduced-motion: reduce) {
   .book { --book-lean: 0deg !important; }
 }
+.book__ribbon {
+  position: absolute;
+  top: -6px;
+  right: 12%;
+  z-index: 7;
+  width: 8px;
+  height: 29px;
+  pointer-events: none;
+  background: linear-gradient(90deg, oklch(.92 .02 75 / .16), transparent 35%, oklch(.13 .02 45 / .2)), var(--bookmark);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 4px), 0 100%);
+  transform: translateZ(calc(var(--book-half-depth) + 1px));
+}
+@media (prefers-reduced-motion: reduce) {
+  .book__ribbon { background: var(--bookmark); }
+}
