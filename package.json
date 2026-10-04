@@ -1,0 +1,18 @@
+{
+  "name": "mybookshelf-api",
+  "private": true,
+  "type": "module",
+  "engines": { "node": "22.x" },
+  "scripts": {
+    "dev": "node scripts/dev.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed-books.js",
+    "export": "node scripts/export-books.js",
+    "create-admin": "node scripts/create-admin.js",
+    "session-secret": "node scripts/generate-session-secret.js",
+    "configure-admin": "node scripts/configure-admin.js",
+    "test": "node --experimental-test-module-mocks --test --test-concurrency=1 tests/*.test.js"
+  },
+  "dependencies": { "@neondatabase/serverless": "1.2.0" },
+  "devDependencies": { "@electric-sql/pglite": "0.5.8" }
+}
