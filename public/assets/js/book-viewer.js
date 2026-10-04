@@ -36,7 +36,8 @@ export function createBookViewer(root, book, language) {
   let slowFrames = 0;
   let contextLost = false;
   let textureFailed = false;
-  let coverInk = book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor);
+  let coverInk = getReadableInk(book.spineColor ?? book.accentColor);
+  root.style.setProperty('--book-ink', coverInk);
   let textureAbort = null, modelVersion = 0;
   let cachedFront = null, cachedSource = '', cachedAspect = 0;
   const pointers = new Map();
@@ -386,7 +387,8 @@ export function createBookViewer(root, book, language) {
       const keepFront = cachedFront && (nextBook.coverTextureUrl ?? nextBook.coverUrl) === cachedSource;
       for (const resource of resources) if (!keepFront || resource !== cachedFront) { resource.dispose(); resources.delete(resource); }
       if (!keepFront) { cachedFront = null; cachedSource = ''; cachedAspect = 0; }
-      book = nextBook; coverInk = book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor);
+      book = nextBook; coverInk = getReadableInk(book.spineColor ?? book.accentColor);
+      root.style.setProperty('--book-ink', coverInk);
       copy = setViewerLanguage(root, book, language); textureFailed = false;
       if (renderer && !contextLost) { makeModel(); status.textContent = ''; resize(); }
       invalidate();

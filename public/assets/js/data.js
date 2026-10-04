@@ -8,6 +8,9 @@ export const UI_COPY = Object.freeze({
       read: "Read"
     }),
     nextBook: "Next book",
+    books: "books",
+    loading: "Loading books",
+    emptyShelves: Object.freeze({ current: "No book open just yet.", want: "Room for your next read.", read: "Finished books will rest here." }),
     pages: "pages",
     coverUnavailable: "Cover unavailable",
     readOnGoodreads: "Read about it on Goodreads",
@@ -25,6 +28,9 @@ export const UI_COPY = Object.freeze({
       read: "Leídos"
     }),
     nextBook: "Próximo libro",
+    books: "libros",
+    loading: "Cargando libros",
+    emptyShelves: Object.freeze({ current: "Aún no hay un libro abierto.", want: "Un lugar para tu próxima lectura.", read: "Aquí descansarán los libros leídos." }),
     pages: "páginas",
     coverUnavailable: "Portada no disponible",
     readOnGoodreads: "Leer más en Goodreads",

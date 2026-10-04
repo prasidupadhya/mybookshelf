@@ -3,7 +3,7 @@ import { getBookThickness, getReadableInk } from "./book-appearance.js";
 
 const bookcase = document.querySelector("[data-bookcase]");
 
-function createShelf({ id }, language) {
+function createShelf({ id }, language, count, loading) {
   const section = document.createElement("section");
   const heading = document.createElement("h2");
   const booksContainer = document.createElement("div");
@@ -15,7 +15,17 @@ function createShelf({ id }, language) {
 
   heading.className = "shelf__label";
   heading.id = headingId;
-  heading.textContent = UI_COPY[language].shelves[id];
+  const catalogue = document.createElement('span');
+  catalogue.className = 'shelf__number';
+  catalogue.textContent = ['I', 'II', 'III'][SHELVES.findIndex(shelf => shelf.id === id)];
+  catalogue.setAttribute('aria-hidden', 'true');
+  const label = document.createElement('span');
+  label.textContent = UI_COPY[language].shelves[id];
+  const tally = document.createElement('span');
+  tally.className = 'shelf__count';
+  tally.textContent = loading ? '—' : String(count).padStart(2, '0');
+  tally.setAttribute('aria-label', loading ? UI_COPY[language].loading : `${count} ${UI_COPY[language].books}`);
+  heading.append(catalogue, label, tally);
 
   booksContainer.className = "shelf__books";
   booksContainer.dataset.shelfBooks = "";
@@ -51,9 +61,12 @@ export function createBookSpine(book, index, language) {
   button.style.setProperty("--book-spine", book.spineColor ?? book.accentColor);
   button.style.setProperty("--book-back", book.backColor ?? book.accentColor);
   button.style.setProperty("--book-binding", book.spineColor ?? book.accentColor);
-  button.style.setProperty("--book-ink", book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor));
+  button.style.setProperty("--book-ink", getReadableInk(book.spineColor ?? book.accentColor));
   button.style.setProperty("--book-thickness", `${bookThickness}px`);
   button.style.setProperty("--cover-aspect", book.coverAspect);
+  // A stable, restrained lean: never changes on a language switch or refresh.
+  const hash = [...book.id].reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) >>> 0, 0);
+  button.style.setProperty('--book-lean', `${hash % 4 === 0 ? -1.1 : hash % 4 === 1 ? .85 : 0}deg`);
   button.setAttribute(
     "aria-label",
     `${localizedTitle} — ${book.author}${book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : ''}`
@@ -72,7 +85,7 @@ export function createBookSpine(book, index, language) {
   cover.loading = "lazy";
   cover.decoding = "async";
   cover.draggable = false;
-  cover.onload = () => button.style.setProperty("--cover-aspect", cover.naturalWidth / cover.naturalHeight);
+  // The API's stored natural aspect reserves the correct width before loading.
 
   coverFallback.className = "book__cover-fallback";
   coverFallback.hidden = true;
@@ -110,7 +123,8 @@ export function renderLibrary(language, { loading = false } = {}) {
   const orderedShelves = SHELVES;
 
   orderedShelves.forEach((shelf) => {
-    const { section, booksContainer } = createShelf(shelf, language);
+    const count = BOOKS.filter(book => book.shelf === shelf.id).length;
+    const { section, booksContainer } = createShelf(shelf, language, count, loading);
     shelfElements.set(shelf.id, booksContainer);
     bookcase.append(section);
   });
@@ -129,13 +143,23 @@ export function renderLibrary(language, { loading = false } = {}) {
     }
   }
 
+  if (!loading) for (const shelf of SHELVES) {
+    const container = shelfElements.get(shelf.id);
+    if (container.children.length) continue;
+    const empty = document.createElement('div'); empty.className = 'shelf-empty';
+    const slot = document.createElement('div'); slot.className = 'book-slot book-slot--empty';
+    slot.setAttribute('aria-hidden', 'true');
+    const copy = document.createElement('p'); copy.textContent = UI_COPY[language].emptyShelves[shelf.id];
+    empty.append(slot, copy); container.append(empty);
+  }
+
   const futureSlot = document.createElement("div");
   const futureSlotLabel = document.createElement("span");
   futureSlot.className = "book-slot";
   futureSlot.setAttribute("aria-hidden", "true");
   futureSlotLabel.textContent = UI_COPY[language].nextBook;
   futureSlot.append(futureSlotLabel);
-  shelfElements.get("want")?.append(futureSlot);
+  if (!loading && BOOKS.some(book => book.shelf === 'want')) shelfElements.get("want")?.append(futureSlot);
   bookcase.setAttribute('aria-busy', String(loading));
 }
 

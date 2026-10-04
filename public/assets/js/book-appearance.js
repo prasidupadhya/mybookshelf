@@ -14,7 +14,9 @@ function luminance(hex) {
 
 export function getReadableInk(background) {
   const contrast = foreground => (Math.max(luminance(background), luminance(foreground)) + .05) / (Math.min(luminance(background), luminance(foreground)) + .05);
-  return contrast('#17110f') >= contrast('#fff8e8') ? '#17110f' : '#fff8e8';
+  // Black/white guarantee at least 4.58:1 for every valid sRGB binding color.
+  // Stored text colors cannot guarantee this for arbitrary admin choices.
+  return contrast('#000000') >= contrast('#ffffff') ? '#000000' : '#ffffff';
 }
 
 // Quantize sampled edge pixels into color buckets so isolated artwork details do not dominate.
