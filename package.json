@@ -11,6 +11,7 @@
     "create-admin": "node scripts/create-admin.js",
     "session-secret": "node scripts/generate-session-secret.js",
     "configure-admin": "node scripts/configure-admin.js",
+    "sync-vercel-env": "node scripts/sync-vercel-env.js",
     "test": "node --experimental-test-module-mocks --test --test-concurrency=1 tests/*.test.js"
   },
   "dependencies": { "@neondatabase/serverless": "1.2.0" },

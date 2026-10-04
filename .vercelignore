@@ -1,0 +1,6 @@
+.env*
+.local-data/
+.git/
+.agents/
+tests/
+docs/
