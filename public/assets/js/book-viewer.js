@@ -1,5 +1,6 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { setViewerLanguage } from './book-viewer-copy.js';
+import { getReadableInk } from './book-appearance.js';
 
 // No camera panning: rotate the object about its center, with a bounded zoom.
 // Quaternions allow complete turns on all axes without Euler-angle lockups.
@@ -35,7 +36,9 @@ export function createBookViewer(root, book, language) {
   let slowFrames = 0;
   let contextLost = false;
   let textureFailed = false;
-  const coverInk = document.querySelector(`[data-book="${book.id}"]`)?.style.getPropertyValue('--book-ink') || '#fff8e8';
+  let coverInk = book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor);
+  let textureAbort = null, modelVersion = 0;
+  let cachedFront = null, cachedSource = '', cachedAspect = 0;
   const pointers = new Map();
   const orientation = new THREE.Quaternion();
   const initial = new THREE.Quaternion().setFromEuler(new THREE.Euler(-.12, -.4, 0));
@@ -65,6 +68,8 @@ export function createBookViewer(root, book, language) {
   }
 
   function makeModel() {
+    const version = ++modelVersion;
+    textureAbort?.abort(); textureAbort = new AbortController();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(36, 1, .1, 100);
     model = new THREE.Group();
@@ -110,6 +115,12 @@ export function createBookViewer(root, book, language) {
     const front = new THREE.Mesh(track(new THREE.PlaneGeometry(width, 2.4)), frontMaterial);
     front.position.z = depth / 2 + .027;
     model.add(front);
+    if (cachedFront) {
+      frontMaterial.map = cachedFront;
+      model.scale.x = cachedAspect / (book.coverAspect || .625);
+      bookRadius = Math.max(1.48, Math.hypot(1.2 * cachedAspect, 1.2, depth / 2));
+      titleMap.dispose(); resources.delete(titleMap);
+    }
 
     const spineMap = canvasTexture(128, 1024, (ctx, w, h) => {
       ctx.fillStyle = bindingColor; ctx.fillRect(0, 0, w, h);
@@ -121,8 +132,8 @@ export function createBookViewer(root, book, language) {
       let authorWidth = 0;
       if (spineAuthor) {
         ctx.font = '30px sans-serif'; ctx.textAlign = 'right';
-        authorWidth = ctx.measureText(spineAuthor).width;
-        ctx.fillText(spineAuthor, h / 2 - 70, 0);
+        authorWidth = Math.min(ctx.measureText(spineAuthor).width, h * .3);
+        ctx.fillText(spineAuthor, h / 2 - 70, 0, authorWidth);
       }
       ctx.font = '600 52px Georgia'; ctx.textAlign = 'left';
       ctx.fillText(book.spineTitle || book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
@@ -142,11 +153,12 @@ export function createBookViewer(root, book, language) {
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.52; scene.add(shadow);
 
     // Fetch is abortable; GPU textures are bounded and never allocated after close.
-    if (book.coverUrl) fetch(book.coverTextureUrl ?? book.coverUrl, { signal: abort.signal, mode: 'cors' })
+    const coverSource = book.coverTextureUrl ?? book.coverUrl;
+    if (book.coverUrl && !cachedFront) fetch(coverSource, { signal: textureAbort.signal, mode: 'cors' })
       .then(response => { if (!response.ok) throw new Error('Cover unavailable'); return response.blob(); })
       .then(blob => createImageBitmap(blob))
       .then(bitmap => {
-        if (disposed) { bitmap.close(); return; }
+        if (disposed || version !== modelVersion) { bitmap.close(); return; }
         // Fill the entire face; no padding, crop, or colored surround.
         const aspect = bitmap.width / bitmap.height;
         const textureHeight = 768;
@@ -158,20 +170,21 @@ export function createBookViewer(root, book, language) {
         bookRadius = Math.max(1.48, Math.hypot(1.2 * aspect, 1.2, depth / 2));
         bitmap.close();
         frontMaterial.map = map; frontMaterial.needsUpdate = true;
+        cachedFront = map; cachedSource = coverSource; cachedAspect = aspect;
         titleMap.dispose(); resources.delete(titleMap);
         resize(); invalidate();
       }).catch(error => {
-        if (disposed || error.name === 'AbortError') return;
+        if (disposed || version !== modelVersion || error.name === 'AbortError') return;
         textureFailed = true; status.textContent = copy.coverUnavailable;
       });
     if (book.backCoverUrl) {
       const backMaterial = material({ color: '#ffffff', roughness: .76 });
       const back = new THREE.Mesh(track(new THREE.PlaneGeometry(width, 2.4)), backMaterial);
       back.rotation.y = Math.PI; back.position.z = -depth / 2 - .027;
-      fetch(book.backCoverUrl, { signal: abort.signal, mode: 'cors' }).then(response => {
+      fetch(book.backCoverTextureUrl ?? book.backCoverUrl, { signal: textureAbort.signal, mode: 'cors' }).then(response => {
         if (!response.ok) throw new Error('Back cover unavailable'); return response.blob();
       }).then(blob => createImageBitmap(blob)).then(bitmap => {
-        if (disposed) { bitmap.close(); return; }
+        if (disposed || version !== modelVersion) { bitmap.close(); return; }
         backMaterial.map = canvasTexture(Math.round(768 * (book.coverAspect || .625)), 768, (ctx, w, h) => ctx.drawImage(bitmap, 0, 0, w, h));
         bitmap.close(); backMaterial.needsUpdate = true; model.add(back); invalidate();
       }).catch(() => { /* A missing back image retains the chosen back color. */ });
@@ -368,7 +381,18 @@ export function createBookViewer(root, book, language) {
   resize(); render(); root.classList.add('is-ready'); schedule();
 
   return {
+    updateBook(nextBook) {
+      if (disposed) return;
+      const keepFront = cachedFront && (nextBook.coverTextureUrl ?? nextBook.coverUrl) === cachedSource;
+      for (const resource of resources) if (!keepFront || resource !== cachedFront) { resource.dispose(); resources.delete(resource); }
+      if (!keepFront) { cachedFront = null; cachedSource = ''; cachedAspect = 0; }
+      book = nextBook; coverInk = book.spineTextColor || getReadableInk(book.spineColor ?? book.accentColor);
+      copy = setViewerLanguage(root, book, language); textureFailed = false;
+      if (renderer && !contextLost) { makeModel(); status.textContent = ''; resize(); }
+      invalidate();
+    },
     setLanguage(nextLanguage) {
+      language = nextLanguage;
       copy = setViewerLanguage(root, book, nextLanguage);
       status.textContent = !renderer || contextLost ? copy.fallback : textureFailed ? copy.coverUnavailable : '';
     },
@@ -381,6 +405,7 @@ export function createBookViewer(root, book, language) {
     dispose() {
       if (disposed) return;
       disposed = true; abort.abort(); cancelAnimationFrame(frame);
+      textureAbort?.abort();
       observer.disconnect(); intersection.disconnect();
       for (const id of pointers.keys()) if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
       pointers.clear(); resources.forEach(resource => resource.dispose()); resources.clear();

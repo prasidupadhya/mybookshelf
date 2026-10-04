@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#0f1b17">
+  <title>Bookshelf administration</title>
+  <script src="/assets/js/theme.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/tokens.css">
+  <link rel="stylesheet" href="/assets/css/base.css">
+  <link rel="stylesheet" href="/assets/css/header.css">
+  <link rel="stylesheet" href="/assets/css/bookshelf.css">
+  <link rel="stylesheet" href="/assets/css/bookplate.css">
+  <link rel="stylesheet" href="/assets/css/book-viewer.css">
+  <link rel="stylesheet" href="/assets/css/loading.css">
+  <link rel="stylesheet" href="/assets/admin/admin.css">
+</head>
+<body>
+  <main class="admin-shell">
+    <header class="admin-header">
+      <div><h1>Your bookshelf</h1><p class="admin-muted" id="account-status">Private administration</p></div>
+      <div class="header-controls">
+        <a href="/" target="_blank" rel="noopener" class="admin-link">View bookshelf</a>
+        <button type="button" class="theme-toggle" data-theme-toggle><span class="theme-toggle__mark" aria-hidden="true"></span><span data-theme-label>Light</span></button>
+        <button type="button" class="admin-button" id="logout" hidden>Sign out</button>
+      </div>
+    </header>
+    <p id="boot-status" role="status" class="admin-muted">Checking your session…</p>
+    <section id="login-panel" class="admin-panel login-panel" aria-labelledby="login-heading" hidden>
+      <h2 id="login-heading">Sign in</h2><p class="admin-muted">Manage your editions, reading progress and shelf order.</p>
+      <form id="login-form">
+        <label for="username">Username</label>
+        <input id="username" name="username" autocomplete="username" autocapitalize="none" spellcheck="false" required maxlength="64">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="128">
+        <p id="login-error" role="alert" class="form-error"></p>
+        <button type="submit" class="admin-button primary">Sign in</button>
+      </form>
+    </section>
+    <section id="dashboard" aria-label="Manage books" hidden>
+      <div class="admin-toolbar"><p id="collection-count" class="admin-muted"></p><div class="button-row"><button type="button" class="admin-button" id="refresh">Refresh</button><button type="button" class="admin-button primary" id="add-book">Add book</button></div></div>
+      <div id="admin-shelves" class="admin-shelves"></div>
+      <p class="admin-muted dashboard-note">Changes reach the public bookshelf within about a minute. Use the arrows or drag within a shelf to reorder.</p>
+    </section>
+  </main>
+
+  <dialog id="book-editor" class="editor-dialog" aria-labelledby="editor-heading">
+    <div class="editor-heading"><h2 id="editor-heading">Add book</h2><button type="button" class="admin-button" id="close-editor" aria-label="Close book editor">Close</button></div>
+    <form id="book-form">
+      <div class="editor-body">
+        <div class="editor-fields">
+          <div class="field-grid">
+            <div><label for="title">Title · English</label><input id="title" name="title" required maxlength="300"></div>
+            <div><label for="title-es">Title · Spanish</label><input id="title-es" name="title_es" maxlength="300" placeholder="Uses English title if empty"></div>
+            <div><label for="author">Author</label><input id="author" name="author" required maxlength="300"></div>
+            <div><label for="slug">Book slug</label><input id="slug" name="slug" required maxlength="100" pattern="[a-z0-9]+(-[a-z0-9]+)*" spellcheck="false"><small>Lowercase words separated by hyphens.</small></div>
+            <div><label for="shelf">Shelf</label><select id="shelf" name="shelf"><option value="currently_reading">Currently reading</option><option value="want_to_read">Want to read</option><option value="read">Read</option></select></div>
+            <div><label for="pages">Page count</label><input id="pages" name="page_count" type="number" min="1" max="20000" step="1"><small>Sets the book’s thickness.</small></div>
+            <div class="full-width"><label for="cover-url">Front cover URL</label><input id="cover-url" name="cover_url" type="url" maxlength="2048" placeholder="https://…"></div>
+            <div class="full-width"><label for="back-cover-url">Back cover URL · optional</label><input id="back-cover-url" name="back_cover_url" type="url" maxlength="2048" placeholder="https://…"></div>
+            <div class="full-width"><label for="goodreads-url">Goodreads link</label><input id="goodreads-url" name="goodreads_url" type="url" maxlength="2048" placeholder="https://www.goodreads.com/book/show/…"></div>
+          </div>
+          <fieldset class="colors"><legend>Binding colors</legend>
+            <div class="color-grid">
+              <div><label for="spine-color">Spine</label><div class="color-row"><input type="color" value="#b99a5b" data-color-for="spine_color" aria-label="Pick spine color"><input id="spine-color" name="spine_color" pattern="#[0-9a-fA-F]{6}" maxlength="7" required spellcheck="false"></div></div>
+              <div><label for="spine-text-color">Spine text</label><div class="color-row"><input type="color" value="#17110f" data-color-for="spine_text_color" aria-label="Pick spine text color"><input id="spine-text-color" name="spine_text_color" pattern="#[0-9a-fA-F]{6}" maxlength="7" required spellcheck="false"></div></div>
+              <div><label for="back-color">Back</label><div class="color-row"><input type="color" value="#b99a5b" data-color-for="back_color" aria-label="Pick back color"><input id="back-color" name="back_color" pattern="#[0-9a-fA-F]{6}" maxlength="7" required spellcheck="false"></div></div>
+              <div><label for="accent-color">Detail accent</label><div class="color-row"><input type="color" value="#b99a5b" data-color-for="accent_color" aria-label="Pick detail accent color"><input id="accent-color" name="accent_color" pattern="#[0-9a-fA-F]{6}" maxlength="7" required spellcheck="false"></div></div>
+            </div>
+            <button type="button" class="admin-button" id="pick-colors">Pick colors from cover</button>
+            <p id="color-status" class="admin-muted" role="status"></p>
+          </fieldset>
+          <div class="field-grid">
+            <div><label for="spine-title">Spine title · optional</label><input id="spine-title" name="spine_title_override" maxlength="160"><small>Empty uses the localized book title.</small></div>
+            <div><label for="spine-author">Spine author</label><label class="checkbox-label"><input type="checkbox" id="inherit-author" checked> Use the book’s author</label><input id="spine-author" name="spine_author_override" maxlength="160" disabled><small>Uncheck and leave empty to hide the author.</small></div>
+            <div><label for="started-at">Started reading</label><input id="started-at" name="started_at" type="datetime-local" step="1"></div>
+            <div><label for="finished-at">Finished reading</label><input id="finished-at" name="finished_at" type="datetime-local" step="1"></div>
+            <div class="full-width"><label for="description-en">Description · English</label><textarea id="description-en" name="description_en" rows="5" maxlength="10000"></textarea></div>
+            <div class="full-width"><label for="description-es">Description · Spanish</label><textarea id="description-es" name="description_es" rows="5" maxlength="10000"></textarea></div>
+          </div>
+          <details class="advanced-fields"><summary>Cover settings</summary>
+            <label for="cover-aspect">Cover width ÷ height</label><input id="cover-aspect" name="cover_aspect" type="number" min="0.2" max="2" step="any" required><small>Detected automatically from the image. Stored to prevent movement while covers load.</small>
+            <label for="texture-url">3D texture URL · optional</label><input id="texture-url" name="cover_texture_url" maxlength="2048"><small>Use another URL for the same artwork if needed. A changed front cover clears the old texture.</small>
+          </details>
+        </div>
+        <aside class="editor-preview" aria-labelledby="preview-heading">
+          <h3 id="preview-heading">Live 3D preview</h3>
+          <div class="book-viewer" id="live-preview">
+            <div class="book-viewer__stage" data-viewer-stage role="group" tabindex="0">
+              <figure class="bookplate__cover-frame">
+                <span class="bookplate__book-face bookplate__book-back" aria-hidden="true"></span>
+                <span class="bookplate__book-face bookplate__book-spine" aria-hidden="true"></span>
+                <span class="bookplate__book-face bookplate__book-fore-edge" aria-hidden="true"></span>
+                <span class="bookplate__book-face bookplate__book-top-edge" aria-hidden="true"></span>
+                <span class="bookplate__book-face bookplate__book-bottom-edge" aria-hidden="true"></span>
+                <div class="bookplate__book-front"><img class="bookplate__cover" id="preview-cover" alt=""><div class="bookplate__cover-fallback" id="preview-fallback" hidden><span id="preview-title"></span></div></div>
+              </figure>
+            </div>
+            <div class="book-viewer__controls" data-viewer-controls role="group" hidden><button type="button" data-viewer-action="reset">Reset</button><button type="button" data-viewer-action="spin" aria-pressed="false">Spin</button></div>
+            <p class="book-viewer__status" data-viewer-status role="status"></p>
+          </div>
+          <p id="preview-caption" class="admin-muted"></p>
+          <p class="admin-muted">Cover proportions, binding color and page thickness update as you edit.</p>
+        </aside>
+      </div>
+      <p id="editor-error" role="alert" class="form-error"></p>
+      <footer class="editor-footer"><span id="save-status" class="admin-muted" role="status"></span><div class="button-row"><button type="button" class="admin-button" id="cancel-editor">Cancel</button><button type="submit" class="admin-button primary" id="save-book">Save book</button></div></footer>
+    </form>
+  </dialog>
+
+  <dialog id="confirmation" class="confirm-dialog" aria-labelledby="confirm-heading" aria-describedby="confirm-message"><h2 id="confirm-heading">Confirm</h2><p id="confirm-message"></p><div class="button-row"><button type="button" class="admin-button" id="confirm-cancel">Cancel</button><button type="button" class="admin-button danger" id="confirm-accept">Delete</button></div></dialog>
+  <div id="toasts" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="/assets/admin/admin.js"></script>
+</body>
+</html>
