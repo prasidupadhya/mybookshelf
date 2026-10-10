@@ -46,8 +46,8 @@
 .bookplate__shelf::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--plate-accent, var(--plate-text)); box-shadow: 0 0 0 1px oklch(0 0 0 / .12); }
 .bookplate__title {
   width: 100%; margin: 0;
-  font-family: var(--font-display); font-size: var(--type-step-3); font-weight: 500;
-  font-optical-sizing: auto; line-height: 1.02; letter-spacing: -.03em;
+  font-family: var(--font-display); font-size: calc(var(--type-step-3) * 1.12); font-weight: 400;
+  line-height: 1; letter-spacing: -.012em;
   overflow-wrap: anywhere; text-wrap: balance;
 }
 .bookplate__author { margin: 14px 0 0; color: var(--plate-text); font-size: var(--type-sm); font-weight: 500; line-height: 1.5; }
@@ -75,11 +75,7 @@
 .bookplate__close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.5; fill: none; transition: transform var(--duration-normal) var(--ease-settle); }
 .bookplate__close:hover svg { transform: rotate(90deg); }
 .bookplate :focus-visible { outline-color: var(--plate-focus); }
-.bookplate.is-transitioning .bookplate__card { transition: none; transform: none; }
-::view-transition-group(book-cover) { animation-duration: 340ms; animation-timing-function: var(--ease-reveal); }
-::view-transition-group(root) { animation-duration: 220ms; }
 @media (prefers-reduced-motion: reduce) {
   .bookplate, .bookplate__card, .bookplate__close svg, .bookplate__link, .bookplate__link::after { transition: none; }
   .bookplate__card, .bookplate.is-open .bookplate__card, .bookplate__close:hover svg, .bookplate__link:hover::after { transform: none; }
-  ::view-transition-group(*) { animation: none; }
 }

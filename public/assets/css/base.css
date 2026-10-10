@@ -1,5 +1,6 @@
 * { box-sizing: border-box; }
-html { scrollbar-gutter: stable; background: var(--canvas); }
+/* Instrument Serif ships one weight; never let the browser fake a bold or oblique. */
+html { scrollbar-gutter: stable; background: var(--canvas); font-synthesis: none; }
 /* The page is a flat gallery wall: no gradients or grain. Depth belongs to the bookcase alone. */
 body {
   margin: 0;

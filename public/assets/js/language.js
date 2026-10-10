@@ -3,7 +3,6 @@ import { UI_COPY } from "./data.js";
 const LANGUAGE_STORAGE_KEY = "bookshelf-language";
 const heading = document.querySelector("[data-heading]");
 const eyebrow = document.querySelector("[data-eyebrow]");
-const siteName = document.querySelector("[data-site-name]");
 const intro = document.querySelector("[data-intro]");
 const languageGroup = document.querySelector("[data-language-group]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
@@ -36,7 +35,6 @@ export function applyLanguage(language, { persist = false } = {}) {
   document.title = UI_COPY[language].documentTitle;
   heading.textContent = UI_COPY[language].heading;
   eyebrow.textContent = UI_COPY[language].eyebrow;
-  siteName.textContent = UI_COPY[language].siteName;
   intro.textContent = UI_COPY[language].intro;
   languageGroup.setAttribute("aria-label", UI_COPY[language].languageLabel);
   footerPrefix.textContent = UI_COPY[language].footerPrefix;

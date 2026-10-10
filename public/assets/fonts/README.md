@@ -1,12 +1,12 @@
-# Reading Room typography
+# Gallery typography
 
 These self-hosted WOFF2 assets come from Fontsource 5.3.0 packages:
 
-- [Fraunces](https://fontsource.org/fonts/fraunces/about): display serif, weight 500, optical sizing retained, softness 20, wonky forms disabled.
-- [Public Sans](https://fontsource.org/fonts/public-sans/about): UI and body text, variable weights 400–600.
-- [IBM Plex Mono](https://fontsource.org/fonts/ibm-plex-mono/about): catalogue metadata, weight 400.
+- [Instrument Serif](https://fontsource.org/fonts/instrument-serif/about): display serif for titles, counts and book spines, regular and italic. Its slightly condensed proportions keep long titles legible on narrow spines.
+- [Inter](https://fontsource.org/fonts/inter/about): reading text and controls, variable weights. Fontsource's Latin file is shipped as-is because its variation tables do not survive re-subsetting.
+- [IBM Plex Mono](https://fontsource.org/fonts/ibm-plex-mono/about): administration metadata, weight 400.
 
-Each asset includes Latin-1, all required Spanish glyphs (`á é í ó ú ñ ü ¿ ¡`), and common typographic punctuation. The subset is independent of the current book collection. The accompanying OFL license files must remain with the fonts. Only the critical Fraunces 500 face is preloaded; every face uses `font-display: swap`.
+Each asset includes Latin-1, all required Spanish glyphs (`á é í ó ú ñ ü ¿ ¡`), and common typographic punctuation. The subset is independent of the current book collection. The accompanying OFL license files must remain with the fonts. Only the regular Instrument Serif face is preloaded; every face uses `font-display: swap`, and `font-synthesis: none` prevents faux bold display type.
 
 The files are ready to serve. Optional one-time preparation, from the repository root:
 

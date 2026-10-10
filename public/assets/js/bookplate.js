@@ -27,8 +27,6 @@ let activeLanguage = "en";
 let viewer = null;
 let viewerSession = 0;
 let closeTimer = 0;
-let activeTransition = null;
-const plateFront = viewerRoot.querySelector('.bookplate__book-front');
 
 let viewerModule = null;
 const loadViewer = () => (viewerModule ||= import("./book-viewer.js").catch(error => { viewerModule = null; throw error; }));
@@ -160,44 +158,15 @@ export function openBookplate(index, spine, language) {
   prefetchBook(index);
   populateBookplate(book);
   setBookplateOrigin(spine, book.accentColor);
-  const reveal = native => {
-    if (session !== viewerSession) return;
-    bookplate.hidden = false;
-    bookplate.scrollTop = 0;
-    pageShell.inert = true;
-    document.body.classList.add('has-open-bookplate');
-    if (native) bookplate.classList.add('is-open');
-    else requestAnimationFrame(() => { if (session === viewerSession) bookplate.classList.add('is-open'); });
-    bookplateClose.focus({ preventScroll: true });
-  };
-  const front = spine.querySelector('.book__front');
-  if (document.startViewTransition && CSS.supports('view-transition-name', 'book-cover') && !reduceMotion.matches) {
-    // Capture the same cover on each side. Start WebGL after the morph so its
-    // canvas cannot replace the texture while the browser takes snapshots.
-    front.style.viewTransitionName = 'book-cover';
-    const transition = document.startViewTransition(() => {
-      if (session !== viewerSession) return;
-      front.style.viewTransitionName = 'none';
-      plateFront.style.viewTransitionName = 'book-cover';
-      bookplate.classList.add('is-transitioning');
-      reveal(true);
-    });
-    activeTransition = transition;
-    transition.ready.catch(() => {}); // Unsupported snapshot cases still update the DOM.
-    transition.finished.catch(() => {}).finally(() => {
-      front.style.removeProperty('view-transition-name');
-      plateFront.style.removeProperty('view-transition-name');
-      bookplate.classList.remove('is-transitioning');
-      if (activeTransition === transition) activeTransition = null;
-      if (session === viewerSession && !bookplate.hidden) {
-        if (!bookplate.classList.contains('is-open')) reveal(false);
-        startViewer(book, session);
-      }
-    });
-  } else {
-    reveal(false);
-    startViewer(book, session);
-  }
+  // The card grows from the chosen book. A cover morph is avoided: snapshots of a book
+  // turned in 3D can momentarily fill the viewport.
+  bookplate.hidden = false;
+  bookplate.scrollTop = 0;
+  pageShell.inert = true;
+  document.body.classList.add("has-open-bookplate");
+  requestAnimationFrame(() => { if (session === viewerSession) bookplate.classList.add("is-open"); });
+  bookplateClose.focus({ preventScroll: true });
+  startViewer(book, session);
 }
 
 function finishClose() {
@@ -214,7 +183,6 @@ function finishClose() {
 export function closeBookplate() {
   window.clearTimeout(closeTimer);
   ++viewerSession;
-  activeTransition?.skipTransition();
   viewer?.pause();
   viewerRoot.querySelector("[data-viewer-stage]").removeAttribute("aria-busy");
   bookplate.classList.remove("is-open");

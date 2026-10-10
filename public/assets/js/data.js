@@ -2,7 +2,6 @@ export const UI_COPY = Object.freeze({
   en: Object.freeze({
     heading: "My bookshelf",
     documentTitle: "My Bookshelf",
-    siteName: "Prasid's library",
     eyebrow: "A personal collection, one book at a time",
     stats: Object.freeze({ current: "Reading now", want: "Want to read", read: "Read" }),
     intro: "Books I've finished, what I'm reading now, and what I want to read next.",
@@ -30,7 +29,6 @@ export const UI_COPY = Object.freeze({
   es: Object.freeze({
     heading: "Mi biblioteca",
     documentTitle: "Mi biblioteca",
-    siteName: "Biblioteca de Prasid",
     eyebrow: "Una colección personal, libro a libro",
     stats: Object.freeze({ current: "Leyendo ahora", want: "Quiero leer", read: "Leídos" }),
     intro: "Libros que ya he leído, lo que estoy leyendo ahora y lo que quiero leer después.",

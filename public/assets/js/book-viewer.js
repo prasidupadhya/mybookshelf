@@ -105,7 +105,7 @@ export function createBookViewer(root, book, language) {
 
     const titleMap = canvasTexture(512, 768, (ctx, w, h) => {
       ctx.fillStyle = bindingColor; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = coverInk; ctx.font = '500 36px Fraunces, Georgia'; ctx.textAlign = 'center';
+      ctx.fillStyle = coverInk; ctx.font = '40px "Instrument Serif", Georgia'; ctx.textAlign = 'center';
       const words = book.title[language].split(' '); let line = '', y = h * .35;
       for (const word of words) {
         if (ctx.measureText(`${line} ${word}`).width > w - 60) { ctx.fillText(line, w / 2, y); y += 45; line = ''; }
@@ -134,11 +134,11 @@ export function createBookViewer(root, book, language) {
       const spineAuthor = book.spineAuthor ?? book.author;
       let authorWidth = 0;
       if (spineAuthor) {
-        ctx.font = '30px "Public Sans", sans-serif'; ctx.textAlign = 'right';
+        ctx.font = '500 28px Inter, sans-serif'; ctx.textAlign = 'right';
         authorWidth = Math.min(ctx.measureText(spineAuthor).width, h * .3);
         ctx.fillText(spineAuthor, h / 2 - 70, 0, authorWidth);
       }
-      ctx.font = '500 52px Fraunces, Georgia'; ctx.textAlign = 'left';
+      ctx.font = '58px "Instrument Serif", Georgia'; ctx.textAlign = 'left';
       ctx.fillText(book.spineTitle || book.title[language], -h / 2 + 70, 0, h - 180 - authorWidth);
     });
     const spine = new THREE.Mesh(track(new THREE.PlaneGeometry(depth + .05, 2.38)), material({ map: spineMap }));

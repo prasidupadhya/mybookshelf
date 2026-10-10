@@ -1,6 +1,6 @@
 .admin-shell { width: min(1280px, calc(100% - 48px)); margin: auto; padding: 44px 0 56px; }
 .admin-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 30px; }
-.admin-header h1, .admin-panel h2, dialog h2 { font-family: var(--font-display); font-weight: 500; letter-spacing: -.025em; font-optical-sizing: auto; }
+.admin-header h1, .admin-panel h2, dialog h2 { font-family: var(--font-display); font-weight: 400; letter-spacing: -.012em; }
 .admin-header h1 { margin: 0; font-size: var(--type-step-3); line-height: 1; }
 .admin-muted { color: var(--muted-text); font-size: .86rem; line-height: 1.5; }
 .admin-header p { margin: 8px 0 0; }

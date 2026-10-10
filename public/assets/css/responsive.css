@@ -17,7 +17,6 @@
   .library-footer { flex-direction: column; justify-content: center; gap: 8px; text-align: center; }
 }
 @media (max-width: 420px) {
-  .site-bar__mark [data-site-name] { display: none; }
   .theme-toggle { padding-inline: 12px 14px; }
 }
 

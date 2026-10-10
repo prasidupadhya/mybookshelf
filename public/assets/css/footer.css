@@ -6,7 +6,7 @@
 }
 .library-footer__identity { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .library-footer__prefix { margin-right: 2px; }
-.library-footer__signature { display: inline-block; color: var(--ink); font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; line-height: 1; }
+.library-footer__signature { display: inline-block; color: var(--ink); font-family: var(--font-display); font-size: 1.6rem; font-weight: 400; line-height: 1; }
 @supports (mask-image: url("../images/signature.svg")) {
   .library-footer__signature {
     width: 60px; height: 28px;

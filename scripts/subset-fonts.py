@@ -20,8 +20,10 @@ UNICODES = set(range(0x20, 0x100)) | set(range(0x2000, 0x2070)) | {
     0x309, 0x323, 0x20AC, 0x2122, 0x2191, 0x2192, 0x2193, 0x2212,
 }
 FACES = [
-    ("@fontsource-variable", "fraunces", "full-normal", "500", {"wght": 500, "SOFT": 20, "WONK": 0}),
-    ("@fontsource-variable", "public-sans", "wght-normal", "400-600", {"wght": (400, 600)}),
+    ("@fontsource", "instrument-serif", "400-normal", "400", None),
+    ("@fontsource", "instrument-serif", "400-italic", "400-italic", None),
+    # Fontsource's Latin Inter is already subset; its variation tables do not survive re-subsetting.
+    ("@fontsource-variable", "inter", "wght-normal", "variable", "as-is"),
     ("@fontsource", "ibm-plex-mono", "400-normal", "400", None),
 ]
 
@@ -33,6 +35,12 @@ for scope, family, source, weight, axes in FACES:
     with tarfile.open(fileobj=BytesIO(archive_bytes), mode="r:gz") as archive:
         font = TTFont(BytesIO(archive.extractfile(f"package/files/{family}-latin-{source}.woff2").read()))
         (ROOT / f"{family}-LICENSE.txt").write_bytes(archive.extractfile("package/LICENSE").read())
+    if axes == "as-is":
+        assert set(map(ord, "áéíóúñü¿¡ÁÉÍÓÚÑÜ")) <= set(font.getBestCmap())
+        output = ROOT / f"{family}-es-{weight}.woff2"
+        font.save(output)
+        print(f"{output.name}: {output.stat().st_size} bytes; Spanish glyphs verified")
+        continue
     if axes:
         font = instantiateVariableFont(font, axes, inplace=True)
     options = subset.Options()
