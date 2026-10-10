@@ -1,444 +1,363 @@
-    .bookcase {
-      --case-depth: 18px;
-      position: relative;
-      padding: 34px 40px 14px;
-      border: 1px solid var(--bookcase-border);
-      border-radius: 2px;
-      background:
-        radial-gradient(circle at var(--light-x) var(--light-y), color-mix(in srgb, var(--ambient-light) 72%, transparent), transparent 42%),
-        linear-gradient(90deg, rgba(255,255,255,.018), transparent 15%, transparent 85%, rgba(0,0,0,.09)),
-        var(--bookcase-surface);
-      box-shadow:
-        0 42px 90px var(--bookcase-shadow),
-        0 8px 20px rgba(0, 0, 0, .12),
-        inset 0 0 0 10px rgba(21, 13, 9, .08),
-        inset 0 1px var(--wood-highlight),
-        inset 0 -1px var(--wood-shadow);
-      transform: none;
-      /* One camera for every shelf. Keep this entire ancestor chain unflattened. */
-      perspective: 2800px;
-      perspective-origin: 50% 0;
-      transform-style: preserve-3d;
-      /* All shelf faces share this camera; no opacity/filter on the ancestors. */
-    }
-
-    .bookcase::before,
-    .bookcase::after {
-      content: "";
-      position: absolute;
-      top: -14px;
-      bottom: -14px;
-      width: 22px;
-      z-index: 0;
-      background:
-        linear-gradient(90deg, var(--wood-highlight), transparent 24%, rgba(0,0,0,.2)),
-        repeating-linear-gradient(4deg, var(--walnut) 0 5px, var(--wood-500) 6px 9px, var(--wood-600) 10px 15px);
-      box-shadow: 0 10px 20px rgba(0,0,0,.3), inset 1px 0 rgba(255,255,255,.05), inset -2px 0 rgba(0,0,0,.16);
-      transform: translateZ(8px);
-      transform-style: preserve-3d;
-    }
-
-    .bookcase::before { left: -11px; }
-    .bookcase::after { right: -11px; transform: translateZ(8px) scaleX(-1); }
-
-    .shelf {
-      position: relative;
-      z-index: 1;
-      margin-bottom: 35px;
-      transform-style: preserve-3d;
-    }
-
-    .shelf__label {
-      margin: 0 0 10px;
-      font-size: .92rem;
-      font-weight: 500;
-      color: var(--shelf-label);
-      text-shadow: 0 1px rgba(0, 0, 0, .08);
-    }
-
-    .shelf__books {
-      --book-height: min(198px, calc((100vw - 128px) / var(--largest-cover-aspect, .625)));
-      --shelf-row-height: var(--book-height);
-      --shelf-row-gap: 40px;
-      min-height: 224px;
-      display: flex;
-      flex-wrap: wrap;
-      align-content: flex-start;
-      align-items: end;
-      gap: var(--shelf-row-gap) 28px;
-      padding: 32px 28px 22px;
-      position: relative;
-      border-left: 1px solid rgba(255,255,255,.03);
-      border-right: 1px solid rgba(0,0,0,.22);
-      background:
-        radial-gradient(circle at var(--light-x) 12%, color-mix(in srgb, var(--ambient-light) 52%, transparent), transparent 32%),
-        linear-gradient(180deg, var(--shelf-bay-top), transparent 48%),
-        linear-gradient(90deg, var(--shelf-bay-side), transparent 10%, transparent 90%, var(--shelf-bay-side));
-      box-shadow:
-        inset 0 22px 34px rgba(0,0,0,.18),
-        inset 0 -8px 18px rgba(0,0,0,.08),
-        inset 8px 0 18px rgba(0,0,0,.05),
-        inset -8px 0 18px rgba(0,0,0,.06);
-      transform-style: preserve-3d;
-    }
-
-    .shelf__books::before {
-      content: "";
-      position: absolute;
-      /* Continue the ledge below each wrapped row without extra DOM or JS. */
-      inset: 32px -8px 22px;
-      z-index: 0;
-      pointer-events: none;
-      background: repeating-linear-gradient(180deg,
-        transparent 0 calc(var(--shelf-row-height) + 10px),
-        var(--wood-400) calc(var(--shelf-row-height) + 10px) calc(var(--shelf-row-height) + 12px),
-        var(--wood-500) calc(var(--shelf-row-height) + 12px) calc(var(--shelf-row-height) + 17px),
-        var(--walnut) calc(var(--shelf-row-height) + 17px) calc(var(--shelf-row-height) + 22px),
-        var(--wood-700) calc(var(--shelf-row-height) + 22px) calc(var(--shelf-row-height) + 28px),
-        var(--wood-700) calc(var(--shelf-row-height) + 28px) calc(var(--shelf-row-height) + 32px),
-        transparent calc(var(--shelf-row-height) + 32px) calc(var(--shelf-row-height) + var(--shelf-row-gap)));
-      transform: translateZ(12px);
-    }
-
-    .shelf__books::after {
-      content: "";
-      position: absolute;
-      left: -8px;
-      right: -8px;
-      bottom: -16px;
-      height: 22px;
-      background:
-        linear-gradient(180deg, var(--wood-highlight), transparent 30%, rgba(0,0,0,.24)),
-        linear-gradient(2deg, var(--wood-500), var(--walnut) 60%, var(--wood-700));
-      border-top: 1px solid rgba(234, 223, 202, .11);
-      border-bottom: 4px solid var(--wood-700);
-      box-shadow: 0 12px 18px rgba(0,0,0,.32), inset 0 1px rgba(255,255,255,.08);
-      z-index: 4;
-      transform: translateZ(12px) rotateX(-1deg);
-      transform-origin: top center;
-    }
-
-    .book {
-      --book-width: calc(var(--book-height) * var(--cover-aspect, .625));
-      --book-thickness: 22px;
-      --book-half-depth: calc(var(--book-thickness) / 2);
-      --book-cover-border: 0px;
-      width: var(--book-width);
-      flex: 0 0 var(--book-width);
-      height: var(--book-height);
-      position: relative;
-      z-index: 2;
-      display: block;
-      padding: 0;
-      border: 0;
-      color: var(--book-ink, #f7eedc);
-      background: transparent;
-      cursor: grab;
-      overflow: visible;
-      text-align: left;
-      touch-action: manipulation;
-      transform-origin: center bottom;
-      /* Flat is the baseline; supported browsers opt into the solid below. */
-      box-shadow: 5px 8px 12px rgba(0, 0, 0, .26);
-    }
-
-    .book__front,
-    .book__face {
-      position: absolute;
-      pointer-events: none;
-      backface-visibility: hidden;
-    }
-
-    .book__face { display: none; }
-
-    .book__front {
-      inset: 0;
-      z-index: 6;
-      display: grid;
-      overflow: hidden;
-      box-sizing: border-box;
-      border: 0;
-      border-radius: 0;
-      background: var(--book-binding, var(--book-accent));
-    }
-
-    .book:active { cursor: grabbing; }
-
-    .book__back {
-      inset: 0;
-      z-index: 0;
-      border: 0;
-      border-radius: 0;
-      background: var(--book-back, var(--book-binding, var(--book-accent)));
-      box-shadow: inset 1px 0 rgba(255,255,255,.1), inset -2px 0 rgba(0,0,0,.12);
-      transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
-    }
-
-    .book__spine {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: var(--book-thickness);
-      z-index: 5;
-      box-sizing: border-box;
-      padding: 0;
-      color: var(--book-ink, #f7eedc);
-      border-block: 1px solid color-mix(in srgb, var(--book-binding, var(--book-spine, var(--book-accent))) 72%, #34251b);
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.17), transparent 26%, rgba(0,0,0,.2)),
-        var(--book-binding, var(--book-spine, var(--book-accent)));
-      box-shadow: inset -2px 0 rgba(0,0,0,.08);
-      transform: translateX(calc(var(--book-half-depth) * -1)) rotateY(-90deg);
-      transform-origin: center center;
-    }
-
-    .book__fore-edge {
-      top: var(--book-cover-border);
-      bottom: var(--book-cover-border);
-      right: 0;
-      width: var(--book-thickness);
-      z-index: 2;
-      border-block: 1px solid color-mix(in srgb, var(--page-edge-shadow) 52%, transparent);
-      background:
-        linear-gradient(90deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
-        repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 4px),
-        linear-gradient(90deg, #fffefa, var(--page-edge) 70%, color-mix(in srgb, var(--page-edge) 72%, var(--page-edge-shadow)));
-      box-shadow: inset -2px 0 3px rgba(0,0,0,.11);
-      transform: translateX(var(--book-half-depth)) rotateY(90deg);
-      transform-origin: center center;
-    }
-
-    .book__top-edge,
-    .book__bottom-edge {
-      left: 0;
-      right: 0;
-      height: var(--book-thickness);
-      z-index: 3;
-      border-inline: 1px solid color-mix(in srgb, var(--page-edge-shadow) 44%, transparent);
-      background:
-        linear-gradient(180deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
-        repeating-linear-gradient(180deg, rgba(95, 80, 58, .12) 0 1px, transparent 1px 3px),
-        linear-gradient(180deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
-      transform-origin: center center;
-    }
-
-    .book__top-edge {
-      top: 0;
-      transform: translateY(calc(var(--book-half-depth) * -1)) rotateX(90deg);
-    }
-
-    .book__bottom-edge {
-      bottom: 0;
-      transform: translateY(var(--book-half-depth)) rotateX(-90deg);
-      background:
-        linear-gradient(180deg, var(--book-binding) 0 1px, transparent 1px calc(100% - 1px), var(--book-binding) calc(100% - 1px) 100%),
-        repeating-linear-gradient(180deg, rgba(95, 80, 58, .08) 0 1px, transparent 1px 3px),
-        linear-gradient(0deg, #fffefa, var(--page-edge) 74%, color-mix(in srgb, var(--page-edge) 76%, var(--page-edge-shadow)));
-    }
-
-    .book__cover,
-    .book__cover-fallback {
-      grid-area: 1 / 1;
-      width: 100%;
-      height: 100%;
-    }
-
-    .book__cover {
-      display: block;
-      object-fit: contain;
-      background: var(--book-binding, var(--book-accent));
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    .book__cover[hidden],
-    .book__cover-fallback[hidden] {
-      display: none;
-    }
-
-    .book__cover-fallback {
-      place-items: center;
-      align-content: center;
-      padding: 12px 10px;
-      box-sizing: border-box;
-      color: var(--book-ink, #f7eedc);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.11), transparent 38%),
-        var(--book-binding, var(--book-accent));
-      font-family: var(--font-display);
-      font-size: .92rem;
-      line-height: 1.05;
-      text-align: center;
-      text-wrap: balance;
-    }
-
-    .book__cover-fallback:not([hidden]) {
-      display: grid;
-    }
-
-    .book__spine-label {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: calc(var(--book-height) - 16px);
-      transform: translate(-50%, -50%) rotate(-90deg);
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 6px;
-      white-space: nowrap;
-      line-height: 1.1;
-    }
-
-    .book__title {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-family: var(--font-display);
-      font-size: clamp(8.5px, calc(var(--book-height) * .055), 11px);
-      font-weight: 600;
-      letter-spacing: .01em;
-    }
-
-    .book__author {
-      flex: 0 0 auto;
-      font-size: clamp(6.5px, calc(var(--book-height) * .039), 8px);
-      letter-spacing: .015em;
-    }
-
-    @supports (perspective: 1px) and (transform-style: preserve-3d) {
-      .book {
-        --book-lift: 0px;
-        /* Clear the bay's z=0 back wall, including the rotated rear corners. */
-        --book-pull: 44px;
-        --book-yaw: 24deg;
-        --book-pitch: -8deg;
-        transform: translate3d(0, var(--book-lift), var(--book-pull))
-          rotateY(var(--book-yaw)) rotateX(var(--book-pitch)) rotateZ(var(--book-lean, 0deg));
-        transform-style: preserve-3d;
-        box-shadow: none;
-        transition: transform var(--duration-pull) var(--ease-settle);
-      }
-
-      .book__face { display: block; }
-      .book__spine { display: flex; }
-      .book__front { transform: translateZ(var(--book-half-depth)); }
-
-      .book.is-pulled,
-      .book:focus-visible {
-        --book-lift: -10px;
-        --book-pull: 72px;
-        --book-yaw: 36deg;
-        --book-pitch: -12deg;
-        z-index: 8;
-      }
-
-      @media (hover: hover) and (pointer: fine) {
-        .book:hover {
-          --book-lift: -10px;
-          --book-pull: 72px;
-          --book-yaw: 36deg;
-          --book-pitch: -12deg;
-          z-index: 8;
-        }
-      }
-    }
-
-    .book-slot {
-      width: 64px;
-      height: calc(var(--book-height) * .88);
-      flex: 0 0 64px;
-      display: grid;
-      place-items: center;
-      align-self: end;
-      margin-left: 6px;
-      position: relative;
-      z-index: 2;
-      border: 1px dashed var(--slot-border);
-      border-bottom-color: var(--slot-border-bottom);
-      color: var(--slot-text);
-      background: var(--slot-bg);
-      box-shadow: inset 0 0 24px rgba(0,0,0,.14), 0 5px 10px rgba(0,0,0,.08);
-      transform: translateZ(1px);
-    }
-
-    .book-slot span {
-      writing-mode: vertical-rl;
-      transform: rotate(180deg);
-      font-family: var(--font-display);
-      font-size: .76rem;
-      letter-spacing: .03em;
-    }
-
-/* Catalogue headings and tactile details belong to the cabinet, not a card grid. */
-.shelf__label {
+/* A walnut bookcase. Each shelf is a bay: a shaded back wall, books standing on a plank, a brass plaque.
+   Wide screens show three bays side by side; narrow screens stack them into one tall case. */
+.bookcase {
+  --row-h: clamp(150px, 46vw, 190px);
+  --headroom: 30px;
+  --plank: 30px;
+  --plank-top: 6px;
+  --frame: 10px;
+  --bay-pad: 14px;
+  position: relative;
   display: grid;
-  grid-template-columns: 2rem minmax(0, 1fr) auto;
-  align-items: baseline;
-  gap: 10px;
-  margin: 0 0 14px;
-  padding-inline: 2px;
-  font-family: var(--font-display);
-  font-size: var(--type-step-1);
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--frame);
+  padding: var(--frame) var(--frame) calc(var(--frame) + 8px);
+  border-radius: 3px;
+  /* Labels and pulled books may rise above the case, but nothing may widen the page. */
+  overflow-x: clip;
+  background:
+    linear-gradient(90deg, oklch(1 0 0 / .07), transparent 1.5%, transparent 98.5%, oklch(0 0 0 / .25)),
+    var(--wood-grain-y) center / 100% 100%,
+    linear-gradient(180deg, #6a4529, var(--wood-base) 30%, #4d311c);
+  box-shadow:
+    inset 0 1px oklch(1 0 0 / .14),
+    inset 0 -8px 0 oklch(0 0 0 / .22),
+    0 1px 2px oklch(0 0 0 / .25),
+    0 28px 48px -26px var(--bookcase-shadow);
+}
+
+.shelf {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-radius: 1px;
+  background:
+    linear-gradient(180deg, oklch(.1 .02 50 / .92), oklch(.17 .03 52 / .72) 22%, oklch(.26 .045 55 / .5) 70%, oklch(.15 .03 52 / .78)),
+    var(--wood-grain-y) center / 100% 100%,
+    var(--wood-dark);
+  box-shadow:
+    inset 9px 0 12px -6px oklch(0 0 0 / .55),
+    inset -9px 0 12px -6px oklch(0 0 0 / .5),
+    inset 0 16px 18px -10px oklch(0 0 0 / .7);
+}
+
+/* Books share one camera per bay. The row has perspective but no transform-style, so its background
+   (the intermediate planks) never occludes a book turned back into the bay. */
+.shelf__books {
+  flex: 1 1 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  align-content: flex-start;
+  gap: calc(var(--headroom) + var(--plank)) 2px;
+  min-height: calc(var(--headroom) + var(--row-h));
+  padding: var(--headroom) var(--bay-pad) 0;
+  perspective: 1500px;
+  perspective-origin: 50% 30%;
+  /* Planks between wrapped rows, drawn at the same pitch as the rows themselves. */
+  background: repeating-linear-gradient(180deg,
+    transparent 0 calc(var(--headroom) + var(--row-h)),
+    #7b5333 calc(var(--headroom) + var(--row-h)) calc(var(--headroom) + var(--row-h) + var(--plank-top)),
+    #5e3d24 calc(var(--headroom) + var(--row-h) + var(--plank-top)) calc(var(--headroom) + var(--row-h) + var(--plank) - 3px),
+    #3a2415 calc(var(--headroom) + var(--row-h) + var(--plank) - 3px) calc(var(--headroom) + var(--row-h) + var(--plank)),
+    oklch(0 0 0 / .45) calc(var(--headroom) + var(--row-h) + var(--plank)),
+    transparent calc(var(--headroom) * 2 + var(--row-h) + var(--plank)));
+}
+
+/* The plank under each bay: a lit top surface seen from above, then the grained front edge. */
+.shelf__board {
+  position: relative;
+  z-index: 3;
+  height: var(--plank);
+  margin-inline: calc(var(--frame) * -.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: var(--plank-top);
+  background:
+    linear-gradient(180deg, #8d6440 0, #6f4a2c var(--plank-top), oklch(1 0 0 / .1) var(--plank-top), transparent calc(var(--plank-top) + 3px), transparent 70%, oklch(0 0 0 / .35)),
+    var(--wood-grain-x) center / 100% 100%,
+    var(--wood-base);
+  box-shadow: 0 6px 8px -4px oklch(0 0 0 / .55);
+}
+
+.shelf__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 3px 10px;
+  border: 1px solid oklch(.78 .08 75 / .32);
+  border-radius: 2px;
+  color: #f1dfbe;
+  background: oklch(.2 .03 55 / .62);
+  font-family: var(--font-ui);
+  font-size: .625rem;
   font-weight: 500;
-  font-optical-sizing: auto;
-  line-height: 1.3;
-  letter-spacing: -.025em;
-  text-shadow: none;
+  line-height: 1.2;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-shadow: 0 1px oklch(.15 .03 55);
+  white-space: nowrap;
 }
-.shelf__number, .shelf__count {
-  font-family: var(--font-mono);
-  font-size: var(--type-xs);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: .04em;
-  color: var(--muted-text);
+.shelf__number, .shelf__count { color: #c9a063; font-variant-numeric: tabular-nums; }
+.shelf__count { position: relative; padding-left: 9px; }
+.shelf__count::before { content: ""; position: absolute; left: 0; top: 50%; width: 1px; height: 9px; transform: translateY(-50%); background: oklch(.78 .08 75 / .4); }
+
+/* A book is a 3D box standing in a slot as wide as its spine. Turned 90° it shows the spine;
+   face-out books stand slightly angled with the cover forward. */
+.book {
+  --book-h: calc(var(--row-h) * var(--book-scale, 1));
+  --book-w: calc(var(--book-h) * var(--cover-aspect, .65));
+  --book-d: 26px;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: var(--book-d);
+  height: var(--row-h);
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  touch-action: manipulation;
+  transform-style: preserve-3d;
+  outline-offset: 3px;
 }
-.shelf__count { min-width: 2ch; text-align: right; }
-.shelf__books { column-gap: clamp(26px, 2.4vw, 38px); }
-.book::before {
+.book--face-out { width: calc(var(--book-w) * .96 + var(--book-d) * .3); margin-inline: 4px 8px; }
+.book--face-out:first-child { margin-left: 0; }
+
+.book__object {
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--book-d) / 2);
+  width: var(--book-w);
+  height: var(--book-h);
+  transform-origin: 0 100%;
+  transform-style: preserve-3d;
+  transform: rotateY(90deg);
+  transition: transform var(--duration-book) var(--ease-book);
+}
+.book--face-out .book__object { left: calc(var(--book-d) * .15); transform: rotateY(17deg); }
+
+.book__face { position: absolute; top: 0; left: 0; display: block; backface-visibility: hidden; }
+
+.book__front {
+  width: var(--book-w);
+  height: var(--book-h);
+  display: grid;
+  overflow: hidden;
+  background: var(--book-binding);
+  transform: translateZ(calc(var(--book-d) / 2));
+}
+/* The hinge crease and a faint laminate sheen on the cover board. */
+.book__front::after {
   content: "";
   position: absolute;
-  bottom: -8px;
-  left: -4%;
-  width: 110%;
-  height: 15px;
+  inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse, oklch(.08 .01 65 / .28), transparent 70%);
-  transform: rotateX(70deg) translateZ(-10px);
+  background: linear-gradient(90deg, oklch(0 0 0 / .26), transparent 3%, oklch(1 0 0 / .14) 4%, oklch(0 0 0 / .12) 5.5%, transparent 8%, oklch(1 0 0 / .04) 60%, oklch(0 0 0 / .1));
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / .06);
 }
-.book__spine-label {
+.book__cover, .book__cover-fallback { grid-area: 1 / 1; width: 100%; height: 100%; }
+.book__cover { display: block; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+.book__cover[hidden], .book__cover-fallback[hidden] { display: none; }
+.book__cover-fallback {
+  display: grid;
+  place-items: center;
+  padding: 14px 10px;
+  color: var(--book-ink);
+  background: linear-gradient(135deg, oklch(1 0 0 / .12), transparent 40%), var(--book-binding);
+  font-family: var(--font-display);
+  font-size: .95rem;
+  line-height: 1.08;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.book__back {
+  width: var(--book-w);
+  height: var(--book-h);
+  overflow: hidden;
+  background: var(--book-back);
+  transform: rotateY(180deg) translateZ(calc(var(--book-d) / 2));
+}
+.book__back-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+.book__spine {
+  left: calc(var(--book-d) / -2);
+  width: var(--book-d);
+  height: var(--book-h);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 1px 2px;
+  gap: 7px;
+  padding: 15px 0 12px;
+  overflow: hidden;
+  color: var(--book-ink);
   background: var(--book-binding);
-  /* A flat ink bed guarantees contrast even beside the spine's edge gradient. */
+  transform: rotateY(-90deg);
 }
-.book__title { font-weight: 500; font-size: clamp(9.5px, calc(var(--book-height) * .06), 12px); }
-.book__author { max-width: 32%; flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
-.book-slot { border-style: solid; border-top-color: transparent; border-radius: 1px; box-shadow: inset 0 0 24px oklch(.08 .01 165 / .09); }
-.book-slot span { font-family: var(--font-mono); font-size: .65rem; letter-spacing: .02em; }
-.shelf-empty { display: flex; align-items: center; gap: 20px; min-width: 0; height: var(--book-height); }
-.shelf-empty .book-slot { height: calc(var(--book-height) * .88); margin: 0; align-self: end; }
-.shelf-empty p { max-width: 22ch; margin: 0; color: var(--muted-text); font-size: var(--type-sm); line-height: 1.6; }
-html[data-theme="light"] .shelf__books::after { box-shadow: 12px 15px 22px oklch(.3 .04 65 / .18), inset 0 1px var(--wood-highlight); }
-@media (max-width: 520px) {
-  .shelf-empty { gap: 12px; }
+/* Gilt bands near head and tail, then a rounded-spine sheen over everything. */
+.book__spine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: .32;
+  background:
+    linear-gradient(currentColor, currentColor) 0 7px / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 10px / 100% 1px no-repeat,
+    linear-gradient(currentColor, currentColor) 0 calc(100% - 7px) / 100% 1px no-repeat;
 }
-@media (prefers-reduced-motion: reduce) {
-  .book { --book-lean: 0deg !important; }
+.book__spine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, oklch(0 0 0 / .34), oklch(1 0 0 / .06) 24%, oklch(1 0 0 / .16) 45%, oklch(0 0 0 / .05) 68%, oklch(0 0 0 / .34));
 }
+.book__title, .book__author {
+  position: relative;
+  z-index: 1;
+  min-height: 0;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.book__title {
+  flex: 0 1 auto;
+  font-family: var(--font-display);
+  font-size: clamp(9.5px, calc(var(--book-d) * .46), 14px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: .01em;
+}
+.book__title--wrap { white-space: normal; text-overflow: clip; max-width: calc(var(--book-d) - 6px); line-height: 1.08; }
+.book__author {
+  flex: 0 0 auto;
+  max-height: 40%;
+  margin-top: auto;
+  font-family: var(--font-ui);
+  font-size: clamp(6.5px, calc(var(--book-d) * .27), 8px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  opacity: .82;
+}
+.book__mark[hidden] { display: none; }
+.book__mark { position: relative; z-index: 1; flex: 0 0 auto; width: 5px; height: 5px; border: 1px solid currentColor; transform: rotate(45deg); opacity: .6; }
+
+/* Fore-edge, head and tail: paper, bounded by the cover boards. */
+.book__pages {
+  top: 3px;
+  /* Centred 2px inside the cover edge: boards overhang the text block. */
+  left: calc(var(--book-w) - var(--book-d) / 2);
+  width: calc(var(--book-d) - 4px);
+  height: calc(var(--book-h) - 6px);
+  background: repeating-linear-gradient(90deg, #e6dfcb 0 1px, #f7f2e4 1px 2px);
+  box-shadow: inset 0 1px 4px oklch(.35 .03 60 / .25);
+  transform: rotateY(90deg);
+}
+.book__top, .book__bottom {
+  top: calc(var(--book-d) / -2);
+  width: var(--book-w);
+  height: var(--book-d);
+  border: 2px solid var(--book-binding);
+  border-left-width: 4px;
+  background: repeating-linear-gradient(0deg, #ddd5bf 0 1px, #f3eedd 1px 2px, #e5dec9 2px 3px);
+  box-shadow: inset 3px 0 3px oklch(0 0 0 / .18);
+  transform: rotateX(90deg);
+}
+.book__bottom { top: calc(var(--book-h) - var(--book-d) / 2); transform: rotateX(-90deg); }
+
+/* A cloth bookmark marks books currently being read. */
 .book__ribbon {
   position: absolute;
-  top: -6px;
-  right: 12%;
-  z-index: 7;
-  width: 8px;
-  height: 29px;
+  top: -7px;
+  right: 14%;
+  width: 7px;
+  height: 26px;
   pointer-events: none;
-  background: linear-gradient(90deg, oklch(.92 .02 75 / .16), transparent 35%, oklch(.13 .02 45 / .2)), var(--bookmark);
+  background: linear-gradient(90deg, oklch(1 0 0 / .18), transparent 40%, oklch(0 0 0 / .22)), var(--bookmark);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 4px), 0 100%);
-  transform: translateZ(calc(var(--book-half-depth) + 1px));
+  transform: translateZ(calc(var(--book-d) / 2 + 1px));
 }
+
+/* Pulling a book: lift it, slide it toward the reader and turn the cover into view. */
+.book.is-pulled, .book:focus-visible { z-index: 20; }
+.book.is-pulled .book__object, .book:focus-visible .book__object { transform: translate3d(0, -12px, 42px) rotateY(54deg) rotateZ(-2deg); }
+.book--face-out.is-pulled .book__object, .book--face-out:focus-visible .book__object { transform: translate3d(0, -12px, 42px) rotateY(4deg); }
+@media (hover: hover) and (pointer: fine) {
+  .book:hover { z-index: 20; }
+  .book:hover .book__object { transform: translate3d(0, -12px, 42px) rotateY(54deg) rotateZ(-2deg); }
+  .book--face-out:hover .book__object { transform: translate3d(0, -12px, 42px) rotateY(4deg); }
+}
+
+/* A small wall label follows a pulled book on precise pointers and keyboard focus. */
+.book__tooltip {
+  position: absolute;
+  bottom: calc(var(--book-h) + 18px);
+  left: -12px;
+  z-index: 2;
+  width: max-content;
+  max-width: 210px;
+  display: grid;
+  gap: 2px;
+  padding: 8px 11px;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--surface-raised);
+  font-size: .8125rem;
+  line-height: 1.3;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 4px, 70px);
+  transition: opacity 160ms ease, transform 160ms ease, visibility 0s linear 160ms;
+}
+.book__tooltip strong { font-weight: 500; }
+@media (hover: none) { .book__tooltip { display: none; } }
+.book__tooltip span { color: var(--ink-muted); font-size: .75rem; }
+.book:focus-visible .book__tooltip { opacity: 1; visibility: visible; transform: translate3d(0, 0, 70px); transition-delay: 0s; }
+@media (hover: hover) and (pointer: fine) {
+  .book:hover .book__tooltip { opacity: 1; visibility: visible; transform: translate3d(0, 0, 70px); transition-delay: 0s; }
+}
+
+/* A blackened steel bookend, seen almost edge-on, holds the row upright against the last book. */
+.bookend { position: absolute; bottom: 0; left: calc(100% + 1px); width: 12px; height: var(--row-h); pointer-events: none; }
+.bookend::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 7px;
+  height: 58%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #5a5650, #2b2925 35%, #161513 70%, #0b0b0a);
+  box-shadow: inset 1px 1px oklch(1 0 0 / .16), 4px 0 6px -2px oklch(0 0 0 / .5);
+}
+.bookend::after { content: ""; position: absolute; bottom: 0; left: -4px; width: 16px; height: 3px; border-radius: 1px; background: linear-gradient(180deg, #3a3833, #0e0e0d); }
+
+.shelf-empty { display: flex; align-items: center; min-height: var(--row-h); margin: 0; color: oklch(.88 .04 80 / .62); font-family: var(--font-display); font-size: .95rem; font-style: italic; line-height: 1.4; }
+
+/* Three bays side by side once each bay can hold a full row; tablets keep one tall, centred case. */
+@media (min-width: 1100px) {
+  .bookcase {
+    --row-h: clamp(160px, 13.5vw, 196px);
+    --frame: 14px;
+    --bay-pad: 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .book__ribbon { background: var(--bookmark); }
+  .book__object, .book__tooltip { transition: none; }
+  .book.is-pulled .book__object, .book:focus-visible .book__object { transform: translate3d(0, 0, 30px) rotateY(54deg); }
 }

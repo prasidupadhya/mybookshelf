@@ -1,59 +1,36 @@
+/* Tablets: one centred column, so the header, the tall bookcase and the colophon share both edges. */
+@media (min-width: 760px) and (max-width: 1099px) {
+  .page-shell { --measure: min(660px, calc(100% - var(--space-gutter) * 2)); }
+  .bookcase { --row-h: 196px; --frame: 12px; --bay-pad: 18px; }
+}
+
+/* Phones and tablets: the intro stacks, the stats become a ruled row, controls stay compact. */
+@media (max-width: 1099px) {
+  .site-bar__inner { min-height: 60px; }
+  .library-header { display: block; }
+  .library-stats { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--hairline); }
+  .library-stats__item { flex: 1 1 0; min-width: 0; padding-left: 16px; }
+  .library-stats__item:first-child { padding-left: 0; }
+  .library-stats__item + .library-stats__item { margin-left: 16px; }
+}
+@media (max-width: 759px) {
+  .library-footer { flex-direction: column; justify-content: center; gap: 8px; text-align: center; }
+}
+@media (max-width: 420px) {
+  .site-bar__mark [data-site-name] { display: none; }
+  .theme-toggle { padding-inline: 12px 14px; }
+}
+
+/* The bookplate becomes a single scrolling column on narrow screens. */
 @media (max-width: 760px) {
-  .page-shell { width: calc(100% - 24px); padding: 32px 0 40px; }
-  /* Header copy shares the left edge of the shelf headings (bookcase border + padding + label inset). */
-  .library-header { display: block; margin: 0 17px 30px; }
-  .library-header p { max-width: 42rem; white-space: normal; text-wrap: pretty; }
-  .header-controls { margin-top: 18px; flex-wrap: wrap; }
-  /* Optically align the "EN" label, not its 44px touch target, with the title above. */
-  .header-controls .language-switcher { margin-top: 0; margin-left: -14px; }
-  .bookcase { padding: 26px 14px 8px; }
-  .bookcase::before, .bookcase::after { width: 14px; }
-  .bookcase::before { left: -7px; }
-  .bookcase::after { right: -7px; }
-  .shelf { margin-bottom: 32px; }
-  .shelf__books { --book-height: min(172px, calc((100vw - 120px) / var(--largest-cover-aspect, .625))); min-height: 0; column-gap: 26px; padding: 32px 18px 24px; }
-  .shelf__books::after { bottom: 0; }
   .bookplate { padding: 12px; }
-  .bookplate__card { min-height: 0; padding: 40px 28px; gap: 24px; grid-template-columns: minmax(180px, .75fr) minmax(0, 1.3fr); }
-  .bookplate__details { padding: 14px 0; }
-}
-/* Tablets: size books so four fill a row instead of leaving a wide empty strip. The formulas follow
-   the page gutter, bookcase and bay padding, with 16px of slack for a classic desktop scrollbar. */
-@media (min-width: 521px) and (max-width: 760px) {
-  .shelf__books { --book-height: min(172px, calc((100vw - 172px) / 4 / var(--largest-cover-aspect, .625))); column-gap: 22px; }
-}
-@media (min-width: 761px) and (max-width: 1023px) {
-  .shelf__books { --book-height: min(198px, calc((95.5vw - 244px) / 4 / var(--largest-cover-aspect, .625))); column-gap: 24px; }
+  .bookplate__card { grid-template-columns: minmax(200px, .8fr) minmax(0, 1.2fr); }
 }
 @media (max-width: 620px) {
   .bookplate { padding: 8px; }
-  .bookplate__card { grid-template-columns: 1fr; gap: 16px; padding: 42px 26px 28px; }
-  .bookplate__cover-column { padding: 0; }
-  .bookplate__details { padding: 0; }
-  .bookplate__ornament { margin-bottom: 16px; }
-  .bookplate__description { margin-block: 22px 14px; }
+  .bookplate__card { grid-template-columns: 1fr; }
+  .bookplate__cover-column { border-right: 0; border-bottom: 1px solid var(--plate-rule); }
+  .bookplate__details { padding: 26px 24px 30px; }
   /* Keep the close control reachable while a long description scrolls. */
-  .bookplate__close { position: sticky; top: 10px; z-index: 3; justify-self: end; margin: -32px -16px -56px 0; border-radius: 50%; background: color-mix(in srgb, var(--plate-bg) 88%, transparent); }
-}
-@media (max-width: 520px) {
-  /* Three books per row on phones: the bay stays full instead of leaving a wide empty column. */
-  .shelf__books { --book-height: min(150px, calc((100vw - 134px) / 3 / var(--largest-cover-aspect, .625))); column-gap: 22px; }
-  .library-footer { flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
-  .library-footer__clock::before { display: none; }
-}
-@media (max-width: 390px) {
-  .page-shell { width: calc(100% - 20px); padding-top: 26px; }
-  .library-header { margin-inline: 13px; }
-  .bookcase { padding-inline: 10px; }
-  .shelf__books { padding-inline: 16px; }
-  .shelf__label { grid-template-columns: 1.4rem minmax(0, 1fr) auto; gap: 8px; }
-  .shelf__books { --book-height: min(150px, calc((100vw - 118px) / 3 / var(--largest-cover-aspect, .625))); }
-  .bookplate__card { padding-inline: 22px; }
-}
-@media (max-width: 359px) {
-  /* Very narrow screens return to two larger books per row. */
-  .shelf__books { --book-height: min(176px, calc((100vw - 96px) / 2 / var(--largest-cover-aspect, .625))); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .theme-toggle, .language-switcher__button, .book, .bookcase, .bookplate__cover-frame { transition: none; }
+  .bookplate__close { position: sticky; top: 10px; z-index: 3; grid-row: 1; justify-self: end; margin: 10px 10px -54px 0; }
 }

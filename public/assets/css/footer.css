@@ -1,12 +1,12 @@
 .library-footer {
-  display: flex; align-items: center; justify-content: flex-end; gap: 14px;
-  margin-top: clamp(30px, 3.8vw, 54px); padding: 20px 2px 0;
-  border-top: 1px solid var(--divider);
-  color: var(--footer-text); font-family: var(--font-mono); font-size: var(--type-xs); line-height: 1.5;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin-top: clamp(32px, 4vw, 56px); padding-top: 20px;
+  border-top: 1px solid var(--hairline);
+  color: var(--footer-text); font-size: .75rem; line-height: 1.5;
 }
 .library-footer__identity { display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
 .library-footer__prefix { margin-right: 2px; }
-.library-footer__signature { display: inline-block; font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; line-height: 1; }
+.library-footer__signature { display: inline-block; color: var(--ink); font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; line-height: 1; }
 @supports (mask-image: url("../images/signature.svg")) {
   .library-footer__signature {
     width: 60px; height: 28px;
@@ -16,4 +16,3 @@
   }
 }
 .library-footer__clock { font: inherit; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.library-footer__clock::before { content: "·"; margin-right: 14px; }

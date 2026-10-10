@@ -1,9 +1,11 @@
-/* An ex-libris plate: warm paper in either room theme. */
+/* The book's wall label: a flat bone card, the 3D book on a slightly darker panel beside its details. */
 .bookplate {
   position: fixed; inset: 0; z-index: 20;
   display: grid;
-  padding: clamp(8px, 2.4vw, 28px);
-  /* The overlay scrolls, so a tall plate keeps its printed frame around all of its content. */
+  /* One viewport-wide track: the card's percentage width must not resolve against its own content. */
+  grid-template-columns: minmax(0, 1fr);
+  padding: clamp(8px, 2.4vw, 32px);
+  /* The overlay scrolls, so a tall card is never clipped. */
   overflow-y: auto;
   overscroll-behavior: contain;
   opacity: 0;
@@ -12,229 +14,72 @@
 }
 .bookplate[hidden] { display: none; }
 .bookplate.is-open { opacity: 1; }
-.bookplate__scrim { position: fixed; inset: 0; background: oklch(.1 .018 160 / .82); backdrop-filter: blur(6px); }
+.bookplate__scrim { position: fixed; inset: 0; background: oklch(.12 .005 80 / .72); backdrop-filter: blur(6px); }
 .bookplate__card {
   --book-origin-dx: 0px; --book-origin-dy: 20px;
-  width: min(980px, 100%);
-  min-height: 440px;
-  /* Auto margins centre the plate without clipping its top when it is taller than the viewport. */
+  width: min(960px, 100%);
+  min-height: 460px;
+  /* Auto margins centre the card without clipping its top when it is taller than the viewport. */
   margin: auto;
   position: relative; z-index: 1;
   display: grid;
-  grid-template-columns: minmax(210px, .72fr) minmax(0, 1.4fr);
-  gap: clamp(24px, 3vw, 48px);
-  padding: clamp(32px, 4vw, 54px);
+  grid-template-columns: minmax(0, 43fr) minmax(0, 57fr);
+  overflow: hidden;
   color: var(--plate-text);
   background: var(--plate-bg);
-  border: 1px solid var(--plate-rule);
-  border-radius: 2px;
-  box-shadow: 0 32px 100px oklch(.05 .01 160 / .55), inset 0 1px oklch(1 .01 90 / .5);
-  transform: translate3d(var(--book-origin-dx), var(--book-origin-dy), -60px) scale(.88);
+  border: 1px solid oklch(1 0 0 / .4);
+  border-radius: 10px;
+  box-shadow: 0 30px 120px oklch(0 0 0 / .45);
+  transform: translate3d(var(--book-origin-dx), var(--book-origin-dy), -60px) scale(.9);
   transition: transform var(--duration-pull) var(--ease-reveal);
 }
 .bookplate.is-open .bookplate__card { transform: translate3d(0, 0, 0) scale(1); }
-.bookplate__card::before {
-  content: ""; position: absolute; inset: 12px; pointer-events: none;
-  border: 1px solid var(--plate-rule);
-  background:
-    linear-gradient(var(--plate-rule), var(--plate-rule)) 4px 4px / 12px 1px no-repeat,
-    linear-gradient(var(--plate-rule), var(--plate-rule)) calc(100% - 4px) calc(100% - 4px) / 12px 1px no-repeat;
-}
 .bookplate__cover-column, .bookplate__details { position: relative; z-index: 1; min-width: 0; }
-.bookplate__cover-column { display: grid; place-items: center; align-content: center; padding: 12px 0; }
-    .bookplate__cover-frame {
-      --book-depth: 24px;
-      --book-half-depth: 12px;
-      --book-cover-border: 0px;
-      width: min(100%, 218px);
-      aspect-ratio: 2 / 3;
-      margin: 0;
-      position: relative;
-      overflow: visible;
-      border: 0;
-      background: transparent;
-      transform-style: preserve-3d;
-      transform: rotateX(4deg) rotateY(-18deg) rotateZ(-.35deg) translateZ(18px);
-      transform-origin: center center;
-      transition: transform 520ms cubic-bezier(.16, 1, .3, 1), filter 420ms ease;
-      filter: drop-shadow(24px 28px 20px rgba(58, 38, 23, .32));
-      backface-visibility: visible;
-      isolation: isolate;
-    }
-
-    .bookplate.is-open .bookplate__cover-frame {
-      transform: rotateX(4deg) rotateY(-18deg) rotateZ(-.35deg) translateZ(18px);
-    }
-
-    .bookplate__book-front,
-    .bookplate__book-face {
-      position: absolute;
-      display: block;
-      transform-style: preserve-3d;
-      backface-visibility: hidden;
-    }
-
-    .bookplate__book-front {
-      inset: 0;
-      z-index: 6;
-      display: grid;
-      overflow: hidden;
-      border: 0;
-      border-radius: 1px 2px 2px 1px;
-      background: var(--book-binding, var(--plate-accent));
-      box-shadow:
-        0 0 0 var(--book-cover-border) var(--book-binding, var(--plate-accent)),
-        0 0 0 calc(var(--book-cover-border) + 1px) color-mix(in srgb, var(--book-binding, var(--plate-accent)) 72%, #463626),
-        inset 1px 0 rgba(255,255,255,.12),
-        inset -1px 0 rgba(0,0,0,.1);
-      transform: translateZ(var(--book-half-depth));
-    }
-
-    .bookplate__book-back {
-      inset: 0;
-      z-index: 0;
-      border: 1px solid color-mix(in srgb, var(--book-binding, var(--book-back, var(--plate-accent))) 76%, #463626);
-      border-radius: 1px 2px 2px 1px;
-      background: var(--book-binding, var(--book-back, var(--plate-accent)));
-      transform: translateZ(calc(var(--book-half-depth) * -1)) rotateY(180deg);
-    }
-
-    .bookplate__book-spine {
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: var(--book-depth);
-      z-index: 4;
-      border-block: 1px solid color-mix(in srgb, var(--book-binding, var(--book-spine, var(--plate-accent))) 72%, #3c2e21);
-      background:
-        linear-gradient(90deg, rgba(255,255,255,.18), transparent 25%, rgba(0,0,0,.22)),
-        var(--book-binding, var(--book-spine, var(--plate-accent)));
-      box-shadow: inset -2px 0 rgba(0,0,0,.08);
-      transform: translateX(calc(var(--book-half-depth) * -1)) rotateY(-90deg);
-      transform-origin: center center;
-    }
-
-    .bookplate__book-fore-edge {
-      top: var(--book-cover-border);
-      bottom: var(--book-cover-border);
-      right: 0;
-      width: var(--book-depth);
-      z-index: 2;
-      border-block: 1px solid rgba(107, 90, 67, .2);
-      background:
-        repeating-linear-gradient(180deg, rgba(112, 94, 69, .11) 0 1px, transparent 1px 4px),
-        linear-gradient(90deg, #fffefa, #eee9df 74%, #d9d1c4);
-      box-shadow: inset -2px 0 3px rgba(65, 49, 35, .14);
-      transform: translateX(var(--book-half-depth)) rotateY(90deg);
-      transform-origin: center center;
-    }
-
-    .bookplate__book-top-edge,
-    .bookplate__book-bottom-edge {
-      left: var(--book-cover-border);
-      right: var(--book-cover-border);
-      height: var(--book-depth);
-      z-index: 3;
-      border-inline: 1px solid rgba(107, 90, 67, .16);
-      background:
-        linear-gradient(90deg, var(--book-binding, var(--plate-accent)) 0 var(--book-cover-border), transparent var(--book-cover-border)),
-        repeating-linear-gradient(90deg, rgba(112, 94, 69, .09) 0 1px, transparent 1px 5px),
-        linear-gradient(180deg, #fffefa, #eee9df 72%, #d7cfc2);
-    }
-
-    .bookplate__book-top-edge {
-      top: 0;
-      transform: translateY(calc(var(--book-half-depth) * -1)) rotateX(90deg);
-      transform-origin: center center;
-    }
-
-    .bookplate__book-bottom-edge {
-      bottom: 0;
-      transform: translateY(var(--book-half-depth)) rotateX(-90deg);
-      transform-origin: center center;
-      background:
-        linear-gradient(90deg, var(--book-binding, var(--plate-accent)) 0 var(--book-cover-border), transparent var(--book-cover-border)),
-        repeating-linear-gradient(90deg, rgba(112, 94, 69, .08) 0 1px, transparent 1px 5px),
-        linear-gradient(0deg, #fffefa, #ece6dc 72%, #d3cabd);
-    }
-
-    .bookplate__cover,
-    .bookplate__cover-fallback {
-      grid-area: 1 / 1;
-      width: 100%;
-      height: 100%;
-    }
-
-    .bookplate__cover {
-      display: block;
-      object-fit: contain;
-      background: var(--book-binding, #cfc1aa);
-    }
-
-    .bookplate__cover[hidden],
-    .bookplate__cover-fallback[hidden] {
-      display: none;
-    }
-
-    .bookplate__cover-fallback {
-      place-items: center;
-      align-content: center;
-      gap: 12px;
-      padding: 24px 18px;
-      color: var(--book-ink);
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.15), transparent 35%),
-        var(--book-binding, #cfc1aa);
-      text-align: center;
-    }
-
-    .bookplate__cover-fallback:not([hidden]) { display: grid; }
-
-    .bookplate__cover-fallback span {
-      font-family: var(--font-display);
-      font-size: 1.45rem;
-      line-height: 1.05;
-    }
-
-    .bookplate__cover-fallback small {
-      font-size: .72rem;
-      color: var(--book-ink);
-    }
-
-
-.bookplate__details { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 12px 0; text-align: left; }
-.bookplate__ornament {
-  display: flex; align-items: center; gap: 12px;
-  margin: 0 0 24px;
+.bookplate__cover-column { display: grid; place-items: center; align-content: center; padding: 40px 24px 28px; background: var(--plate-panel); border-right: 1px solid var(--plate-rule); }
+.bookplate__details { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; padding: 56px clamp(28px, 4vw, 52px) 48px; text-align: left; }
+.bookplate__shelf {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin: 0 0 22px;
   color: var(--plate-muted);
-  font-family: var(--font-mono); font-size: .7rem; letter-spacing: .1em;
+  font-size: .6875rem; font-weight: 500; letter-spacing: .14em; line-height: 1.4; text-transform: uppercase;
 }
-.bookplate__ornament::before { content: "Ex libris"; text-transform: uppercase; }
-.bookplate__ornament::after { content: ""; width: 48px; height: 1px; background: var(--plate-rule); }
+.bookplate__shelf::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--plate-accent, var(--plate-text)); box-shadow: 0 0 0 1px oklch(0 0 0 / .12); }
 .bookplate__title {
   width: 100%; margin: 0;
   font-family: var(--font-display); font-size: var(--type-step-3); font-weight: 500;
-  font-optical-sizing: auto; line-height: 1.08; letter-spacing: -.035em;
+  font-optical-sizing: auto; line-height: 1.02; letter-spacing: -.03em;
   overflow-wrap: anywhere; text-wrap: balance;
 }
-.bookplate__author { margin: 16px 0 0; color: var(--plate-muted); font-size: var(--type-sm); line-height: 1.5; font-variant-caps: all-small-caps; letter-spacing: .055em; }
-.bookplate__pages { display: flex; flex-wrap: wrap; gap: 8px 0; margin: 18px 0 0; color: var(--plate-muted); font-family: var(--font-mono); font-size: .72rem; line-height: 1.65; }
-.bookplate__pages > * + *::before { content: "·"; margin: 0 10px; }
-.bookplate__description { width: 100%; max-width: 66ch; margin: 26px 0 20px; color: var(--plate-text); font-size: var(--type-body); line-height: 1.75; overflow-wrap: anywhere; white-space: pre-line; }
-.bookplate__link { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; color: var(--plate-link); font-size: var(--type-sm); font-weight: 500; text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.bookplate__author { margin: 14px 0 0; color: var(--plate-text); font-size: var(--type-sm); font-weight: 500; line-height: 1.5; }
+.bookplate__pages { display: flex; flex-wrap: wrap; gap: 6px 0; margin: 6px 0 0; color: var(--plate-muted); font-size: .8125rem; line-height: 1.6; font-variant-numeric: tabular-nums; }
+.bookplate__pages > * + *::before { content: "·"; margin: 0 9px; }
+.bookplate__pages[hidden] { display: none; }
+.bookplate__description { width: 100%; max-width: 60ch; margin: 24px 0 28px; padding-top: 22px; border-top: 1px solid var(--plate-rule); color: var(--plate-text); font-size: var(--type-body); line-height: 1.7; overflow-wrap: anywhere; white-space: pre-line; }
+.bookplate__description:empty { display: none; }
+.bookplate__link {
+  display: inline-flex; gap: 8px; align-items: center; min-height: 40px; padding: 0 18px;
+  border-radius: 999px; color: #fff; background: var(--plate-link);
+  font-size: .8125rem; font-weight: 500; text-decoration: none;
+  transition: background-color var(--duration-quick) var(--ease-press);
+}
 .bookplate__link[hidden] { display: none; }
-.bookplate__link::after { content: "↗"; display: inline-block; text-decoration: none; transition: transform var(--duration-quick) var(--ease-press); }
+.bookplate__link::after { content: "↗"; display: inline-block; transition: transform var(--duration-quick) var(--ease-press); }
+.bookplate__link:hover { background: #3a3833; }
 .bookplate__link:hover::after { transform: translate(2px, -2px); }
-.bookplate__close { position: absolute; top: 18px; right: 18px; z-index: 3; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--plate-muted); cursor: pointer; }
-.bookplate__close svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.5; fill: none; transition: transform var(--duration-normal) var(--ease-settle); }
+.bookplate__close {
+  position: absolute; top: 14px; right: 14px; z-index: 3;
+  width: 40px; height: 40px; display: grid; place-items: center; padding: 0;
+  border: 1px solid var(--plate-rule); border-radius: 50%;
+  background: var(--plate-bg); color: var(--plate-text); cursor: pointer;
+}
+.bookplate__close svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 1.5; fill: none; transition: transform var(--duration-normal) var(--ease-settle); }
 .bookplate__close:hover svg { transform: rotate(90deg); }
 .bookplate :focus-visible { outline-color: var(--plate-focus); }
 .bookplate.is-transitioning .bookplate__card { transition: none; transform: none; }
 ::view-transition-group(book-cover) { animation-duration: 340ms; animation-timing-function: var(--ease-reveal); }
 ::view-transition-group(root) { animation-duration: 220ms; }
 @media (prefers-reduced-motion: reduce) {
-  .bookplate, .bookplate__card, .bookplate__close svg, .bookplate__link[hidden] { display: none; }
-.bookplate__link::after { transition: none; }
+  .bookplate, .bookplate__card, .bookplate__close svg, .bookplate__link, .bookplate__link::after { transition: none; }
   .bookplate__card, .bookplate.is-open .bookplate__card, .bookplate__close:hover svg, .bookplate__link:hover::after { transform: none; }
   ::view-transition-group(*) { animation: none; }
 }

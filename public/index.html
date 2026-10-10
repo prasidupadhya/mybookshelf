@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A personal bookshelf of literary and philosophical classics.">
-  <meta name="theme-color" content="#0f1b17">
+  <meta name="theme-color" content="#0e0d0b">
   <title>My Bookshelf</title>
   <script src="assets/js/theme.js"></script>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230f1b17'/%3E%3Cpath d='M13 17c7-2 13 0 19 5v27c-6-5-12-7-19-5V17Zm38 0c-7-2-13 0-19 5v27c6-5 12-7 19-5V17Z' fill='%23eadfca'/%3E%3Cpath d='M32 22v27' stroke='%23b99a5b' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141311'/%3E%3Crect x='15' y='14' width='9' height='36' rx='1' fill='%23e9e7e0'/%3E%3Crect x='27' y='19' width='8' height='31' rx='1' fill='%23c9a063'/%3E%3Crect x='38' y='14' width='9' height='36' rx='1' fill='%23e9e7e0' transform='rotate(9 42 50)'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/fraunces-es-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/css/fonts.css">
   <link rel="stylesheet" href="assets/css/tokens.css">
@@ -21,39 +21,49 @@
   <link rel="stylesheet" href="assets/css/loading.css">
 </head>
 <body>
-  <div class="room-light" data-room-light aria-hidden="true"></div>
   <div class="page-shell" data-page-shell>
-    <header class="library-header">
-      <div class="library-header__copy">
-        <h1 data-heading>My bookshelf</h1>
-        <p data-intro>Books I've finished, what I'm reading now, and what I want to read next.</p>
-      </div>
-      <div class="header-controls">
-        <div class="language-switcher" role="group" aria-label="Language" data-language-group>
-          <button class="language-switcher__button is-active" type="button" data-language="en" aria-pressed="true">EN</button>
-          <span aria-hidden="true">/</span>
-          <button class="language-switcher__button" type="button" data-language="es" aria-pressed="false">ES</button>
+    <header class="site-bar">
+      <div class="site-bar__inner">
+        <p class="site-bar__mark"><span class="site-bar__monogram" aria-hidden="true">P</span><span data-site-name>Prasid's library</span></p>
+        <div class="header-controls">
+          <div class="language-switcher" role="group" aria-label="Language" data-language-group>
+            <button class="language-switcher__button is-active" type="button" data-language="en" aria-pressed="true">EN</button>
+            <button class="language-switcher__button" type="button" data-language="es" aria-pressed="false">ES</button>
+          </div>
+          <button class="theme-toggle" type="button" data-theme-toggle>
+            <span class="theme-toggle__mark" aria-hidden="true"></span>
+            <span data-theme-label>Light</span>
+          </button>
         </div>
-        <button class="theme-toggle" type="button" data-theme-toggle>
-          <span class="theme-toggle__mark" aria-hidden="true"></span>
-          <span data-theme-label>Light</span>
-        </button>
       </div>
     </header>
+
+    <section class="library-header" aria-labelledby="library-title">
+      <div class="library-header__copy">
+        <p class="eyebrow" data-eyebrow>A personal collection, one book at a time</p>
+        <h1 id="library-title"><span data-heading>My bookshelf</span><span class="library-header__dot" aria-hidden="true">.</span></h1>
+        <p class="library-header__intro" data-intro>Books I've finished, what I'm reading now, and what I want to read next.</p>
+      </div>
+      <dl class="library-stats" data-stats aria-busy="true">
+        <div class="library-stats__item"><dt>Reading now</dt><dd>—</dd></div>
+        <div class="library-stats__item"><dt>Want to read</dt><dd>—</dd></div>
+        <div class="library-stats__item"><dt>Read</dt><dd>—</dd></div>
+      </dl>
+    </section>
 
     <main class="bookcase" data-bookcase aria-label="Personal book collection" aria-busy="true">
       <!-- Reserve the cabinet before modules load; these shapes contain no book data. -->
       <section class="shelf" data-shelf="current" aria-labelledby="current-label">
-        <h2 class="shelf__label" id="current-label"><span class="shelf__number" aria-hidden="true">I</span><span>Currently reading</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
         <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+        <div class="shelf__board"><h2 class="shelf__label" id="current-label"><span class="shelf__number" aria-hidden="true">I</span><span>Currently reading</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2></div>
       </section>
       <section class="shelf" data-shelf="want" aria-labelledby="want-label">
-        <h2 class="shelf__label" id="want-label"><span class="shelf__number" aria-hidden="true">II</span><span>Want to read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
         <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+        <div class="shelf__board"><h2 class="shelf__label" id="want-label"><span class="shelf__number" aria-hidden="true">II</span><span>Want to read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2></div>
       </section>
       <section class="shelf" data-shelf="read" aria-labelledby="read-label">
-        <h2 class="shelf__label" id="read-label"><span class="shelf__number" aria-hidden="true">III</span><span>Read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2>
         <div class="shelf__books" data-shelf-books><div class="shelf-placeholder" aria-hidden="true"></div></div>
+        <div class="shelf__board"><h2 class="shelf__label" id="read-label"><span class="shelf__number" aria-hidden="true">III</span><span>Read</span><span class="shelf__count"><span aria-hidden="true">—</span><span class="visually-hidden">Loading books</span></span></h2></div>
       </section>
     </main>
 
@@ -65,7 +75,6 @@
       </span>
       <time class="library-footer__clock" data-live-clock></time>
     </footer>
-
   </div>
 
   <section class="bookplate" id="bookplate" role="dialog" aria-modal="true" aria-labelledby="bookplate-title" hidden>
@@ -104,7 +113,7 @@
       </div>
 
       <div class="bookplate__details">
-        <div class="bookplate__ornament" aria-hidden="true"></div>
+        <p class="bookplate__shelf" data-bookplate-shelf></p>
         <h2 class="bookplate__title" id="bookplate-title" data-bookplate-title></h2>
         <p class="bookplate__author" data-bookplate-author></p>
         <p class="bookplate__pages" data-bookplate-pages></p>

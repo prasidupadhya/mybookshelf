@@ -1,19 +1,20 @@
 # My Bookshelf
 
-A vanilla HTML/CSS/JavaScript bookshelf, deployed on Vercel with Neon Postgres. Its Reading Room design keeps the wooden bookcase, EN/ES copy, light/dark themes, CSS 3D books and lazy-loaded Three.js detail viewer. There is no frontend framework or build step.
+A vanilla HTML/CSS/JavaScript bookshelf, deployed on Vercel with Neon Postgres. Its Gallery design presents the library as a walnut bookcase of 3D books on a flat, gallery-like page, with EN/ES copy, light/dark themes and a lazy-loaded Three.js detail viewer. There is no frontend framework or build step.
 
 Book records live only in Neon. No edition list, seed records, cover files or public JSON snapshot are checked into the current tree. `data.js` contains interface copy and shelf definitions only. Older Git commits still contain the former static library; deleting current files does not rewrite repository history.
 
-## Reading Room features
+## Gallery features
 
-- Deep green evening light and warm morning paper, with shared OKLCH color tokens. A small composited lamp follows a fine mouse pointer in the dark theme; touch devices use fixed light. The static grain and decorative motion simplify under reduced motion.
-- Self-hosted Fraunces for titles, Public Sans for reading/UI, and IBM Plex Mono for catalogue metadata. Fraunces gives the room a literary voice, while Public Sans keeps controls and long descriptions quiet. The subsetted WOFF2 files include Spanish punctuation and accented letters, use `font-display: swap`, and preload only the display face.
-- Numbered shelf headings with accessible counts, bilingual empty slots, deeper wooden ledges, stable subtle book leans and a decorative cloth bookmark for currently reading books. Natural cover proportions, paper edges, page-count thickness and the 340ms pull-out remain intact.
-- An ex-libris bookplate with a comfortable description measure and a text link to Goodreads. Supported browsers morph the selected cover with same-document View Transitions; other browsers retain the clicked-book-origin animation. Focus trapping, Escape, outside-click dismissal and focus return are preserved.
-- A freely rotatable Three.js book with drag/inertia, pinch/wheel zoom, keyboard controls, Reset/Spin and the existing CSS-solid fallback. Three.js and the cover texture are fetched only when a reader hovers, focuses or touches a book (or opens it), and its resources are disposed on close. The already-loaded cover stays visible until the 3D texture is ready, and revisioned cover relays are cached long-term.
-- A compact bilingual header that remembers the chosen language (Spanish browsers start in Spanish), a system-aware theme toggle, signature colophon and live clock. Administration shares the typography and surfaces without the lamp or grain.
+- A flat page in two themes: warm paper by day and an ink-black room by night, with hairline rules, pill controls and no page gradients or grain. Only the furniture carries texture and depth.
+- A walnut bookcase with one bay per shelf: three bays side by side from 1100px, one tall centred case on tablets and phones. Each bay has a shaded back wall, a plank with a brass plaque (numeral, shelf name, count) and planks between wrapped rows at the same pitch.
+- Each book is a six-face CSS 3D box turned spine-out. Spine thickness follows the page count, heights vary by a stable per-book hash, and spines print the title, the author's surname (or the admin's spine override) and gilt bands with contrast-checked ink. Long titles shrink to fit, drop the decorative mark on the tightest spines, or wrap onto two lines on thick spines; they are never cut off.
+- Every book on the reading shelf, and the first book on the other shelves, stands face-out. Hovering, keyboard focus or a touch pulls a book forward and turns its cover into view, with a small title label on precise pointers. A steel bookend holds each row, and a cloth bookmark marks books currently being read.
+- A bone-coloured detail card with the shelf name, title, author, page count and dates, the description and a pill link to Goodreads. Supported browsers morph the selected cover with same-document View Transitions. Focus trapping, Escape, outside-click dismissal and focus return are preserved.
+- A freely rotatable Three.js book with drag/inertia, pinch/wheel zoom, keyboard controls, Reset/Spin and a CSS-solid fallback. Three.js and the cover texture are fetched only when a reader hovers, focuses or touches a book (or opens it), and its resources are disposed on close. The already-loaded cover stays visible until the 3D texture is ready, and revisioned cover relays are cached long-term.
+- Self-hosted Fraunces for display, Public Sans for reading and controls. The header remembers the chosen language (Spanish browsers start in Spanish) and shows live shelf counts; the colophon keeps the signature and clock.
 
-The redesign adds no runtime dependencies and does not change the schema, API contracts, authentication or administration logic. Its measurements, contrast table and review limits are recorded in [the Reading Room review](docs/reading-room-review.md).
+The redesign adds no runtime dependencies and does not change the schema, API contracts, authentication or administration logic. [The earlier Reading Room review](docs/reading-room-review.md) records the previous design's measurements.
 
 ## Architecture
 
@@ -30,7 +31,7 @@ scripts/                    Migration, private import/export and admin setup
 public/index.html           Public Reading Room and data-free loading cabinet
 public/admin/index.html     Separate private administration interface
 public/assets/css/          Shared tokens/fonts and public component styles
-public/assets/js/           Vanilla public scripts, atmosphere and lazy 3D viewer
+public/assets/js/           Vanilla public scripts and lazy 3D viewer
 public/assets/admin/        Admin scripts and styling
 public/assets/fonts/        Spanish-capable subsetted WOFF2 fonts and licenses
 public/assets/images/       Signature outlines and their font license

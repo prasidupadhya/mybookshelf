@@ -1,5 +1,5 @@
 const THEME_STORAGE_KEY = "bookshelf-theme";
-const THEME_COLORS = Object.freeze({ dark: "#0f1b17", light: "#e9dcc4" });
+const THEME_COLORS = Object.freeze({ dark: "#0e0d0b", light: "#e9e7e0" });
 const THEME_COPY = Object.freeze({
   en: Object.freeze({ light: "Light", dark: "Dark", toLight: "Switch to light theme", toDark: "Switch to dark theme" }),
   es: Object.freeze({ light: "Claro", dark: "Oscuro", toLight: "Cambiar al tema claro", toDark: "Cambiar al tema oscuro" })

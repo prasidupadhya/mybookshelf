@@ -66,22 +66,25 @@
 .book-viewer__controls[hidden] { display: none; }
 .book-viewer__controls button {
   min-width: 0;
-  min-height: 44px;
-  padding: 4px;
-  color: var(--plate-link);
+  min-height: 36px;
+  padding: 0 12px;
+  color: var(--plate-text);
   border: 1px solid var(--plate-rule);
-  border-radius: 3px;
-  background: var(--paper-50);
+  border-radius: 999px;
+  background: var(--plate-bg);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-family: var(--font-ui);
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .04em;
   line-height: 1.1;
+  overflow-wrap: anywhere;
 }
-.book-viewer__controls [data-viewer-action="reset"],
-.book-viewer__controls [data-viewer-action="spin"] { font-family: var(--font-mono); font-size: .74rem; overflow-wrap: anywhere; }
-.book-viewer__controls button:hover { background: var(--paper-50); }
-.book-viewer__controls button[aria-pressed="true"] { background: var(--plate-link); color: var(--paper-50); }
+.book-viewer__controls button:hover { border-color: var(--plate-muted); }
+.book-viewer__controls button[aria-pressed="true"] { border-color: var(--plate-link); background: var(--plate-link); color: #fff; }
 .bookplate .book-viewer :focus-visible { outline: 2px solid var(--plate-focus); outline-offset: 2px; }
 .bookplate .book-viewer__stage:focus-visible { outline-offset: -3px; }
+@media (min-width: 900px) { .bookplate .book-viewer__stage { height: 360px; } .bookplate .book-viewer .bookplate__cover-frame { height: 250px; } }
 @media (max-width: 760px) { .book-viewer__stage { height: 255px; } }
 @media (max-width: 620px) {
   .book-viewer { max-width: 300px; margin-inline: auto; }

@@ -7,6 +7,7 @@ import { loadCoverBlob } from "./cover-cache.js";
 const bookplate = document.querySelector("#bookplate");
 const bookplateCard = bookplate.querySelector(".bookplate__card");
 const bookplateTitle = bookplate.querySelector("[data-bookplate-title]");
+const bookplateShelf = bookplate.querySelector("[data-bookplate-shelf]");
 const bookplateAuthor = bookplate.querySelector("[data-bookplate-author]");
 const bookplatePages = bookplate.querySelector("[data-bookplate-pages]");
 const bookplateDescription = bookplate.querySelector("[data-bookplate-description]");
@@ -115,12 +116,12 @@ function showCover(book) {
 
 function populateBookplate(book) {
   bookplateTitle.textContent = book.title[activeLanguage];
+  bookplateShelf.textContent = UI_COPY[activeLanguage].shelves[book.shelf];
   bookplateAuthor.textContent = book.author;
   const copy = UI_COPY[activeLanguage];
   const metadata = [];
   const addMetadata = text => { const entry = document.createElement('span'); entry.textContent = text; metadata.push(entry); };
   if (book.pageCount) addMetadata(`${book.pageCount} ${copy.pages}`);
-  addMetadata(copy.shelves[book.shelf]);
   for (const [value, label] of [[book.startedAt, copy.started], [book.finishedAt, copy.finished]]) {
     const date = value ? new Date(value) : null;
     if (!date || Number.isNaN(date.getTime())) continue;
@@ -129,7 +130,7 @@ function populateBookplate(book) {
     metadata.push(entry);
   }
   bookplatePages.replaceChildren(...metadata);
-  bookplatePages.hidden = false;
+  bookplatePages.hidden = !metadata.length;
   bookplateDescription.textContent = book.description[activeLanguage];
   bookplateLink.textContent = UI_COPY[activeLanguage].readOnGoodreads;
   bookplateLink.hidden = !book.url;
