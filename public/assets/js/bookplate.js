@@ -147,6 +147,7 @@ export function openBookplate(index, spine, language) {
   const reveal = native => {
     if (session !== viewerSession) return;
     bookplate.hidden = false;
+    bookplate.scrollTop = 0;
     pageShell.inert = true;
     document.body.classList.add('has-open-bookplate');
     if (native) bookplate.classList.add('is-open');

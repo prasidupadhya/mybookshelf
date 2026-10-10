@@ -12,20 +12,22 @@
   .shelf__books { --book-height: min(172px, calc((100vw - 120px) / var(--largest-cover-aspect, .625))); min-height: 0; column-gap: 26px; padding: 32px 18px 24px; }
   .shelf__books::after { bottom: 0; }
   .bookplate { padding: 12px; }
-  .bookplate__card { min-height: 0; max-height: calc(100dvh - 24px); padding: 40px 28px; gap: 24px; grid-template-columns: minmax(180px, .75fr) minmax(0, 1.3fr); }
+  .bookplate__card { min-height: 0; padding: 40px 28px; gap: 24px; grid-template-columns: minmax(180px, .75fr) minmax(0, 1.3fr); }
   .bookplate__details { padding: 14px 0; }
 }
 @media (max-width: 620px) {
   .bookplate { padding: 8px; }
-  .bookplate__card { grid-template-columns: 1fr; max-height: calc(100dvh - 16px); gap: 16px; padding: 42px 26px 28px; }
+  .bookplate__card { grid-template-columns: 1fr; gap: 16px; padding: 42px 26px 28px; }
   .bookplate__cover-column { padding: 0; }
   .bookplate__details { padding: 0; }
   .bookplate__ornament { margin-bottom: 16px; }
   .bookplate__description { margin-block: 22px 14px; }
-  .bookplate__close { top: 10px; right: 10px; }
+  /* Keep the close control reachable while a long description scrolls. */
+  .bookplate__close { position: sticky; top: 10px; z-index: 3; justify-self: end; margin: -32px -16px -56px 0; border-radius: 50%; background: color-mix(in srgb, var(--plate-bg) 88%, transparent); }
 }
 @media (max-width: 520px) {
-  .shelf__books { --book-height: min(150px, calc((100vw - 110px) / var(--largest-cover-aspect, .625))); }
+  /* Three books per row on phones: the bay stays full instead of leaving a wide empty column. */
+  .shelf__books { --book-height: min(150px, calc((100vw - 134px) / 3 / var(--largest-cover-aspect, .625))); column-gap: 22px; }
   .library-footer { flex-direction: column; align-items: center; justify-content: center; gap: 8px; text-align: center; }
   .library-footer__clock::before { display: none; }
 }
@@ -35,7 +37,12 @@
   .bookcase { padding-inline: 10px; }
   .shelf__books { padding-inline: 16px; }
   .shelf__label { grid-template-columns: 1.4rem minmax(0, 1fr) auto; gap: 8px; }
+  .shelf__books { --book-height: min(150px, calc((100vw - 118px) / 3 / var(--largest-cover-aspect, .625))); }
   .bookplate__card { padding-inline: 22px; }
+}
+@media (max-width: 359px) {
+  /* Very narrow screens return to two larger books per row. */
+  .shelf__books { --book-height: min(150px, calc((100vw - 96px) / 2 / var(--largest-cover-aspect, .625))); }
 }
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle, .language-switcher__button, .book, .bookcase, .bookplate__cover-frame { transition: none; }

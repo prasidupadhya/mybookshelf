@@ -422,7 +422,6 @@
 .shelf-empty p { max-width: 22ch; margin: 0; color: var(--muted-text); font-size: var(--type-sm); line-height: 1.6; }
 html[data-theme="light"] .shelf__books::after { box-shadow: 12px 15px 22px oklch(.3 .04 65 / .18), inset 0 1px var(--wood-highlight); }
 @media (max-width: 520px) {
-  .shelf[data-shelf="read"] .shelf__books { min-height: calc(var(--book-height) * 2 + var(--shelf-row-gap) + 54px); }
   .shelf-empty { gap: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {

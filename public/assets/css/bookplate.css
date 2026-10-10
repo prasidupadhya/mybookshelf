@@ -1,26 +1,29 @@
 /* An ex-libris plate: warm paper in either room theme. */
 .bookplate {
   position: fixed; inset: 0; z-index: 20;
-  display: grid; place-items: center;
+  display: grid;
   padding: clamp(8px, 2.4vw, 28px);
+  /* The overlay scrolls, so a tall plate keeps its printed frame around all of its content. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   opacity: 0;
   perspective: 1500px;
   transition: opacity var(--duration-normal) var(--ease-reveal);
 }
 .bookplate[hidden] { display: none; }
 .bookplate.is-open { opacity: 1; }
-.bookplate__scrim { position: absolute; inset: 0; background: oklch(.1 .018 160 / .82); backdrop-filter: blur(6px); }
+.bookplate__scrim { position: fixed; inset: 0; background: oklch(.1 .018 160 / .82); backdrop-filter: blur(6px); }
 .bookplate__card {
   --book-origin-dx: 0px; --book-origin-dy: 20px;
   width: min(980px, 100%);
   min-height: 440px;
-  max-height: calc(100dvh - 56px);
+  /* Auto margins centre the plate without clipping its top when it is taller than the viewport. */
+  margin: auto;
   position: relative; z-index: 1;
   display: grid;
   grid-template-columns: minmax(210px, .72fr) minmax(0, 1.4fr);
   gap: clamp(24px, 3vw, 48px);
   padding: clamp(32px, 4vw, 54px);
-  overflow-y: auto;
   color: var(--plate-text);
   background: var(--plate-bg);
   border: 1px solid var(--plate-rule);
@@ -219,6 +222,7 @@
 .bookplate__pages > * + *::before { content: "·"; margin: 0 10px; }
 .bookplate__description { width: 100%; max-width: 66ch; margin: 26px 0 20px; color: var(--plate-text); font-size: var(--type-body); line-height: 1.75; overflow-wrap: anywhere; white-space: pre-line; }
 .bookplate__link { display: inline-flex; gap: 12px; align-items: center; min-height: 44px; color: var(--plate-link); font-size: var(--type-sm); font-weight: 500; text-decoration-line: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.bookplate__link[hidden] { display: none; }
 .bookplate__link::after { content: "↗"; display: inline-block; text-decoration: none; transition: transform var(--duration-quick) var(--ease-press); }
 .bookplate__link:hover::after { transform: translate(2px, -2px); }
 .bookplate__close { position: absolute; top: 18px; right: 18px; z-index: 3; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--plate-muted); cursor: pointer; }
@@ -229,7 +233,8 @@
 ::view-transition-group(book-cover) { animation-duration: 340ms; animation-timing-function: var(--ease-reveal); }
 ::view-transition-group(root) { animation-duration: 220ms; }
 @media (prefers-reduced-motion: reduce) {
-  .bookplate, .bookplate__card, .bookplate__close svg, .bookplate__link::after { transition: none; }
+  .bookplate, .bookplate__card, .bookplate__close svg, .bookplate__link[hidden] { display: none; }
+.bookplate__link::after { transition: none; }
   .bookplate__card, .bookplate.is-open .bookplate__card, .bookplate__close:hover svg, .bookplate__link:hover::after { transform: none; }
   ::view-transition-group(*) { animation: none; }
 }

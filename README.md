@@ -11,7 +11,7 @@ Book records live only in Neon. No edition list, seed records, cover files or pu
 - Numbered shelf headings with accessible counts, bilingual empty slots, deeper wooden ledges, stable subtle book leans and a decorative cloth bookmark for currently reading books. Natural cover proportions, paper edges, page-count thickness and the 340ms pull-out remain intact.
 - An ex-libris bookplate with a comfortable description measure and a text link to Goodreads. Supported browsers morph the selected cover with same-document View Transitions; other browsers retain the clicked-book-origin animation. Focus trapping, Escape, outside-click dismissal and focus return are preserved.
 - A freely rotatable Three.js book with drag/inertia, pinch/wheel zoom, keyboard controls, Reset/Spin and the existing CSS-solid fallback. Three.js is fetched only when a preview opens, and its resources are disposed on close.
-- A compact bilingual header, system-aware theme toggle, signature colophon and live clock. Administration shares the typography and surfaces without the lamp or grain.
+- A compact bilingual header that remembers the chosen language (Spanish browsers start in Spanish), a system-aware theme toggle, signature colophon and live clock. Administration shares the typography and surfaces without the lamp or grain.
 
 The redesign adds no runtime dependencies and does not change the schema, API contracts, authentication or administration logic. Its measurements, contrast table and review limits are recorded in [the Reading Room review](docs/reading-room-review.md).
 

@@ -2,7 +2,7 @@ import { UI_COPY, BOOKS, setBooks } from "./data.js";
 import { loadPublicBooks } from "./books-api.js";
 import { initClock, setClockLanguage } from "./clock.js";
 import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookplate.js";
-import { applyLanguage } from "./language.js";
+import { applyLanguage, getPreferredLanguage } from "./language.js";
 import { renderLibrary } from "./library.js";
 import { cancelBookSelection, initMotion, selectBook } from "./motion.js";
 import { initAtmosphere } from "./atmosphere.js";
@@ -10,25 +10,25 @@ import { initAtmosphere } from "./atmosphere.js";
 const bookcase = document.querySelector("[data-bookcase]");
 const languageButtons = [...document.querySelectorAll("[data-language]")];
 
-let activeLanguage = document.documentElement.lang === "es" ? "es" : "en";
+let activeLanguage = getPreferredLanguage();
 let loading = true;
 let pendingBooks = null;
 let fetching = false;
 let unavailable = false;
 
 function renderCollection() {
-  renderLibrary(activeLanguage, { loading });
+  renderLibrary(activeLanguage, { loading, unavailable });
   if (!unavailable) return;
   const message = document.createElement('p'); message.className = 'collection-status';
   message.setAttribute('role', 'status');
-  message.textContent = activeLanguage === 'es' ? 'La colección no está disponible temporalmente. ' : 'The collection is temporarily unavailable. ';
+  message.textContent = `${UI_COPY[activeLanguage].unavailable} `;
   const retry = document.createElement('button'); retry.type = 'button';
-  retry.textContent = activeLanguage === 'es' ? 'Reintentar' : 'Try again';
-  retry.addEventListener('click', refreshBooks); message.append(retry); bookcase.append(message);
+  retry.textContent = UI_COPY[activeLanguage].retry;
+  retry.addEventListener('click', refreshBooks); message.append(retry); bookcase.prepend(message);
 }
 
 function setLanguage(language) {
-  if (!UI_COPY[language] || !applyLanguage(language)) return;
+  if (!UI_COPY[language] || !applyLanguage(language, { persist: true })) return;
 
   activeLanguage = language;
   cancelBookSelection();

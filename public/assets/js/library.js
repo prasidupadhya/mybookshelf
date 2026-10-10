@@ -70,10 +70,9 @@ export function createBookSpine(book, index, language) {
   // A stable, restrained lean: never changes on a language switch or refresh.
   const hash = [...book.id].reduce((value, character) => (Math.imul(value, 31) + character.charCodeAt(0)) >>> 0, 0);
   button.style.setProperty('--book-lean', `${hash % 4 === 0 ? -1.1 : hash % 4 === 1 ? .85 : 0}deg`);
-  const visibleLabel = `${book.spineTitle || localizedTitle} ${book.spineAuthor ?? book.author}`.trim();
-  const fullLabel = visibleLabel === `${localizedTitle} ${book.author}`
-    ? visibleLabel : `${visibleLabel} (${localizedTitle} — ${book.author})`;
-  button.setAttribute('aria-label', `${fullLabel}${book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : ''}`);
+  // Announce the edition's title and author once; spine overrides are visual abbreviations.
+  const pages = book.pageCount ? `, ${book.pageCount} ${UI_COPY[language].pages}` : '';
+  button.setAttribute('aria-label', `${localizedTitle}, ${book.author}${pages}`);
 
   front.className = "book__front";
   back.className = "book__face book__back";
@@ -136,7 +135,7 @@ export function createBookSpine(book, index, language) {
   return button;
 }
 
-export function renderLibrary(language, { loading = false } = {}) {
+export function renderLibrary(language, { loading = false, unavailable = false } = {}) {
   bookcase.replaceChildren();
   bookcase.style.setProperty('--largest-cover-aspect', String(Math.max(.625, ...BOOKS.map(book => book.coverAspect))));
   const shelfElements = new Map();
@@ -144,7 +143,7 @@ export function renderLibrary(language, { loading = false } = {}) {
 
   orderedShelves.forEach((shelf) => {
     const count = BOOKS.filter(book => book.shelf === shelf.id).length;
-    const { section, booksContainer } = createShelf(shelf, language, count, loading);
+    const { section, booksContainer } = createShelf(shelf, language, count, loading || unavailable);
     shelfElements.set(shelf.id, booksContainer);
     bookcase.append(section);
   });
@@ -163,7 +162,8 @@ export function renderLibrary(language, { loading = false } = {}) {
     }
   }
 
-  if (!loading) for (const shelf of SHELVES) {
+  // Without a database response, empty-shelf copy would misrepresent the collection.
+  if (!loading && !unavailable) for (const shelf of SHELVES) {
     const container = shelfElements.get(shelf.id);
     if (container.children.length) continue;
     const empty = document.createElement('div'); empty.className = 'shelf-empty';
@@ -173,13 +173,6 @@ export function renderLibrary(language, { loading = false } = {}) {
     empty.append(slot, copy); container.append(empty);
   }
 
-  const futureSlot = document.createElement("div");
-  const futureSlotLabel = document.createElement("span");
-  futureSlot.className = "book-slot";
-  futureSlot.setAttribute("aria-hidden", "true");
-  futureSlotLabel.textContent = UI_COPY[language].nextBook;
-  futureSlot.append(futureSlotLabel);
-  if (!loading && BOOKS.some(book => book.shelf === 'want')) shelfElements.get("want")?.append(futureSlot);
   bookcase.setAttribute('aria-busy', String(loading));
 }
 

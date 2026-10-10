@@ -1,16 +1,18 @@
 export const UI_COPY = Object.freeze({
   en: Object.freeze({
     heading: "My bookshelf",
+    documentTitle: "My Bookshelf",
     intro: "Books I've finished, what I'm reading now, and what I want to read next.",
     shelves: Object.freeze({
       current: "Currently reading",
       want: "Want to read",
       read: "Read"
     }),
-    nextBook: "Next book",
     books: "books",
     book: "book",
     loading: "Loading books",
+    unavailable: "The collection is temporarily unavailable.",
+    retry: "Try again",
     emptyShelves: Object.freeze({ current: "No book open just yet.", want: "Room for your next read.", read: "Finished books will rest here." }),
     pages: "pages",
     started: "Started",
@@ -24,16 +26,18 @@ export const UI_COPY = Object.freeze({
   }),
   es: Object.freeze({
     heading: "Mi biblioteca",
+    documentTitle: "Mi biblioteca",
     intro: "Libros que ya he leído, lo que estoy leyendo ahora y lo que quiero leer después.",
     shelves: Object.freeze({
       current: "Leyendo ahora",
       want: "Quiero leer",
       read: "Leídos"
     }),
-    nextBook: "Próximo libro",
     books: "libros",
     book: "libro",
     loading: "Cargando libros",
+    unavailable: "La colección no está disponible temporalmente.",
+    retry: "Reintentar",
     emptyShelves: Object.freeze({ current: "Aún no hay un libro abierto.", want: "Un lugar para tu próxima lectura.", read: "Aquí descansarán los libros leídos." }),
     pages: "páginas",
     started: "Inicio",
