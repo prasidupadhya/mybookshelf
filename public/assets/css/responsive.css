@@ -1,9 +1,11 @@
 @media (max-width: 760px) {
   .page-shell { width: calc(100% - 24px); padding: 32px 0 40px; }
-  .library-header { display: block; margin: 0 8px 30px; }
+  /* Header copy shares the left edge of the shelf headings (bookcase border + padding + label inset). */
+  .library-header { display: block; margin: 0 17px 30px; }
   .library-header p { max-width: 42rem; white-space: normal; text-wrap: pretty; }
   .header-controls { margin-top: 18px; flex-wrap: wrap; }
-  .header-controls .language-switcher { margin-top: 0; }
+  /* Optically align the "EN" label, not its 44px touch target, with the title above. */
+  .header-controls .language-switcher { margin-top: 0; margin-left: -14px; }
   .bookcase { padding: 26px 14px 8px; }
   .bookcase::before, .bookcase::after { width: 14px; }
   .bookcase::before { left: -7px; }
@@ -14,6 +16,14 @@
   .bookplate { padding: 12px; }
   .bookplate__card { min-height: 0; padding: 40px 28px; gap: 24px; grid-template-columns: minmax(180px, .75fr) minmax(0, 1.3fr); }
   .bookplate__details { padding: 14px 0; }
+}
+/* Tablets: size books so four fill a row instead of leaving a wide empty strip. The formulas follow
+   the page gutter, bookcase and bay padding, with 16px of slack for a classic desktop scrollbar. */
+@media (min-width: 521px) and (max-width: 760px) {
+  .shelf__books { --book-height: min(172px, calc((100vw - 172px) / 4 / var(--largest-cover-aspect, .625))); column-gap: 22px; }
+}
+@media (min-width: 761px) and (max-width: 1023px) {
+  .shelf__books { --book-height: min(198px, calc((95.5vw - 244px) / 4 / var(--largest-cover-aspect, .625))); column-gap: 24px; }
 }
 @media (max-width: 620px) {
   .bookplate { padding: 8px; }
@@ -33,7 +43,7 @@
 }
 @media (max-width: 390px) {
   .page-shell { width: calc(100% - 20px); padding-top: 26px; }
-  .library-header { margin-inline: 6px; }
+  .library-header { margin-inline: 13px; }
   .bookcase { padding-inline: 10px; }
   .shelf__books { padding-inline: 16px; }
   .shelf__label { grid-template-columns: 1.4rem minmax(0, 1fr) auto; gap: 8px; }
@@ -42,7 +52,7 @@
 }
 @media (max-width: 359px) {
   /* Very narrow screens return to two larger books per row. */
-  .shelf__books { --book-height: min(150px, calc((100vw - 96px) / 2 / var(--largest-cover-aspect, .625))); }
+  .shelf__books { --book-height: min(176px, calc((100vw - 96px) / 2 / var(--largest-cover-aspect, .625))); }
 }
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle, .language-switcher__button, .book, .bookcase, .bookplate__cover-frame { transition: none; }
