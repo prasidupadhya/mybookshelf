@@ -2,6 +2,7 @@ import { BOOKS, UI_COPY } from "./data.js";
 import { getSpineByIndex } from "./library.js";
 import { setViewerLanguage } from "./book-viewer-copy.js";
 import { getReadableInk } from "./book-appearance.js";
+import { loadCoverBlob } from "./cover-cache.js";
 
 const bookplate = document.querySelector("#bookplate");
 const bookplateCard = bookplate.querySelector(".bookplate__card");
@@ -28,6 +29,19 @@ let closeTimer = 0;
 let activeTransition = null;
 const plateFront = viewerRoot.querySelector('.bookplate__book-front');
 
+let viewerModule = null;
+const loadViewer = () => (viewerModule ||= import("./book-viewer.js").catch(error => { viewerModule = null; throw error; }));
+
+// Start the engine and cover texture downloads as soon as a reader shows interest in a book,
+// so the 3D cover is usually ready by the time the bookplate finishes opening.
+export function prefetchBook(index) {
+  const book = BOOKS[index];
+  if (!book || navigator.connection?.saveData) return;
+  loadViewer().catch(() => {});
+  const cover = book.coverTextureUrl ?? book.coverUrl;
+  if (cover) loadCoverBlob(cover).catch(() => {});
+}
+
 async function startViewer(book, session) {
   const copy = setViewerLanguage(viewerRoot, book, activeLanguage);
   const stage = viewerRoot.querySelector("[data-viewer-stage]");
@@ -36,7 +50,7 @@ async function startViewer(book, session) {
   viewerRoot.querySelector("[data-viewer-status]").textContent = copy.loading;
   try {
     // The engine and renderer are absent from the initial page's module graph.
-    const { createBookViewer } = await import("./book-viewer.js");
+    const { createBookViewer } = await loadViewer();
     if (session !== viewerSession) return;
     viewer = createBookViewer(viewerRoot, book, activeLanguage);
   } catch {
@@ -142,6 +156,7 @@ export function openBookplate(index, spine, language) {
   activeLanguage = language;
   lastFocusedSpine = spine;
   activeBookIndex = index;
+  prefetchBook(index);
   populateBookplate(book);
   setBookplateOrigin(spine, book.accentColor);
   const reveal = native => {

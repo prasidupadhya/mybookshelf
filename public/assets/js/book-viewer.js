@@ -1,6 +1,7 @@
 import * as THREE from '../vendor/three/three.module.js';
 import { setViewerLanguage } from './book-viewer-copy.js';
 import { getReadableInk, getBookThickness } from './book-appearance.js';
+import { loadCoverBlob } from './cover-cache.js';
 
 // No camera panning: rotate the object about its center, with a bounded zoom.
 // Quaternions allow complete turns on all axes without Euler-angle lockups.
@@ -35,7 +36,6 @@ export function createBookViewer(root, book, language) {
   let bookRadius = 1.48;
   let slowFrames = 0;
   let contextLost = false;
-  let textureFailed = false;
   let coverInk = getReadableInk(book.spineColor ?? book.accentColor);
   root.style.setProperty('--book-ink', coverInk);
   root.style.setProperty('--viewer-depth', `${getBookThickness(book.pageCount)}px`);
@@ -122,6 +122,7 @@ export function createBookViewer(root, book, language) {
       model.scale.x = cachedAspect / (book.coverAspect || .625);
       bookRadius = Math.max(1.48, Math.hypot(1.2 * cachedAspect, 1.2, depth / 2));
       titleMap.dispose(); resources.delete(titleMap);
+      root.classList.add('is-textured');
     }
 
     const spineMap = canvasTexture(128, 1024, (ctx, w, h) => {
@@ -154,11 +155,13 @@ export function createBookViewer(root, book, language) {
     shadow = new THREE.Mesh(track(new THREE.PlaneGeometry(3.4, 2)), track(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: .65, depthWrite: false })));
     shadow.rotation.x = -Math.PI / 2; shadow.position.y = -1.52; scene.add(shadow);
 
-    // Fetch is abortable; GPU textures are bounded and never allocated after close.
+    // The already-loaded CSS cover stays visible until this texture is ready. Downloads are shared
+    // with the shelf's prefetch; GPU textures are bounded and never allocated after close.
     const coverSource = book.coverTextureUrl ?? book.coverUrl;
-    if (book.coverUrl && !cachedFront) fetch(coverSource, { signal: textureAbort.signal, mode: 'cors' })
-      .then(response => { if (!response.ok) throw new Error('Cover unavailable'); return response.blob(); })
-      .then(blob => createImageBitmap(blob))
+    const textureSignal = textureAbort.signal;
+    if (!book.coverUrl) root.classList.add('is-textured');
+    else if (!cachedFront) loadCoverBlob(coverSource)
+      .then(blob => { if (textureSignal.aborted) throw new DOMException('Closed', 'AbortError'); return createImageBitmap(blob); })
       .then(bitmap => {
         if (disposed || version !== modelVersion) { bitmap.close(); return; }
         // Fill the entire face; no padding, crop, or colored surround.
@@ -174,18 +177,18 @@ export function createBookViewer(root, book, language) {
         frontMaterial.map = map; frontMaterial.needsUpdate = true;
         cachedFront = map; cachedSource = coverSource; cachedAspect = aspect;
         titleMap.dispose(); resources.delete(titleMap);
+        root.classList.add('is-textured');
         resize(); invalidate();
       }).catch(error => {
         if (disposed || version !== modelVersion || error.name === 'AbortError') return;
-        textureFailed = true; status.textContent = copy.coverUnavailable;
+        // Keep rotating the CSS book, which shows the directly loaded cover or its titled fallback.
+        invalidate();
       });
     if (book.backCoverUrl) {
       const backMaterial = material({ color: '#ffffff', roughness: .76 });
       const back = new THREE.Mesh(track(new THREE.PlaneGeometry(width, 2.4)), backMaterial);
       back.rotation.y = Math.PI; back.position.z = -depth / 2 - .027;
-      fetch(book.backCoverTextureUrl ?? book.backCoverUrl, { signal: textureAbort.signal, mode: 'cors' }).then(response => {
-        if (!response.ok) throw new Error('Back cover unavailable'); return response.blob();
-      }).then(blob => createImageBitmap(blob)).then(bitmap => {
+      loadCoverBlob(book.backCoverTextureUrl ?? book.backCoverUrl).then(blob => createImageBitmap(blob)).then(bitmap => {
         if (disposed || version !== modelVersion) { bitmap.close(); return; }
         backMaterial.map = canvasTexture(Math.round(768 * (book.coverAspect || .625)), 768, (ctx, w, h) => ctx.drawImage(bitmap, 0, 0, w, h));
         bitmap.close(); backMaterial.needsUpdate = true; model.add(back); invalidate();
@@ -226,12 +229,15 @@ export function createBookViewer(root, book, language) {
   }
 
   function render() {
-    if (renderer && !contextLost) {
+    const webgl = renderer && !contextLost;
+    if (webgl) {
       model.quaternion.copy(orientation);
       camera.position.set(0, fitDistance * .035 / zoom, fitDistance / zoom);
       camera.lookAt(0, -.05, 0);
       renderer.render(scene, camera);
-    } else {
+    }
+    // The CSS book is visible without WebGL and while the WebGL cover texture is loading.
+    if (!webgl || !root.classList.contains('is-textured')) {
       matrix.makeRotationFromQuaternion(orientation);
       fallback.style.setProperty('--viewer-rotation', `matrix3d(${matrix.elements.join(',')})`);
       const diameter = Math.hypot(fallback.offsetWidth, fallback.offsetHeight, 24);
@@ -391,14 +397,15 @@ export function createBookViewer(root, book, language) {
       book = nextBook; coverInk = getReadableInk(book.spineColor ?? book.accentColor);
       root.style.setProperty('--book-ink', coverInk);
       root.style.setProperty('--viewer-depth', `${getBookThickness(book.pageCount)}px`);
-      copy = setViewerLanguage(root, book, language); textureFailed = false;
+      copy = setViewerLanguage(root, book, language);
+      if (!keepFront) root.classList.remove('is-textured');
       if (renderer && !contextLost) { makeModel(); status.textContent = ''; resize(); }
       invalidate();
     },
     setLanguage(nextLanguage) {
       language = nextLanguage;
       copy = setViewerLanguage(root, book, nextLanguage);
-      status.textContent = !renderer || contextLost ? copy.fallback : textureFailed ? copy.coverUnavailable : '';
+      status.textContent = !renderer || contextLost ? copy.fallback : '';
     },
     pause() {
       suspended = true; stopMotion();
@@ -414,7 +421,7 @@ export function createBookViewer(root, book, language) {
       for (const id of pointers.keys()) if (stage.hasPointerCapture(id)) stage.releasePointerCapture(id);
       pointers.clear(); resources.forEach(resource => resource.dispose()); resources.clear();
       disposeRenderer();
-      root.classList.remove('is-ready', 'is-webgl', 'is-interactive', 'is-dragging');
+      root.classList.remove('is-ready', 'is-webgl', 'is-textured', 'is-interactive', 'is-dragging');
       fallback.style.removeProperty('--viewer-rotation'); fallback.style.removeProperty('--viewer-scale');
       controls.hidden = true; status.textContent = ''; spinButton.setAttribute('aria-pressed', 'false');
     }

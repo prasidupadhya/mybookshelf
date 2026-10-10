@@ -25,7 +25,7 @@ export async function testDatabase({ books = fixtureBooks() } = {}) {
   return { db, pg, books };
 }
 
-export async function request(handler, { method = 'GET', body, cookie, id, csrf = true } = {}) {
+export async function request(handler, { method = 'GET', body, cookie, id, query = {}, csrf = true } = {}) {
   const headers = { host: 'localhost:3000', 'content-type': 'application/json', ...(csrf ? { origin: 'http://localhost:3000', 'x-requested-with': 'fetch' } : {}), ...(cookie ? { cookie } : {}) };
   const output = { status: 200, headers: {}, body: null };
   const res = {
@@ -33,6 +33,6 @@ export async function request(handler, { method = 'GET', body, cookie, id, csrf 
     set statusCode(value) { output.status = value; },
     end: value => { output.body = Buffer.isBuffer(value) ? value : JSON.parse(value); res.writableEnded = true; }
   };
-  await handler({ method, body, headers, query: { id }, socket: { remoteAddress: '127.0.0.1' } }, res);
+  await handler({ method, body, headers, query: { ...query, id }, socket: { remoteAddress: '127.0.0.1' } }, res);
   return output;
 }

@@ -54,6 +54,10 @@ test('Postgres migrations, authentication, CSRF, persistence and shelf operation
     assert.match(publicResult.body.shelves.read[0].cover_texture_url, /^\/api\/books\/[^/]+\/cover\?face=front&rev=[0-9a-f]{16}$/);
     const publicCover = await request(handlers['books/[id]/cover'], { id: publicResult.body.shelves.read[0].id });
     assert.equal(publicCover.status, 200); assert.equal(publicCover.headers['content-type'], 'image/jpeg');
+    assert.match(publicCover.headers['cache-control'], /max-age=60,/);
+    const textureUrl = new URL(publicResult.body.shelves.read[0].cover_texture_url, 'http://localhost');
+    const revisioned = await request(handlers['books/[id]/cover'], { id: publicResult.body.shelves.read[0].id, query: { face: 'front', rev: textureUrl.searchParams.get('rev') } });
+    assert.match(revisioned.headers['cache-control'], /max-age=31536000.*immutable/);
     assert.equal((await request(handlers['books/[id]/cover'], { id: 'bad' })).status, 400);
     assert.equal((await request(handlers['books/[id]/cover'], { id: '00000000-0000-0000-0000-000000000000' })).status, 404);
     assert.equal((await request(handlers['admin/books/index'], { method: 'POST', cookie, csrf: false, body: {} })).status, 403);

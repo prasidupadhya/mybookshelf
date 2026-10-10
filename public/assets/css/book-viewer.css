@@ -28,8 +28,9 @@
   opacity: 0;
   transition: opacity 300ms ease;
 }
-.book-viewer.is-ready canvas { opacity: 1; }
-.book-viewer.is-webgl .bookplate__cover-frame { visibility: hidden; }
+/* The CSS book keeps the loaded cover on screen until the WebGL texture is ready, then cross-fades. */
+.book-viewer.is-ready.is-textured canvas { opacity: 1; }
+.book-viewer.is-webgl.is-textured .bookplate__cover-frame { visibility: hidden; transition: visibility 0s linear 300ms; }
 .book-viewer .bookplate__cover-frame {
   --book-depth: var(--viewer-depth, 24px);
   --book-half-depth: calc(var(--book-depth) / 2);

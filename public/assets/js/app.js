@@ -1,7 +1,7 @@
 import { UI_COPY, BOOKS, setBooks } from "./data.js";
 import { loadPublicBooks } from "./books-api.js";
 import { initClock, setClockLanguage } from "./clock.js";
-import { initBookplate, openBookplate, refreshBookplateLanguage } from "./bookplate.js";
+import { initBookplate, openBookplate, prefetchBook, refreshBookplateLanguage } from "./bookplate.js";
 import { applyLanguage, getPreferredLanguage } from "./language.js";
 import { renderLibrary } from "./library.js";
 import { cancelBookSelection, initMotion, selectBook } from "./motion.js";
@@ -44,6 +44,21 @@ bookcase.addEventListener("click", (event) => {
     openBookplate(Number(spine.dataset.bookIndex), spine, activeLanguage);
   });
 });
+
+// A deliberate hover, keyboard focus or the first touch warms the detail view before the click
+// arrives. A short hover delay keeps a pointer sweeping across the shelf from fetching every cover.
+let hoverPrefetch = 0;
+const prefetchSpine = (event) => {
+  const spine = event.target.closest?.("[data-book-index]");
+  if (spine && !spine.disabled) prefetchBook(Number(spine.dataset.bookIndex));
+};
+bookcase.addEventListener("pointerover", (event) => {
+  window.clearTimeout(hoverPrefetch);
+  hoverPrefetch = window.setTimeout(() => prefetchSpine(event), 120);
+}, { passive: true });
+bookcase.addEventListener("pointerout", () => window.clearTimeout(hoverPrefetch), { passive: true });
+bookcase.addEventListener("pointerdown", prefetchSpine, { passive: true });
+bookcase.addEventListener("focusin", prefetchSpine);
 
 languageButtons.forEach((button) => {
   button.addEventListener("click", () => setLanguage(button.dataset.language));
