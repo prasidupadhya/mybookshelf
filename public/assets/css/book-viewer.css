@@ -26,18 +26,22 @@
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 300ms ease;
+  /* Waits for the CSS book to fade out first, so the two renderings never overlap. */
+  transition: opacity 220ms ease 160ms;
 }
 /* The CSS book keeps the loaded cover on screen until the WebGL texture is ready, then cross-fades. */
 .book-viewer.is-ready.is-textured canvas { opacity: 1; }
-.book-viewer.is-webgl.is-textured .bookplate__cover-frame { visibility: hidden; transition: visibility 0s linear 300ms; }
+.book-viewer.is-webgl.is-textured .bookplate__cover-frame { opacity: 0; visibility: hidden; transition: opacity 160ms ease, visibility 0s linear 160ms; }
 .book-viewer .bookplate__cover-frame {
   --book-depth: var(--viewer-depth, 24px);
   --book-half-depth: calc(var(--book-depth) / 2);
   --book-cover-border: 0px;
-  width: auto;
-  height: 210px;
-  aspect-ratio: var(--cover-aspect, .625);
+  --frame-h: 210px;
+  /* Explicit size: an auto width let the cover's natural pixel width (often 1500px+) set the frame. */
+  width: calc(var(--frame-h) * var(--cover-aspect, .625));
+  min-width: 0;
+  height: var(--frame-h);
+  aspect-ratio: auto;
   filter: none;
   isolation: auto;
   transform: var(--viewer-rotation, rotateX(-8deg) rotateY(-24deg)) scale(var(--viewer-scale, 1));
@@ -84,7 +88,7 @@
 .book-viewer__controls button[aria-pressed="true"] { border-color: var(--plate-link); background: var(--plate-link); color: #fff; }
 .bookplate .book-viewer :focus-visible { outline: 2px solid var(--plate-focus); outline-offset: 2px; }
 .bookplate .book-viewer__stage:focus-visible { outline-offset: -3px; }
-@media (min-width: 900px) { .bookplate .book-viewer__stage { height: 360px; } .bookplate .book-viewer .bookplate__cover-frame { height: 250px; } }
+@media (min-width: 900px) { .bookplate .book-viewer__stage { height: 360px; } .bookplate .book-viewer .bookplate__cover-frame { --frame-h: 250px; } }
 @media (max-width: 760px) { .book-viewer__stage { height: 255px; } }
 @media (max-width: 620px) {
   .book-viewer { max-width: 300px; margin-inline: auto; }

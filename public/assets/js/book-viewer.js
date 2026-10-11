@@ -236,8 +236,9 @@ export function createBookViewer(root, book, language) {
       camera.lookAt(0, -.05, 0);
       renderer.render(scene, camera);
     }
-    // The CSS book is visible without WebGL and while the WebGL cover texture is loading.
-    if (!webgl || !root.classList.contains('is-textured')) {
+    // Only the no-WebGL fallback follows the orientation. While a WebGL texture loads, the CSS book
+    // keeps its own resting pose: three.js's y-up rotation garbles a y-down CSS transform.
+    if (!webgl) {
       matrix.makeRotationFromQuaternion(orientation);
       fallback.style.setProperty('--viewer-rotation', `matrix3d(${matrix.elements.join(',')})`);
       const diameter = Math.hypot(fallback.offsetWidth, fallback.offsetHeight, 24);

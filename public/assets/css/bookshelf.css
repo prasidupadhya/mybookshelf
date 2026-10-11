@@ -149,6 +149,8 @@
   width: var(--book-w);
   height: var(--book-h);
   display: grid;
+  /* Fixed tracks: a cover image must never size its own grid area. */
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   overflow: hidden;
   background: var(--book-binding);
   transform: translateZ(calc(var(--book-d) / 2));
