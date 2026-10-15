@@ -23,10 +23,12 @@ const server = createServer(async (req, res) => {
   catch { res.writeHead(400); return res.end('Invalid URL'); }
   const dynamic = /^\/api\/admin\/books\/([^/]+)$/.exec(path);
   const cover = /^\/api\/books\/([^/]+)\/cover$/.exec(path);
-  const apiFile = routes[path] || (dynamic ? 'api/admin/books/[id].js' : cover ? 'api/books/[id]/cover.js' : null);
+  const speech = /^\/api\/books\/([^/]+)\/speech$/.exec(path);
+  const apiFile = routes[path] || (dynamic ? 'api/admin/books/[id].js' : cover ? 'api/books/[id]/cover.js' : speech ? 'api/books/[id]/speech.js' : null);
   if (apiFile) {
     req.query = Object.fromEntries(url.searchParams); if (dynamic) req.query.id = dynamic[1];
     if (cover) req.query.id = cover[1];
+    if (speech) req.query.id = speech[1];
     const { default: handler } = await import(pathToFileURL(resolve(apiFile)));
     return handler(req, res);
   }

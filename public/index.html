@@ -118,7 +118,11 @@
         <p class="bookplate__author" data-bookplate-author></p>
         <p class="bookplate__pages" data-bookplate-pages></p>
         <p class="bookplate__description" data-bookplate-description></p>
-        <a class="bookplate__link" data-bookplate-link target="_blank" rel="noopener noreferrer">Read about it on Goodreads</a>
+        <div class="bookplate__actions">
+          <button class="bookplate__listen" type="button" data-bookplate-listen data-state="idle" hidden></button>
+          <a class="bookplate__link" data-bookplate-link target="_blank" rel="noopener noreferrer">Read about it on Goodreads</a>
+        </div>
+        <p class="bookplate__listen-status" data-bookplate-listen-status role="status"></p>
       </div>
     </article>
   </section>

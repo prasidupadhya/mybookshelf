@@ -12,6 +12,8 @@ const bookplateAuthor = bookplate.querySelector("[data-bookplate-author]");
 const bookplatePages = bookplate.querySelector("[data-bookplate-pages]");
 const bookplateDescription = bookplate.querySelector("[data-bookplate-description]");
 const bookplateLink = bookplate.querySelector("[data-bookplate-link]");
+const listenButton = bookplate.querySelector("[data-bookplate-listen]");
+const listenStatus = bookplate.querySelector("[data-bookplate-listen-status]");
 const bookplateCover = bookplate.querySelector("[data-bookplate-cover]");
 const bookplateCoverFallback = bookplate.querySelector("[data-bookplate-cover-fallback]");
 const bookplateCoverTitle = bookplate.querySelector("[data-bookplate-cover-title]");
@@ -113,6 +115,8 @@ function showCover(book) {
 }
 
 function populateBookplate(book) {
+  stopNarration();
+  listenButton.hidden = !book.dbId || !book.description[activeLanguage];
   bookplateTitle.textContent = book.title[activeLanguage];
   bookplateShelf.textContent = UI_COPY[activeLanguage].shelves[book.shelf];
   bookplateAuthor.textContent = book.author;
@@ -143,6 +147,49 @@ function populateBookplate(book) {
   showCover(book);
 }
 
+// Narration: one audio element, reused for every book. The server generates each clip once and stores it.
+let narration = null;
+let narrationKey = "";
+
+function setListenState(state) {
+  const copy = UI_COPY[activeLanguage];
+  listenButton.dataset.state = state;
+  listenButton.disabled = state === "loading";
+  listenButton.setAttribute("aria-busy", String(state === "loading"));
+  listenButton.textContent = state === "playing" ? copy.pauseNarration
+    : state === "loading" ? copy.preparingNarration : copy.listen;
+  listenStatus.textContent = state === "error" ? copy.narrationUnavailable : "";
+}
+
+function stopNarration() {
+  narration?.pause();
+  setListenState("idle");
+}
+
+function createNarration() {
+  narration = new Audio();
+  narration.preload = "none";
+  narration.addEventListener("waiting", () => setListenState("loading"));
+  narration.addEventListener("playing", () => setListenState("playing"));
+  narration.addEventListener("pause", () => { if (!narration.ended) setListenState("idle"); });
+  narration.addEventListener("ended", () => setListenState("idle"));
+  narration.addEventListener("error", () => { if (narration.currentSrc) setListenState("error"); });
+}
+
+async function toggleNarration(book) {
+  if (!book.dbId || !book.description[activeLanguage]) return;
+  const key = `${book.dbId}:${activeLanguage}`;
+  if (!narration) createNarration();
+  if (narrationKey === key && !narration.paused) { narration.pause(); return; }
+  if (narrationKey !== key) {
+    narrationKey = key;
+    narration.src = `/api/books/${book.dbId}/speech?lang=${activeLanguage}`;
+  }
+  setListenState("loading");
+  try { await narration.play(); }
+  catch { if (narrationKey === key) setListenState("error"); }
+}
+
 export function openBookplate(index, spine, language) {
   const book = BOOKS[index];
   if (!book) return;
@@ -171,6 +218,7 @@ export function openBookplate(index, spine, language) {
 
 function finishClose() {
   if (bookplate.classList.contains("is-open")) return;
+  stopNarration();
   viewer?.dispose();
   viewer = null;
   bookplate.hidden = true;
@@ -183,6 +231,7 @@ function finishClose() {
 export function closeBookplate() {
   window.clearTimeout(closeTimer);
   ++viewerSession;
+  stopNarration();
   viewer?.pause();
   viewerRoot.querySelector("[data-viewer-stage]").removeAttribute("aria-busy");
   bookplate.classList.remove("is-open");
@@ -229,6 +278,7 @@ function trapBookplateFocus(event) {
 
 export function initBookplate(language) {
   activeLanguage = language;
+  listenButton.addEventListener("click", () => { if (activeBookIndex !== null) toggleNarration(BOOKS[activeBookIndex]); });
 
   bookplate.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-bookplate]")) closeBookplate();

@@ -12,6 +12,7 @@ Book records live only in Neon. No edition list, seed records, cover files or pu
 - Every book on the reading shelf, and the first book on the other shelves, stands face-out. Hovering, keyboard focus or a touch pulls a book forward and turns its cover into view, with a small title label on precise pointers. A steel bookend holds each row, and a cloth bookmark marks books currently being read.
 - A bone-coloured detail card with the shelf name, title, author, page count and dates, the description and a pill link to Goodreads. Supported browsers morph the selected cover with same-document View Transitions. Focus trapping, Escape, outside-click dismissal and focus return are preserved.
 - A freely rotatable Three.js book with drag/inertia, pinch/wheel zoom, keyboard controls, Reset/Spin and a CSS-solid fallback. Three.js and the cover texture are fetched only when a reader hovers, focuses or touches a book (or opens it), and its resources are disposed on close. The already-loaded cover stays visible until the 3D texture is ready, and revisioned cover relays are cached long-term.
+- A **Listen** button on each book card narrates its saved description in the page's language through ElevenLabs. The key lives only in the server environment. Each description is generated once and stored in Postgres (`speech_clips`); an edited description is regenerated on its next listen. Nothing is spoken unless it is a saved description.
 - Self-hosted Instrument Serif for display and spines, Inter for reading and controls. The header remembers the chosen language (Spanish browsers start in Spanish) and shows live shelf counts; the colophon keeps the signature and clock.
 
 The redesign adds no runtime dependencies and does not change the schema, API contracts, authentication or administration logic. [The earlier Reading Room review](docs/reading-room-review.md) records the previous design's measurements.
@@ -94,6 +95,8 @@ For a fresh installation:
 ## Vercel setup and deployment
 
 Connect `prasidupadhya/mybookshelf` to the existing Vercel project. Use the repository root, framework **Other**, output directory `public`, the standard npm install command, and no build command. `vercel.json` configures the serverless functions, hidden-page rewrites and security headers.
+
+Optionally set `ELEVENLABS_API_KEY` as a **Sensitive** variable to enable the Listen button; `ELEVENLABS_VOICE_ID` chooses a different voice. Apply the schema with `npm run migrate` before deploying, because the narration table must exist.
 
 Set `DATABASE_URL` and `SESSION_SECRET` as **Sensitive** variables for **Production** and **Preview** in Vercel's project settings. The values must match the intended Neon branch and local session secret. Nothing is exposed as a public/frontend variable.
 
