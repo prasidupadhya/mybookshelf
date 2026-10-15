@@ -109,15 +109,3 @@ BEGIN
   RETURN QUERY SELECT * FROM books WHERE shelf = p_shelf ORDER BY sort_order;
 END;
 $$;
-
--- statement
--- Narrated descriptions. One clip per book and language; text_hash changes whenever the description or voice changes,
--- so an edited description is regenerated on its next listen and never served stale.
-CREATE TABLE IF NOT EXISTS speech_clips (
-  book_id uuid NOT NULL REFERENCES books(id) ON DELETE CASCADE,
-  lang text NOT NULL CHECK (lang IN ('en', 'es')),
-  text_hash text NOT NULL CHECK (text_hash ~ '^[0-9a-f]{64}$'),
-  audio bytea NOT NULL CHECK (octet_length(audio) BETWEEN 1 AND 8388608),
-  created_at timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (book_id, lang)
-);

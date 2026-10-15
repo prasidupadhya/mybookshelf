@@ -220,19 +220,6 @@
   font-size: .8125rem; font-weight: 500; text-decoration: none;
   transition: background-color var(--duration-quick) var(--ease-press);
 }
-.bookplate__actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-.bookplate__listen {
-  display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 18px;
-  border: 1px solid var(--plate-rule); border-radius: 999px;
-  color: var(--plate-text); background: var(--plate-bg);
-  font-size: .8125rem; font-weight: 500; cursor: pointer;
-  transition: border-color var(--duration-quick) var(--ease-press);
-}
-.bookplate__listen:hover { border-color: var(--plate-muted); }
-.bookplate__listen[hidden] { display: none; }
-.bookplate__listen:disabled { cursor: progress; opacity: .7; }
-.bookplate__listen-status { margin: 10px 0 0; color: var(--danger-text); font-size: .8125rem; }
-.bookplate__listen-status:empty { display: none; }
 .bookplate__link[hidden] { display: none; }
 .bookplate__link::after { content: "↗"; display: inline-block; transition: transform var(--duration-quick) var(--ease-press); }
 .bookplate__link:hover { background: #3a3833; }
