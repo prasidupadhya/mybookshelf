@@ -7,56 +7,70 @@
 .site-bar__inner { width: var(--measure); min-height: 68px; margin-inline: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .site-bar__mark { display: inline-flex; align-items: center; gap: 10px; margin: 0; color: var(--ink); font-size: var(--type-sm); font-weight: 500; letter-spacing: -.005em; white-space: nowrap; }
 .site-bar__monogram {
-  width: 30px; height: 30px; display: grid; place-items: center; flex: 0 0 30px;
+  width: 44px; height: 44px; display: grid; place-items: center; flex: 0 0 44px;
   border: 1px solid currentColor; border-radius: 50%;
-  font-family: var(--font-display); font-size: 1.1rem; line-height: 1; padding-top: 2px;
+  font-family: var(--font-display); font-size: 1.45rem; line-height: 1; padding-top: 3px;
 }
 
 .header-controls { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
-/* Language: a two-state switch with a sliding thumb, sized to the theme toggle beside it. */
+
+/* The control dock: language and theme share one rounded hairline frame, matching the monogram's height.
+   Inside it, each control is a 36px pill or circle; the dock itself gives a 44px touch row. */
+.site-bar .header-controls {
+  --dock-inner: 36px;
+  gap: 2px; height: 44px; padding: 3px;
+  border: 1px solid var(--theme-control-border); border-radius: 999px;
+  background: var(--theme-control-bg);
+}
+.header-controls__divider { width: 1px; height: 18px; margin: 0 5px; background: var(--theme-control-border); }
+
+/* Language: a segmented switch whose pill thumb glides to the active language with a soft spring. */
 .language-switcher {
-  --switch-h: 44px; --switch-half: 56px;
   position: relative; isolation: isolate;
-  display: inline-grid; grid-template-columns: repeat(2, var(--switch-half));
-  height: var(--switch-h); padding: 3px;
-  border: 1px solid var(--theme-control-border); border-radius: 8px;
+  display: inline-grid; grid-template-columns: repeat(2, 46px);
+  height: var(--dock-inner, 36px);
 }
 .language-switcher::before {
-  content: ""; position: absolute; z-index: -1;
-  top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
-  border-radius: 5px; background: var(--ink);
+  content: ""; position: absolute; z-index: -1; inset: 0 auto 0 0; width: 50%;
+  border-radius: 999px; background: var(--ink);
   transform: translateX(0);
-  transition: transform .45s var(--ease-settle);
+  transition: transform .5s cubic-bezier(.34, 1.3, .5, 1);
 }
 .language-switcher[data-active="es"]::before { transform: translateX(100%); }
 .language-switcher__button {
-  min-width: 0; height: 100%; padding: 0; border: 0; border-radius: 5px;
+  min-width: 0; height: 100%; padding: 0; border: 0; border-radius: 999px;
   color: var(--control-muted); background: transparent; cursor: pointer;
-  font-family: var(--font-ui); font-size: .75rem; font-weight: 500; letter-spacing: .06em;
+  font-family: var(--font-ui); font-size: .75rem; font-weight: 600; letter-spacing: .08em; line-height: 1;
   transition: color .3s var(--ease-settle);
 }
 .language-switcher__button:hover { color: var(--control-active); }
 .language-switcher__button.is-active { color: var(--canvas); }
+.language-switcher__button:focus-visible, .theme-toggle:focus-visible { outline-offset: 2px; }
 
-/* Theme: a square icon button whose sun and moon draw themselves in, mirroring the animated toggle. */
+/* Theme: a circular icon button. The sun turns and grows in for light; the moon does the same for dark,
+   while each path draws itself along its length, mirroring the animated toggle's 0.7s motion. */
 .theme-toggle {
-  width: 44px; height: 44px; flex: 0 0 44px; padding: 0; display: inline-grid; place-items: center;
-  border: 1px solid var(--theme-control-border); border-radius: 8px;
+  width: 44px; height: 44px; flex: 0 0 auto; padding: 0; display: inline-grid; place-items: center;
+  border: 1px solid var(--theme-control-border); border-radius: 50%;
   color: var(--control-active); background: var(--theme-control-bg); cursor: pointer;
   transition: background-color var(--duration-quick) var(--ease-press), transform var(--duration-quick) var(--ease-press);
 }
-.theme-toggle:hover { background: var(--theme-control-hover); }
-.theme-toggle:active { transform: scale(.94); }
-.theme-toggle__icon { width: 20px; height: 20px; overflow: visible; }
+.site-bar .theme-toggle { width: var(--dock-inner); height: var(--dock-inner); border: 0; background: transparent; }
+.theme-toggle:hover, .site-bar .theme-toggle:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); }
+.theme-toggle:active { transform: scale(.92); }
+.theme-toggle__icon { width: 19px; height: 19px; overflow: visible; }
 .theme-toggle__icon path {
-  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round;
   stroke-dasharray: 1; stroke-dashoffset: 0;
   transition: stroke-dashoffset .7s var(--ease-settle);
 }
-/* Light shows the sun; dark shows the moon. Hidden parts are drawn back to zero length. */
-html[data-theme="dark"] .theme-toggle__sun path,
-html[data-theme="light"] .theme-toggle__moon { stroke-dashoffset: 1; }
-html[data-theme="dark"] .theme-toggle__moon { stroke-dashoffset: 0; }
+.theme-toggle__sun, .theme-toggle__moon {
+  transform-box: view-box; transform-origin: 50% 50%;
+  transition: transform .7s var(--ease-settle), opacity .45s var(--ease-settle);
+}
+html[data-theme="dark"] .theme-toggle__sun { transform: rotate(-90deg) scale(.4); opacity: 0; }
+html[data-theme="dark"] .theme-toggle__sun path { stroke-dashoffset: 1; }
+html[data-theme="light"] .theme-toggle__moon { transform: rotate(60deg) scale(.4); opacity: 0; stroke-dashoffset: 1; }
 
 /* The exhibition label: eyebrow, title with a brass full stop, a short caption, then three counts. */
 .library-header {
@@ -85,5 +99,6 @@ html[data-theme="dark"] .theme-toggle__moon { stroke-dashoffset: 0; }
 .library-stats dt { color: var(--ink-muted); font-size: .75rem; line-height: 1.3; }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-toggle, .theme-toggle__icon path, .language-switcher__button, .language-switcher::before { transition: none; }
+  .theme-toggle, .theme-toggle__icon path, .theme-toggle__sun, .theme-toggle__moon,
+  .language-switcher__button, .language-switcher::before { transition: none; }
 }
