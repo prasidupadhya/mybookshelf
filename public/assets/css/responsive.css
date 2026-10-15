@@ -16,9 +16,6 @@
 @media (max-width: 759px) {
   .library-footer { flex-direction: column; justify-content: center; gap: 8px; text-align: center; }
 }
-@media (max-width: 420px) {
-  .theme-toggle { padding-inline: 12px 14px; }
-}
 
 /* The bookplate becomes a single scrolling column on narrow screens. */
 @media (max-width: 760px) {

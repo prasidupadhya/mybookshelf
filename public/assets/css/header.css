@@ -13,30 +13,50 @@
 }
 
 .header-controls { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+/* Language: a two-state switch with a sliding thumb, sized to the theme toggle beside it. */
 .language-switcher {
-  display: inline-flex; align-items: center; gap: 2px; padding: 3px;
-  border: 1px solid var(--theme-control-border); border-radius: 999px;
+  --switch-h: 44px; --switch-half: 56px;
+  position: relative; isolation: isolate;
+  display: inline-grid; grid-template-columns: repeat(2, var(--switch-half));
+  height: var(--switch-h); padding: 3px;
+  border: 1px solid var(--theme-control-border); border-radius: 8px;
 }
+.language-switcher::before {
+  content: ""; position: absolute; z-index: -1;
+  top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
+  border-radius: 5px; background: var(--ink);
+  transform: translateX(0);
+  transition: transform .45s var(--ease-settle);
+}
+.language-switcher[data-active="es"]::before { transform: translateX(100%); }
 .language-switcher__button {
-  min-width: 40px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 999px;
+  min-width: 0; height: 100%; padding: 0; border: 0; border-radius: 5px;
   color: var(--control-muted); background: transparent; cursor: pointer;
   font-family: var(--font-ui); font-size: .75rem; font-weight: 500; letter-spacing: .06em;
-  transition: background-color var(--duration-quick) var(--ease-press), color var(--duration-quick) var(--ease-press);
+  transition: color .3s var(--ease-settle);
 }
 .language-switcher__button:hover { color: var(--control-active); }
-.language-switcher__button.is-active { color: var(--canvas); background: var(--ink); }
+.language-switcher__button.is-active { color: var(--canvas); }
+
+/* Theme: a square icon button whose sun and moon draw themselves in, mirroring the animated toggle. */
 .theme-toggle {
-  min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 0 16px 0 13px;
-  border: 1px solid var(--theme-control-border); border-radius: 999px;
+  width: 44px; height: 44px; flex: 0 0 44px; padding: 0; display: inline-grid; place-items: center;
+  border: 1px solid var(--theme-control-border); border-radius: 8px;
   color: var(--control-active); background: var(--theme-control-bg); cursor: pointer;
-  font-family: var(--font-ui); font-size: .75rem; font-weight: 500; letter-spacing: .06em; line-height: 1;
-  transition: background-color var(--duration-quick) var(--ease-press);
+  transition: background-color var(--duration-quick) var(--ease-press), transform var(--duration-quick) var(--ease-press);
 }
 .theme-toggle:hover { background: var(--theme-control-hover); }
-.theme-toggle__mark { width: 12px; height: 12px; flex: 0 0 12px; border: 1px solid currentColor; border-radius: 50%; }
-.theme-toggle[data-next-theme="light"] .theme-toggle__mark { background: var(--accent); border-color: var(--accent); }
-.theme-toggle[data-next-theme="dark"] .theme-toggle__mark { box-shadow: inset -4px -1px 0 0 currentColor; }
+.theme-toggle:active { transform: scale(.94); }
+.theme-toggle__icon { width: 20px; height: 20px; overflow: visible; }
+.theme-toggle__icon path {
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  stroke-dasharray: 1; stroke-dashoffset: 0;
+  transition: stroke-dashoffset .7s var(--ease-settle);
+}
+/* Light shows the sun; dark shows the moon. Hidden parts are drawn back to zero length. */
+html[data-theme="dark"] .theme-toggle__sun path,
+html[data-theme="light"] .theme-toggle__moon { stroke-dashoffset: 1; }
+html[data-theme="dark"] .theme-toggle__moon { stroke-dashoffset: 0; }
 
 /* The exhibition label: eyebrow, title with a brass full stop, a short caption, then three counts. */
 .library-header {
@@ -65,5 +85,5 @@
 .library-stats dt { color: var(--ink-muted); font-size: .75rem; line-height: 1.3; }
 
 @media (prefers-reduced-motion: reduce) {
-  .theme-toggle, .language-switcher__button { transition: none; }
+  .theme-toggle, .theme-toggle__icon path, .language-switcher__button, .language-switcher::before { transition: none; }
 }

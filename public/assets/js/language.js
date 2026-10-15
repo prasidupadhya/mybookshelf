@@ -42,6 +42,8 @@ export function applyLanguage(language, { persist = false } = {}) {
   footerSuffix.textContent = UI_COPY[language].footerSuffix;
   footerSuffix.hidden = !UI_COPY[language].footerSuffix;
 
+  // The sliding thumb in the switch follows the active language.
+  languageGroup.dataset.active = language;
   languageButtons.forEach((button) => {
     const isActive = button.dataset.language === language;
     button.classList.toggle("is-active", isActive);
